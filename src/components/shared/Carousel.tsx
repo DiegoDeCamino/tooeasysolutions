@@ -11,11 +11,13 @@ export default function Carousel({
   intervalMs = 3500,
   showArrows = true,
   showDots = true,
+  aspectClass = "aspect-[16/9] sm:aspect-[21/9]",
 }: {
   slides: Slide[];
   intervalMs?: number;
   showArrows?: boolean;
   showDots?: boolean;
+  aspectClass?: string;
 }) {
   const [index, setIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -61,7 +63,7 @@ export default function Carousel({
         if (e.key === "ArrowRight") go(1);
       }}
     >
-      <div className="relative aspect-[21/9]">
+      <div className={`relative ${aspectClass}`}>
         {slides.map((s, i) => (
           <div
             key={i}

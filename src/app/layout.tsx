@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import Link from "next/link";
 // Image is not used directly; keep import removed to avoid lint warning
 import { PackageSearch, Truck, HelpCircle, Phone } from "lucide-react";
+import MobileNav from "@/components/shared/MobileNav";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -37,14 +38,14 @@ export default function RootLayout({
         className={`${nunito.variable} antialiased min-h-screen bg-brand-cream`}
       >
         <header className="w-full sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-black/5">
-          <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+          <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
             <Link href="/" className="flex items-center gap-3">
               <Truck className="text-brand-orange" size={28} />
               <span className="text-xl font-extrabold tracking-tight">
                 Too Easy Solutions
               </span>
             </Link>
-            <nav className="flex items-center gap-6 text-sm font-semibold">
+            <nav className="hidden sm:flex items-center gap-6 text-sm font-semibold">
               <Link
                 href="/"
                 className="hover:text-brand-teal flex items-center gap-1"
@@ -70,6 +71,7 @@ export default function RootLayout({
                 <Phone size={18} /> Contact
               </Link>
             </nav>
+            <MobileNav />
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>

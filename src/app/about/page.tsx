@@ -50,32 +50,20 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-4">
-        <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-md">
-          <Image
-            src="/images/crew/diego working 1.jpg"
-            alt="On the job"
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-md">
-          <Image
-            src="/images/crew/Diego and customer 1.jpg"
-            alt="With a customer"
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-md">
-          <Image
-            src="/images/crew/Diego and customers 2.jpg"
-            alt="Delivering to clients"
-            fill
-            className="object-cover"
-          />
-        </div>
-      </div>
+      <Carousel
+        slides={[
+          { src: "/images/crew/diego working 1.jpg", alt: "On the job" },
+          {
+            src: "/images/crew/Diego and customer 1.jpg",
+            alt: "With a customer",
+          },
+          {
+            src: "/images/crew/Diego and customers 2.jpg",
+            alt: "Delivering to clients",
+          },
+        ]}
+        aspectClass="aspect-[4/3] sm:aspect-[16/9]"
+      />
 
       <Carousel
         slides={[
@@ -90,6 +78,7 @@ export default function AboutPage() {
           },
         ]}
         intervalMs={3500}
+        aspectClass="aspect-[16/10] sm:aspect-[21/9]"
       />
     </div>
   );
