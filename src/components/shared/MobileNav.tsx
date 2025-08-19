@@ -21,13 +21,13 @@ export default function MobileNav() {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] bg-black/60"
           role="dialog"
           aria-modal="true"
           onClick={() => setOpen(false)}
         >
           <nav
-            className="absolute right-0 top-0 h-full w-[78%] max-w-[320px] bg-white shadow-xl p-5 flex flex-col gap-4"
+            className="absolute right-0 top-0 h-full w-[78%] max-w-[320px] bg-white shadow-2xl p-5 flex flex-col gap-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">

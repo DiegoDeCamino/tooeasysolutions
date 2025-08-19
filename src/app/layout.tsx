@@ -37,7 +37,7 @@ export default function RootLayout({
       <body
         className={`${nunito.variable} antialiased min-h-screen bg-brand-cream`}
       >
-        <header className="w-full sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-black/5">
+        <header className="w-full sticky top-0 z-50 bg-white border-b border-black/5 shadow-sm">
           <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
             <Link href="/" className="flex items-center gap-3">
               <Truck className="text-brand-orange" size={28} />
