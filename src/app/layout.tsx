@@ -2,7 +2,14 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import Link from "next/link";
 // Image is not used directly; keep import removed to avoid lint warning
-import { PackageSearch, Truck, HelpCircle, Phone } from "lucide-react";
+import {
+  PackageSearch,
+  Truck,
+  HelpCircle,
+  Phone,
+  Briefcase,
+  Heart,
+} from "lucide-react";
 import MobileNav from "@/components/shared/MobileNav";
 import "./globals.css";
 
@@ -57,6 +64,18 @@ export default function RootLayout({
                 className="hover:text-brand-teal flex items-center gap-1"
               >
                 <Truck size={18} /> About Us
+              </Link>
+              <Link
+                href="/community"
+                className="hover:text-brand-teal flex items-center gap-1"
+              >
+                <Heart size={18} /> Community
+              </Link>
+              <Link
+                href="/projects"
+                className="hover:text-brand-teal flex items-center gap-1"
+              >
+                <Briefcase size={18} /> Our Projects
               </Link>
               <Link
                 href="/faq"

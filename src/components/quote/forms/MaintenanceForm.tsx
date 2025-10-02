@@ -10,7 +10,13 @@ export default function MaintenanceForm() {
     maintenance: boolean;
     landscaping: boolean;
     gardening: boolean;
-  }>({ maintenance: false, landscaping: false, gardening: false });
+    carpentry: boolean;
+  }>({
+    maintenance: false,
+    landscaping: false,
+    gardening: false,
+    carpentry: false,
+  });
   const [details, setDetails] = useState("");
   const [date, setDate] = useState("");
   const [flex, setFlex] = useState(false);
@@ -87,6 +93,16 @@ export default function MaintenanceForm() {
             }
           />{" "}
           Gardening
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={kinds.carpentry}
+            onChange={(e) =>
+              setKinds({ ...kinds, carpentry: e.target.checked })
+            }
+          />{" "}
+          Carpentry
         </label>
       </fieldset>
       <div>

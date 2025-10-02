@@ -16,6 +16,9 @@ export async function sendEmail({ subject, html }: SendArgs) {
       port: Number(process.env.SMTP_PORT || 587),
       secure: Boolean(process.env.SMTP_SECURE === "true"),
       auth: process.env.SMTP_USER && process.env.SMTP_PASS ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
+      tls: {
+        rejectUnauthorized: false, // Allow self-signed certificates in development
+      },
     });
     await transporter.sendMail({ to, from, subject, html });
     return;

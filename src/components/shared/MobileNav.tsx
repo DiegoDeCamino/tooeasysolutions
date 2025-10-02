@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Home, Info, HelpCircle, Phone } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  Info,
+  HelpCircle,
+  Phone,
+  Briefcase,
+  Heart,
+} from "lucide-react";
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -54,6 +63,22 @@ export default function MobileNav() {
                   href="/about"
                   icon={<Info size={16} />}
                   text="About Us"
+                  onNavigate={() => setOpen(false)}
+                />
+              </li>
+              <li>
+                <NavLink
+                  href="/community"
+                  icon={<Heart size={16} />}
+                  text="Community"
+                  onNavigate={() => setOpen(false)}
+                />
+              </li>
+              <li>
+                <NavLink
+                  href="/projects"
+                  icon={<Briefcase size={16} />}
+                  text="Our Projects"
                   onNavigate={() => setOpen(false)}
                 />
               </li>

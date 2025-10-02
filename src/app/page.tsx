@@ -1,6 +1,6 @@
 import QuoteTabs from "@/components/quote/QuoteTabs";
 import Image from "next/image";
-import { Package, Move, Wrench, Car } from "lucide-react";
+import { Package, Move, Wrench } from "lucide-react";
 import Carousel from "@/components/shared/Carousel";
 
 export default function Home() {
@@ -48,6 +48,7 @@ export default function Home() {
 
       <Carousel
         slides={[
+          { src: "/images/landing page hello.jpg", alt: "Welcome" },
           { src: "/images/crew/diego working main.jpg", alt: "Diego working" },
           { src: "/images/crew/diego working 1.jpg", alt: "On the job" },
           {
@@ -56,7 +57,7 @@ export default function Home() {
           },
         ]}
         intervalMs={3500}
-        aspectClass="aspect-[4/3] sm:aspect-[16/9]"
+        aspectClass="aspect-[16/9] sm:aspect-[16/7]"
       />
 
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
@@ -76,13 +77,10 @@ export default function Home() {
           </p>
         </div>
         <div className="card p-4 sm:p-5 hover:shadow-2xl transition-shadow">
-          <div className="flex items-center gap-3">
-            <Car className="text-brand-teal" size={36} />
-            <Wrench className="text-brand-orange" size={32} />
-          </div>
-          <h3 className="mt-3 font-bold text-lg">Towing & Maintenance</h3>
+          <Wrench className="text-brand-orange" size={40} />
+          <h3 className="mt-3 font-bold text-lg">Home Maintenance</h3>
           <p className="text-sm text-black/70">
-            Vehicle towing and handy home maintenance — one call, too easy.
+            From carpentry to landscaping, we keep your home in top shape.
           </p>
         </div>
       </section>
