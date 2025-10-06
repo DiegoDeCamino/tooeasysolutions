@@ -10,8 +10,18 @@ export async function POST(req: NextRequest) {
     if (!valid) return new NextResponse("captcha_failed", { status: 400 });
   }
 
+  interface ParcelRow {
+    itemType: string;
+    quantity: number;
+    kg: number;
+    width: number;
+    length: number;
+    height: number;
+    unit: string;
+  }
+
   // Filter out empty rows
-  const validRows = (data.rows || []).filter((row: any) => 
+  const validRows = (data.rows || []).filter((row: ParcelRow) => 
     row.itemType && row.itemType.trim() !== ""
   );
 
@@ -78,7 +88,7 @@ export async function POST(req: NextRequest) {
               </tr>
             </thead>
             <tbody>
-              ${validRows.map((row: any) => `
+              ${validRows.map((row: ParcelRow) => `
                 <tr>
                   <td><strong>${row.quantity}</strong></td>
                   <td>${row.itemType}</td>

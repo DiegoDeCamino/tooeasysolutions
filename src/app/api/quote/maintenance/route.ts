@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
     if (!valid) return new NextResponse("captcha_failed", { status: 400 });
   }
   const selectedKinds = Object.entries(data.kinds || {})
-    .filter(([_, value]) => value)
-    .map(([key, _]) => {
-      const labels: any = {
+    .filter(([, value]) => value)
+    .map(([key]) => {
+      const labels: Record<string, string> = {
         maintenance: '🔧 Mantenimiento del hogar',
         landscaping: '🌳 Paisajismo',
         gardening: '🌱 Jardinería',
