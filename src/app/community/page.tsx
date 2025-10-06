@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -85,12 +86,12 @@ export default function CommunityPage() {
           easy, together!
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-          <a href="/" className="btn-primary">
+          <Link href="/" className="btn-primary">
             Get a Quote
-          </a>
-          <a href="/contact" className="btn-secondary">
+          </Link>
+          <Link href="/contact" className="btn-secondary">
             Contact Us
-          </a>
+          </Link>
         </div>
       </section>
     </div>

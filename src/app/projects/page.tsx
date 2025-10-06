@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { X, ZoomIn } from "lucide-react";
 
@@ -81,12 +82,12 @@ export default function ProjectsPage() {
           we&apos;re here to help. Get in touch for a quick quote today!
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-          <a href="/" className="btn-primary">
+          <Link href="/" className="btn-primary">
             Get a Quote
-          </a>
-          <a href="/contact" className="btn-secondary">
+          </Link>
+          <Link href="/contact" className="btn-secondary">
             Contact Us
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -195,12 +196,12 @@ function ProjectModal({
           </div>
 
           <div className="pt-4 border-t border-black/10 flex flex-col sm:flex-row gap-3">
-            <a href="/" className="btn-primary w-full sm:w-auto">
+            <Link href="/" className="btn-primary w-full sm:w-auto">
               Get a Similar Quote
-            </a>
-            <a href="/contact" className="btn-secondary w-full sm:w-auto">
+            </Link>
+            <Link href="/contact" className="btn-secondary w-full sm:w-auto">
               Contact Us
-            </a>
+            </Link>
             <button
               onClick={onClose}
               className="px-5 py-2.5 font-semibold text-brand-charcoal hover:bg-brand-cream rounded-lg transition-colors w-full sm:w-auto"

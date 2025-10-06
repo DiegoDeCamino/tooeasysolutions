@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Slide = { src: string; alt: string };
@@ -23,8 +23,10 @@ export default function Carousel({
   const touchStartX = useRef<number | null>(null);
   const paused = useRef(false);
 
-  const go = (dir: 1 | -1) =>
-    setIndex((i) => (i + dir + slides.length) % slides.length);
+  const go = useCallback(
+    (dir: 1 | -1) => setIndex((i) => (i + dir + slides.length) % slides.length),
+    [slides.length]
+  );
   const goTo = (i: number) =>
     setIndex(((i % slides.length) + slides.length) % slides.length);
 
@@ -32,7 +34,7 @@ export default function Carousel({
     if (paused.current) return;
     const id = setInterval(() => go(1), intervalMs);
     return () => clearInterval(id);
-  }, [index, intervalMs, slides.length]);
+  }, [index, intervalMs, go]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
