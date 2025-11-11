@@ -47,7 +47,17 @@ export default function ContactForm() {
           Send
         </button>
       </div>
-      {status && <p className="text-sm text-black/70">{status}</p>}
+      {status && (
+        <div
+          className={`p-4 rounded-lg text-center text-lg font-bold ${
+            status.includes("Thanks") || status.includes("shortly")
+              ? "bg-green-100 text-green-800 border-2 border-green-500"
+              : "bg-red-100 text-red-800 border-2 border-red-500"
+          }`}
+        >
+          {status}
+        </div>
+      )}
     </form>
   );
 }

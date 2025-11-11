@@ -6,7 +6,7 @@ type SendArgs = {
 };
 
 export async function sendEmail({ subject, html }: SendArgs) {
-  const to = process.env.CONTACT_EMAIL || "tooeasyparceldelivery@gmail.com";
+  const to = process.env.CONTACT_EMAIL || "tooeasysolutionswa@gmail.com";
   const from = process.env.MAIL_FROM || "website@tooeasy.local";
 
   // Prefer SMTP creds from env; if not present, fallback to nodemailer ethereal for dev

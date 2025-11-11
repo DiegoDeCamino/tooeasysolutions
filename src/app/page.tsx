@@ -37,7 +37,7 @@ export default function Home() {
                   className="h-8 w-auto"
                 />
                 <span className="text-sm text-black/70">
-                  tooeasyparceldelivery@gmail.com • 0432 689 687
+                  tooeasysolutionswa@gmail.com • 0432 689 687
                 </span>
               </div>
               <QuoteTabs />

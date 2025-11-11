@@ -17,9 +17,9 @@ export default function ContactPage() {
           Email:{" "}
           <a
             className="text-brand-teal"
-            href="mailto:tooeasyparceldelivery@gmail.com"
+            href="mailto:tooeasysolutionswa@gmail.com"
           >
-            tooeasyparceldelivery@gmail.com
+            tooeasysolutionswa@gmail.com
           </a>
         </p>
         <div className="rounded-xl overflow-hidden border border-black/5">

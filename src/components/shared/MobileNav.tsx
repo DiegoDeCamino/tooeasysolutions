@@ -100,7 +100,7 @@ export default function MobileNav() {
               </li>
             </ul>
             <div className="mt-auto text-sm text-black/70">
-              <p>tooeasyparceldelivery@gmail.com</p>
+              <p>tooeasysolutionswa@gmail.com</p>
               <p>0432 689 687</p>
             </div>
           </nav>
