@@ -13,10 +13,10 @@ export async function POST(req: NextRequest) {
     .filter(([, value]) => value)
     .map(([key]) => {
       const labels: Record<string, string> = {
-        maintenance: '🔧 Mantenimiento del hogar',
-        landscaping: '🌳 Paisajismo',
-        gardening: '🌱 Jardinería',
-        carpentry: '🪚 Carpintería'
+        maintenance: '🔧 House Maintenance',
+        landscaping: '🌳 Landscaping',
+        gardening: '🌱 Gardening',
+        carpentry: '🪚 Carpentry'
       };
       return labels[key] || key;
     });
@@ -44,52 +44,52 @@ export async function POST(req: NextRequest) {
     </head>
     <body>
       <div class="header">
-        <h1>🛠️ Nueva Cotización de Mantenimiento</h1>
-        <p>Recibido el ${new Date().toLocaleString('es-AU', { timeZone: 'Australia/Perth' })}</p>
+        <h1>🛠️ New Maintenance Quote</h1>
+        <p>Received on ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Perth' })}</p>
       </div>
 
       <div class="section">
-        <h2>📍 Ubicación</h2>
+        <h2>📍 Location</h2>
         <div class="info-row">
-          <div class="info-label">Dirección:</div>
-          <div class="info-value">${data.address || '<em>No especificada</em>'}</div>
+          <div class="info-label">Address:</div>
+          <div class="info-value">${data.address || '<em>Not specified</em>'}</div>
         </div>
       </div>
 
       <div class="section">
-        <h2>🔧 Tipo de Servicio Solicitado</h2>
+        <h2>🔧 Requested Service Type</h2>
         ${selectedKinds.length > 0 ? `
           <div style="margin-top: 10px;">
             ${selectedKinds.map(kind => `<span class="badge">${kind}</span>`).join('')}
           </div>
-        ` : '<p><em>No se seleccionaron servicios</em></p>'}
+        ` : '<p><em>No services selected</em></p>'}
       </div>
 
       ${data.details && data.details.trim() ? `
         <div class="section">
-          <h2>📝 Detalles Adicionales</h2>
+          <h2>📝 Additional Details</h2>
           <div class="details-box">${data.details}</div>
         </div>
       ` : ''}
 
       <div class="section">
-        <h2>📅 Fecha Preferida</h2>
+        <h2>📅 Preferred Date</h2>
         <div class="info-row">
-          <div class="info-label">Fecha de servicio:</div>
-          <div class="info-value">${data.date ? new Date(data.date).toLocaleDateString('es-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '<em>No especificada</em>'}</div>
+          <div class="info-label">Service Date:</div>
+          <div class="info-value">${data.date ? new Date(data.date).toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '<em>Not specified</em>'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Flexibilidad:</div>
+          <div class="info-label">Flexibility:</div>
           <div class="info-value">
-            <span class="badge-flex">${data.flex ? '✅ Fecha flexible' : '📅 Fecha fija'}</span>
+            <span class="badge-flex">${data.flex ? '✅ Date flexible' : '📅 Fixed date'}</span>
           </div>
         </div>
       </div>
 
       <div class="section">
-        <h2>👤 Información del Cliente</h2>
+        <h2>👤 Customer Information</h2>
         <div class="info-row">
-          <div class="info-label">Nombre:</div>
+          <div class="info-label">Name:</div>
           <div class="info-value"><strong>${data.name}</strong></div>
         </div>
         <div class="info-row">
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         </div>
         ${data.phone ? `
           <div class="info-row">
-            <div class="info-label">Teléfono:</div>
+            <div class="info-label">Phone:</div>
             <div class="info-value"><a href="tel:${data.phone}">${data.phone}</a></div>
           </div>
         ` : ''}
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     </html>
   `;
 
-  await sendEmail({ subject: "🛠️ Nueva Cotización de Mantenimiento", html });
+  await sendEmail({ subject: "🛠️ New Maintenance Quote", html });
   return NextResponse.json({ ok: true });
 }
 

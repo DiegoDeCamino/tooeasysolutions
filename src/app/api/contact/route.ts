@@ -30,23 +30,23 @@ export async function POST(req: NextRequest) {
     </head>
     <body>
       <div class="header">
-        <h1>💬 Nuevo Mensaje de Contacto</h1>
-        <p>Recibido el ${new Date().toLocaleString('es-AU', { timeZone: 'Australia/Perth' })}</p>
+        <h1>💬 New Contact Message</h1>
+        <p>Received on ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Perth' })}</p>
       </div>
 
       <div class="section">
-        <h2>👤 Información del Remitente</h2>
+        <h2>👤 Sender Information</h2>
         <div class="info-row">
-          <div class="info-label">Nombre:</div>
-          <div class="info-value"><strong>${data.name || '<em>No especificado</em>'}</strong></div>
+          <div class="info-label">Name:</div>
+          <div class="info-value"><strong>${data.name || '<em>Not specified</em>'}</strong></div>
         </div>
         <div class="info-row">
           <div class="info-label">Email:</div>
-          <div class="info-value"><a href="mailto:${data.email}">${data.email || '<em>No especificado</em>'}</a></div>
+          <div class="info-value"><a href="mailto:${data.email}">${data.email || '<em>Not specified</em>'}</a></div>
         </div>
         ${data.phone ? `
           <div class="info-row">
-            <div class="info-label">Teléfono:</div>
+            <div class="info-label">Phone:</div>
             <div class="info-value"><a href="tel:${data.phone}">${data.phone}</a></div>
           </div>
         ` : ''}
@@ -54,14 +54,14 @@ export async function POST(req: NextRequest) {
 
       ${data.message && data.message.trim() ? `
         <div class="section">
-          <h2>📝 Mensaje</h2>
+          <h2>📝 Message</h2>
           <div class="message-box">${data.message}</div>
         </div>
       ` : ''}
 
       ${data.subject ? `
         <div class="section">
-          <h2>📌 Asunto</h2>
+          <h2>📌 Subject</h2>
           <div class="info-value">${data.subject}</div>
         </div>
       ` : ''}
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     </html>
   `;
 
-  await sendEmail({ subject: "💬 Nuevo Mensaje de Contacto - Website", html });
+  await sendEmail({ subject: "💬 New Contact Message - Website", html });
   return NextResponse.json({ ok: true });
 }
 

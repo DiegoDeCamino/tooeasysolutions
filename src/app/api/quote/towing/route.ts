@@ -31,50 +31,50 @@ export async function POST(req: NextRequest) {
     </head>
     <body>
       <div class="header">
-        <h1>🚗 Nueva Solicitud de Grúa</h1>
-        <p>Recibido el ${new Date().toLocaleString('es-AU', { timeZone: 'Australia/Perth' })}</p>
+        <h1>🚗 New Towing Request</h1>
+        <p>Received on ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Perth' })}</p>
       </div>
 
       <div class="section">
-        <h2>🚙 Vehículo</h2>
+        <h2>🚙 Vehicle</h2>
         <div class="info-row">
-          <div class="info-label">Modelo y año:</div>
+          <div class="info-label">Model and Year:</div>
           <div class="info-value">
-            ${data.model ? `<span class="car-badge">🚗 ${data.model}</span>` : '<em>No especificado</em>'}
+            ${data.model ? `<span class="car-badge">🚗 ${data.model}</span>` : '<em>Not specified</em>'}
           </div>
         </div>
       </div>
 
       <div class="section">
-        <h2>📍 Ubicaciones</h2>
+        <h2>📍 Locations</h2>
         <div class="info-row">
-          <div class="info-label">Recoger en:</div>
-          <div class="info-value">${data.from || '<em>No especificado</em>'}</div>
+          <div class="info-label">Pick-up from:</div>
+          <div class="info-value">${data.from || '<em>Not specified</em>'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Entregar en:</div>
-          <div class="info-value">${data.to || '<em>No especificado</em>'}</div>
+          <div class="info-label">Drop-off at:</div>
+          <div class="info-value">${data.to || '<em>Not specified</em>'}</div>
         </div>
       </div>
 
       <div class="section">
-        <h2>📅 Fecha de Servicio</h2>
+        <h2>📅 Service Date</h2>
         <div class="info-row">
-          <div class="info-label">Fecha preferida:</div>
-          <div class="info-value">${data.date ? new Date(data.date).toLocaleDateString('es-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '<em>No especificada</em>'}</div>
+          <div class="info-label">Preferred Date:</div>
+          <div class="info-value">${data.date ? new Date(data.date).toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '<em>Not specified</em>'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Flexibilidad:</div>
+          <div class="info-label">Flexibility:</div>
           <div class="info-value">
-            <span class="badge">${data.flex ? '✅ Fecha flexible' : '📅 Fecha fija'}</span>
+            <span class="badge">${data.flex ? '✅ Date flexible' : '📅 Fixed date'}</span>
           </div>
         </div>
       </div>
 
       <div class="section">
-        <h2>👤 Información del Cliente</h2>
+        <h2>👤 Customer Information</h2>
         <div class="info-row">
-          <div class="info-label">Nombre:</div>
+          <div class="info-label">Name:</div>
           <div class="info-value"><strong>${data.name}</strong></div>
         </div>
         <div class="info-row">
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         </div>
         ${data.phone ? `
           <div class="info-row">
-            <div class="info-label">Teléfono:</div>
+            <div class="info-label">Phone:</div>
             <div class="info-value"><a href="tel:${data.phone}">${data.phone}</a></div>
           </div>
         ` : ''}
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
     </html>
   `;
 
-  await sendEmail({ subject: "🚗 Nueva Solicitud de Grúa", html });
+  await sendEmail({ subject: "🚗 New Towing Request", html });
   return NextResponse.json({ ok: true });
 }
 

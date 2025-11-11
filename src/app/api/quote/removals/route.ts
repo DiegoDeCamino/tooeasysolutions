@@ -31,47 +31,47 @@ export async function POST(req: NextRequest) {
     </head>
     <body>
       <div class="header">
-        <h1>🚚 Nueva Cotización de Mudanza</h1>
-        <p>Recibido el ${new Date().toLocaleString('es-AU', { timeZone: 'Australia/Perth' })}</p>
+        <h1>🚚 New Removals Quote</h1>
+        <p>Received on ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Perth' })}</p>
       </div>
 
       <div class="section">
-        <h2>📍 Ubicaciones</h2>
+        <h2>📍 Locations</h2>
         <div class="info-row">
-          <div class="info-label">Recoger en:</div>
-          <div class="info-value">${data.from || '<em>No especificado</em>'}</div>
+          <div class="info-label">Pick-up from:</div>
+          <div class="info-value">${data.from || '<em>Not specified</em>'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Entregar en:</div>
-          <div class="info-value">${data.to || '<em>No especificado</em>'}</div>
+          <div class="info-label">Drop-off at:</div>
+          <div class="info-value">${data.to || '<em>Not specified</em>'}</div>
         </div>
       </div>
 
       <div class="section">
-        <h2>📦 Artículos a Mudar</h2>
+        <h2>📦 Items to Move</h2>
         ${data.items && data.items.trim() ? `
           <div class="items-list">${data.items}</div>
-        ` : '<p><em>No se especificaron artículos</em></p>'}
+        ` : '<p><em>No items specified</em></p>'}
       </div>
 
       <div class="section">
-        <h2>📅 Fecha y Horario</h2>
+        <h2>📅 Date and Time</h2>
         <div class="info-row">
-          <div class="info-label">Fecha preferida:</div>
-          <div class="info-value">${data.date ? new Date(data.date).toLocaleDateString('es-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '<em>No especificada</em>'}</div>
+          <div class="info-label">Preferred Date:</div>
+          <div class="info-value">${data.date ? new Date(data.date).toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '<em>Not specified</em>'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Flexibilidad:</div>
+          <div class="info-label">Flexibility:</div>
           <div class="info-value">
-            <span class="badge">${data.flex ? '✅ Fecha flexible' : '📅 Fecha fija'}</span>
+            <span class="badge">${data.flex ? '✅ Date flexible' : '📅 Fixed date'}</span>
           </div>
         </div>
       </div>
 
       <div class="section">
-        <h2>👤 Información del Cliente</h2>
+        <h2>👤 Customer Information</h2>
         <div class="info-row">
-          <div class="info-label">Nombre:</div>
+          <div class="info-label">Name:</div>
           <div class="info-value"><strong>${data.name}</strong></div>
         </div>
         <div class="info-row">
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
         </div>
         ${data.phone ? `
           <div class="info-row">
-            <div class="info-label">Teléfono:</div>
+            <div class="info-label">Phone:</div>
             <div class="info-value"><a href="tel:${data.phone}">${data.phone}</a></div>
           </div>
         ` : ''}
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
     </html>
   `;
 
-  await sendEmail({ subject: "🚚 Nueva Cotización de Mudanza", html });
+  await sendEmail({ subject: "🚚 New Removals Quote", html });
   return NextResponse.json({ ok: true });
 }
 

@@ -51,40 +51,40 @@ export async function POST(req: NextRequest) {
     </head>
     <body>
       <div class="header">
-        <h1>📦 Nueva Cotización de Parcel</h1>
-        <p>Recibido el ${new Date().toLocaleString('es-AU', { timeZone: 'Australia/Perth' })}</p>
+        <h1>📦 New Parcel Quote</h1>
+        <p>Received on ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Perth' })}</p>
       </div>
 
       <div class="section">
-        <h2>📍 Información de Entrega</h2>
+        <h2>📍 Delivery Information</h2>
         <div class="info-row">
-          <div class="info-label">Origen:</div>
-          <div class="info-value">${data.from || '<em>No especificado</em>'}</div>
+          <div class="info-label">From:</div>
+          <div class="info-value">${data.from || '<em>Not specified</em>'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Tipo de recogida:</div>
-          <div class="info-value">${data.fromType === 'home' ? '🏠 Domicilio' : '🏢 Negocio'}</div>
+          <div class="info-label">Pick-up Type:</div>
+          <div class="info-value">${data.fromType === 'home' ? '🏠 Home Address' : '🏢 Business'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Destino:</div>
-          <div class="info-value">${data.to || '<em>No especificado</em>'}</div>
+          <div class="info-label">To:</div>
+          <div class="info-value">${data.to || '<em>Not specified</em>'}</div>
         </div>
         <div class="info-row">
-          <div class="info-label">Tipo de entrega:</div>
-          <div class="info-value">${data.toType === 'home' ? '🏠 Domicilio' : '🏢 Negocio'}</div>
+          <div class="info-label">Drop-off Type:</div>
+          <div class="info-value">${data.toType === 'home' ? '🏠 Home Address' : '🏢 Business'}</div>
         </div>
       </div>
 
       <div class="section">
-        <h2>📋 Detalles de los Paquetes</h2>
+        <h2>📋 Package Details</h2>
         ${validRows.length > 0 ? `
           <table>
             <thead>
               <tr>
-                <th>Cantidad</th>
-                <th>Tipo de Artículo</th>
-                <th>Peso (kg)</th>
-                <th>Dimensiones</th>
+                <th>Quantity</th>
+                <th>Item Type</th>
+                <th>Weight (kg)</th>
+                <th>Dimensions</th>
               </tr>
             </thead>
             <tbody>
@@ -98,28 +98,28 @@ export async function POST(req: NextRequest) {
               `).join('')}
             </tbody>
           </table>
-        ` : '<p><em>No se especificaron artículos</em></p>'}
+        ` : '<p><em>No items specified</em></p>'}
         
         <div class="info-row" style="margin-top: 15px;">
-          <div class="info-label">Mercancías peligrosas:</div>
+          <div class="info-label">Dangerous Goods:</div>
           <div class="info-value">
             <span class="badge${data.dangerousGoods ? ' danger' : ''}">
-              ${data.dangerousGoods ? '⚠️ SÍ' : '✅ NO'}
+              ${data.dangerousGoods ? '⚠️ YES' : '✅ NO'}
             </span>
           </div>
         </div>
         ${data.budget ? `
           <div class="info-row">
-            <div class="info-label">Presupuesto del cliente:</div>
+            <div class="info-label">Customer Budget:</div>
             <div class="info-value"><strong>$${data.budget}</strong></div>
           </div>
         ` : ''}
       </div>
 
       <div class="section">
-        <h2>👤 Información del Cliente</h2>
+        <h2>👤 Customer Information</h2>
         <div class="info-row">
-          <div class="info-label">Nombre:</div>
+          <div class="info-label">Name:</div>
           <div class="info-value"><strong>${data.name}</strong></div>
         </div>
         <div class="info-row">
@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
         </div>
         ${data.phone ? `
           <div class="info-row">
-            <div class="info-label">Teléfono:</div>
+            <div class="info-label">Phone:</div>
             <div class="info-value"><a href="tel:${data.phone}">${data.phone}</a></div>
           </div>
         ` : ''}
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
     </html>
   `;
 
-  await sendEmail({ subject: "📦 Nueva Cotización de Parcel", html });
+  await sendEmail({ subject: "📦 New Parcel Quote", html });
   return NextResponse.json({ ok: true });
 }
 
