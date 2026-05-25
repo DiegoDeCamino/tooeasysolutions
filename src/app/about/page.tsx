@@ -10,21 +10,25 @@ export default function AboutPage() {
     <div className="space-y-8">
       <div className="grid lg:grid-cols-2 gap-8 items-start">
         <div className="space-y-4">
-          <h1 className="text-3xl font-extrabold">About Us</h1>
+          <h1 className="font-tangkiwood text-4xl sm:text-5xl text-brand-charcoal">
+            About Us
+          </h1>
           <p>
-            Too Easy Solutions is a community-based courier, removalist, towing
-            and home maintenance service proudly operating across the South West
-            of Western Australia, from Perth to Augusta.
+            Too Easy Solutions is a local removals, courier, cleaning and home
+            maintenance service proudly operating across the South West of
+            Western Australia, from Perth to Augusta.
           </p>
           <p>
-            Our mission is simple: be local, reliable and affordable. We started
-            in the Margaret River region helping neighbours move items and
-            quickly grew through word of mouth. Today, we continue to focus on
-            friendly service, transparent pricing and fast response times.
+            Our mission is simple: be local, reliable and affordable. We
+            started in the Margaret River region helping neighbours move items
+            and quickly grew through word of mouth. Today, we continue to
+            focus on friendly service, transparent pricing and fast response
+            times.
           </p>
           <p>
-            Whether it&apos;s a single parcel, a home move, a vehicle tow, or a
-            handyman job — we&apos;re here to help. Local. Affordable. Too Easy.
+            Whether it&apos;s a parcel across town, a full house move, a deep
+            clean, or a handyman job — we&apos;re here to help. One page.
+            Every service. All South West WA. Local. Affordable. Too Easy.
           </p>
           <div className="flex items-center gap-3 pt-2">
             <Image
@@ -34,15 +38,15 @@ export default function AboutPage() {
               height={120}
               className="h-12 w-auto"
             />
-            <span className="text-sm text-black/70">
+            <span className="font-tangkiwood text-lg text-brand-charcoal">
               Local. Affordable. Too Easy.
             </span>
           </div>
         </div>
         <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
           <Image
-            src="/images/crew/diego working main.jpg"
-            alt="Diego working"
+            src="/images/house and commercial removal.jpg"
+            alt="House and commercial removals across the South West"
             fill
             className="object-cover"
             priority
@@ -52,14 +56,17 @@ export default function AboutPage() {
 
       <Carousel
         slides={[
-          { src: "/images/crew/diego working 1.jpg", alt: "On the job" },
           {
-            src: "/images/crew/Diego and customer 1.jpg",
-            alt: "With a customer",
+            src: "/images/removals.jpg",
+            alt: "Parcel delivery and removals",
           },
           {
-            src: "/images/crew/Diego and customers 2.jpg",
-            alt: "Delivering to clients",
+            src: "/images/cleaning.jpg",
+            alt: "Home and commercial cleaning",
+          },
+          {
+            src: "/images/home maintenance.jpg",
+            alt: "Home maintenance and handyman work",
           },
         ]}
         aspectClass="aspect-[4/3] sm:aspect-[16/9]"
@@ -68,13 +75,16 @@ export default function AboutPage() {
       <Carousel
         slides={[
           {
-            src: "/images/crew/diego and customers 3.jpg",
-            alt: "Community deliveries",
+            src: "/images/furniture assembly.jpg",
+            alt: "Furniture assembly",
           },
-          { src: "/images/crew/diego working 1.jpg", alt: "On the job" },
           {
-            src: "/images/crew/Diego and customers 2.jpg",
-            alt: "Delivering to clients",
+            src: "/images/workforce and carpentry.jpg",
+            alt: "Workforce and carpentry",
+          },
+          {
+            src: "/images/house and commercial removal.jpg",
+            alt: "House and commercial removals",
           },
         ]}
         intervalMs={3500}

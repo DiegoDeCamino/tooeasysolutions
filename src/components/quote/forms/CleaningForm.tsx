@@ -4,10 +4,24 @@ import { useState } from "react";
 import AddressAutocomplete from "./AddressAutocomplete";
 import TurnstileWidget from "../../shared/TurnstileWidget";
 
-export default function TowingForm() {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [model, setModel] = useState("");
+export default function CleaningForm() {
+  const [address, setAddress] = useState("");
+  const [kinds, setKinds] = useState<{
+    house: boolean;
+    endOfLease: boolean;
+    commercial: boolean;
+    deep: boolean;
+    windows: boolean;
+  }>({
+    house: false,
+    endOfLease: false,
+    commercial: false,
+    deep: false,
+    windows: false,
+  });
+  const [bedrooms, setBedrooms] = useState("");
+  const [bathrooms, setBathrooms] = useState("");
+  const [details, setDetails] = useState("");
   const [date, setDate] = useState("");
   const [flex, setFlex] = useState(false);
   const [name, setName] = useState("");
@@ -19,13 +33,15 @@ export default function TowingForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus(null);
-    const resp = await fetch("/api/quote/towing", {
+    const resp = await fetch("/api/quote/cleaning", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        from,
-        to,
-        model,
+        address,
+        kinds,
+        bedrooms,
+        bathrooms,
+        details,
         date,
         flex,
         name,
@@ -44,30 +60,91 @@ export default function TowingForm() {
   return (
     <form onSubmit={submit} className="space-y-4">
       <h3 className="text-lg font-extrabold">
-        Request a Tow – We&apos;ll Need the Following Details:
+        Book a Clean – Please Provide:
       </h3>
+      <AddressAutocomplete
+        label="Full Address or Suburb"
+        value={address}
+        onChange={setAddress}
+      />
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-semibold">
+          What Type of Cleaning Do You Need?
+        </legend>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={kinds.house}
+            onChange={(e) => setKinds({ ...kinds, house: e.target.checked })}
+          />{" "}
+          Regular House Cleaning
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={kinds.endOfLease}
+            onChange={(e) =>
+              setKinds({ ...kinds, endOfLease: e.target.checked })
+            }
+          />{" "}
+          End of Lease / Bond Clean
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={kinds.commercial}
+            onChange={(e) =>
+              setKinds({ ...kinds, commercial: e.target.checked })
+            }
+          />{" "}
+          Commercial / Office Cleaning
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={kinds.deep}
+            onChange={(e) => setKinds({ ...kinds, deep: e.target.checked })}
+          />{" "}
+          Deep / Spring Clean
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={kinds.windows}
+            onChange={(e) => setKinds({ ...kinds, windows: e.target.checked })}
+          />{" "}
+          Windows
+        </label>
+      </fieldset>
       <div className="grid sm:grid-cols-2 gap-4">
-        <AddressAutocomplete
-          label="Pick-up Location"
-          value={from}
-          onChange={setFrom}
+        <TextField
+          label="Bedrooms"
+          placeholder="e.g. 3"
+          value={bedrooms}
+          onChange={setBedrooms}
         />
-        <AddressAutocomplete
-          label="Drop-off Location"
-          value={to}
-          onChange={setTo}
+        <TextField
+          label="Bathrooms"
+          placeholder="e.g. 2"
+          value={bathrooms}
+          onChange={setBathrooms}
         />
       </div>
-      <TextField
-        label="Car Model & Year"
-        placeholder="E.g., Toyota Corolla 2015, Ford Ranger 2020, etc."
-        value={model}
-        onChange={setModel}
-      />
+      <div>
+        <label className="block text-sm font-semibold mb-1">
+          Please provide more details
+        </label>
+        <textarea
+          className="w-full rounded-md border border-black/10 px-3 py-2"
+          rows={4}
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+        />
+      </div>
       <div className="grid sm:grid-cols-2 gap-4 items-end">
         <div>
           <label className="block text-sm font-semibold mb-1">
-            Preferred Tow Date
+            Preferred Date for Service
           </label>
           <input
             type="date"
@@ -78,12 +155,12 @@ export default function TowingForm() {
         </div>
         <div className="flex items-center gap-3">
           <input
-            id="flex-tow"
+            id="flex-clean"
             type="checkbox"
             checked={flex}
             onChange={(e) => setFlex(e.target.checked)}
           />
-          <label htmlFor="flex-tow" className="font-semibold">
+          <label htmlFor="flex-clean" className="font-semibold">
             My date is flexible
           </label>
         </div>

@@ -1,32 +1,64 @@
 import QuoteTabs from "@/components/quote/QuoteTabs";
 import Image from "next/image";
-import { Package, Move, Wrench } from "lucide-react";
+import Link from "next/link";
 import Carousel from "@/components/shared/Carousel";
+
+type ServiceCard = {
+  title: string;
+  src: string;
+  alt: string;
+};
+
+const SERVICE_CARDS: ServiceCard[] = [
+  {
+    title: "Parcel Delivery",
+    src: "/images/removals.jpg",
+    alt: "Parcel delivery across the South West",
+  },
+  {
+    title: "Removals",
+    src: "/images/house and commercial removal.jpg",
+    alt: "House and commercial removals",
+  },
+  {
+    title: "Cleaning",
+    src: "/images/cleaning.jpg",
+    alt: "Home and commercial cleaning",
+  },
+  {
+    title: "Home Maintenance",
+    src: "/images/home maintenance.jpg",
+    alt: "Home maintenance, carpentry and handyman work",
+  },
+];
 
 export default function Home() {
   return (
     <div className="space-y-10 sm:space-y-12">
-      <section className="relative overflow-hidden rounded-2xl bg-[url('/images/hero.jpg')] bg-cover bg-center min-h-[420px] sm:min-h-[360px] flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/20" />
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-teal via-cyan-700 to-brand-orange min-h-[420px] sm:min-h-[360px] flex items-center">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.18),transparent_60%)]" />
         <div className="relative z-10 w-full p-6 sm:p-10 text-white">
           <div className="max-w-3xl space-y-3">
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-300">
-              QUICK QUOTE
+            <h1 className="font-tangkiwood text-3xl sm:text-5xl leading-tight text-amber-100 drop-shadow">
+              One Page. Every Service. All South West WA.
             </h1>
-            <h2 className="text-2xl sm:text-3xl font-extrabold">
-              Community-Based Couriers & Removalists
+            <h2 className="text-xl sm:text-2xl font-extrabold">
+              Removals, couriers, cleaning, and home maintenance — all booked
+              right here, serving Perth to Augusta. We are here to help 🌱
             </h2>
-            <p className="text-lg opacity-95">
-              From Perth to Augusta – We&apos;ve Got You Covered!
+            <p className="text-base sm:text-lg opacity-95">
+              Stop searching. Start sorting. It&apos;s all Too Easy.
             </p>
-            <p className="text-base opacity-90">
-              Need to send or collect something across the South West? We’re
-              your local, friendly movers – fast, reliable, and
-              community-focused. Whether it&apos;s a single item or a full move,
-              we&apos;re here to help. 🌱 Local. Affordable. Too Easy.
+            <p>
+              <Link
+                href="#quote"
+                className="inline-flex items-center gap-2 rounded-full bg-white text-brand-charcoal font-bold px-5 py-2.5 shadow-lg hover:shadow-xl transition-shadow"
+              >
+                👉 Get a Free Quote Today
+              </Link>
             </p>
           </div>
-          <div className="mt-4 sm:mt-6">
+          <div id="quote" className="mt-4 sm:mt-6 scroll-mt-24">
             <div className="card p-3 sm:p-6 shadow-2xl ring-1 ring-black/5">
               <div className="flex items-center gap-3 mb-3">
                 <Image
@@ -48,41 +80,33 @@ export default function Home() {
 
       <Carousel
         slides={[
-          { src: "/images/landing page hello.jpg", alt: "Welcome" },
-          { src: "/images/crew/diego working main.jpg", alt: "Diego working" },
-          { src: "/images/crew/diego working 1.jpg", alt: "On the job" },
-          {
-            src: "/images/crew/Diego and customer 1.jpg",
-            alt: "With a customer",
-          },
+          { src: "/images/landing page hello.jpg", alt: "Welcome — Hello" },
         ]}
         intervalMs={3500}
+        showArrows={false}
+        showDots={false}
         aspectClass="aspect-[16/9] sm:aspect-[16/7]"
       />
 
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-        <div className="card p-4 sm:p-5 hover:shadow-2xl transition-shadow">
-          <Package className="text-brand-teal" size={40} />
-          <h3 className="mt-3 font-bold text-lg">Parcel Delivery</h3>
-          <p className="text-sm text-black/70">
-            From a letter to a bulky item, we deliver across the South West,
-            fast.
-          </p>
-        </div>
-        <div className="card p-4 sm:p-5 hover:shadow-2xl transition-shadow">
-          <Move className="text-brand-teal" size={40} />
-          <h3 className="mt-3 font-bold text-lg">Removals</h3>
-          <p className="text-sm text-black/70">
-            Single items to full moves. Careful hands, fair prices.
-          </p>
-        </div>
-        <div className="card p-4 sm:p-5 hover:shadow-2xl transition-shadow">
-          <Wrench className="text-brand-orange" size={40} />
-          <h3 className="mt-3 font-bold text-lg">Home Maintenance</h3>
-          <p className="text-sm text-black/70">
-            From carpentry to landscaping, we keep your home in top shape.
-          </p>
-        </div>
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {SERVICE_CARDS.map((card) => (
+          <article
+            key={card.title}
+            className="group relative overflow-hidden rounded-2xl shadow-xl ring-1 ring-black/10 aspect-[4/5]"
+          >
+            <Image
+              src={card.src}
+              alt={card.alt}
+              fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/10" />
+            <h3 className="absolute inset-x-0 top-4 text-center font-tangkiwood text-white text-2xl sm:text-3xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] px-3">
+              {card.title}
+            </h3>
+          </article>
+        ))}
       </section>
     </div>
   );

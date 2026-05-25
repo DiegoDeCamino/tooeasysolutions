@@ -3,11 +3,11 @@
 import { useState } from "react";
 import ParcelForm from "@/components/quote/forms/ParcelForm";
 import RemovalsForm from "@/components/quote/forms/RemovalsForm";
-import TowingForm from "@/components/quote/forms/TowingForm";
+import CleaningForm from "@/components/quote/forms/CleaningForm";
 import MaintenanceForm from "@/components/quote/forms/MaintenanceForm";
-import { Package, Move, Car, Cog } from "lucide-react";
+import { Package, Move, Cog, Sparkles } from "lucide-react";
 
-type TabKey = "parcel" | "removals" | "towing" | "maintenance";
+type TabKey = "parcel" | "removals" | "cleaning" | "maintenance";
 
 export default function QuoteTabs() {
   const [activeTab, setActiveTab] = useState<TabKey>("parcel");
@@ -30,15 +30,15 @@ export default function QuoteTabs() {
           onClick={setActiveTab}
         />
         <TabButton
-          tab="towing"
-          label="Towing"
-          icon={<Car size={16} />}
+          tab="cleaning"
+          label="Cleaning"
+          icon={<Sparkles size={16} />}
           active={activeTab}
           onClick={setActiveTab}
         />
         <TabButton
           tab="maintenance"
-          label="House Maintenance"
+          label="Home Maintenance"
           icon={<Cog size={16} />}
           active={activeTab}
           onClick={setActiveTab}
@@ -47,7 +47,7 @@ export default function QuoteTabs() {
       <div className="mt-4">
         {activeTab === "parcel" && <ParcelForm />}
         {activeTab === "removals" && <RemovalsForm />}
-        {activeTab === "towing" && <TowingForm />}
+        {activeTab === "cleaning" && <CleaningForm />}
         {activeTab === "maintenance" && <MaintenanceForm />}
       </div>
     </div>

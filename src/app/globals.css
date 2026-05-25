@@ -8,6 +8,23 @@
   --orange: #f36a21; /* secondary */
 }
 
+/*
+ * TAN TANGKIWOOD is a commercial display font.
+ * Drop the font file(s) into /public/fonts/ (any of the supported formats below)
+ * and the page will pick it up automatically. Until then, the fallback chain
+ * uses Rye (Google Fonts) which has a similar vintage wood-type vibe.
+ */
+@font-face {
+  font-family: "TAN TANGKIWOOD";
+  src: url("/fonts/TAN-TANGKIWOOD.woff2") format("woff2"),
+    url("/fonts/TAN-TANGKIWOOD.woff") format("woff"),
+    url("/fonts/TAN-TANGKIWOOD.otf") format("opentype"),
+    url("/fonts/TAN-TANGKIWOOD.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
 @theme inline {
   --color-background: var(--cream);
   --color-foreground: var(--charcoal);
@@ -17,6 +34,13 @@
   --color-brand-charcoal: var(--charcoal);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-tangkiwood: "TAN TANGKIWOOD", var(--font-rye), "Alfa Slab One",
+    Georgia, serif;
+}
+
+.font-tangkiwood {
+  font-family: var(--font-tangkiwood);
+  letter-spacing: 0.02em;
 }
 
 body {

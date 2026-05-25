@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { Nunito, Rye } from "next/font/google";
 import Link from "next/link";
 // Image is not used directly; keep import removed to avoid lint warning
 import {
@@ -18,18 +18,28 @@ const nunito = Nunito({
   subsets: ["latin"],
 });
 
+// Fallback display font for "TAN TANGKIWOOD" — kicks in until a real
+// TAN TANGKIWOOD font file is dropped into /public/fonts/.
+const rye = Rye({
+  variable: "--font-rye",
+  weight: "400",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Too Easy Solutions — Couriers, Removals, Towing & House Maintenance",
+  title:
+    "Too Easy Solutions — Removals, Couriers, Cleaning & Home Maintenance",
   description:
-    "Community-based couriers and removalists servicing Perth to Augusta, Western Australia. Fast quotes — Too Easy.",
+    "One page. Every service. All South West WA. Removals, couriers, cleaning and home maintenance from Perth to Augusta — booked right here.",
   metadataBase: new URL("https://tooeasy.example"),
   keywords: [
     "courier",
     "removals",
-    "towing",
-    "house maintenance",
+    "cleaning",
+    "home maintenance",
     "Perth",
     "Margaret River",
+    "Augusta",
     "South West WA",
   ],
 };
@@ -42,13 +52,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunito.variable} antialiased min-h-screen bg-brand-cream`}
+        className={`${nunito.variable} ${rye.variable} antialiased min-h-screen bg-brand-cream`}
       >
         <header className="w-full sticky top-0 z-50 bg-white border-b border-black/5 shadow-sm">
           <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
             <Link href="/" className="flex items-center gap-3">
               <Truck className="text-brand-orange" size={28} />
-              <span className="text-xl font-extrabold tracking-tight">
+              <span className="font-tangkiwood text-2xl sm:text-3xl tracking-tight text-brand-charcoal leading-none">
                 Too Easy Solutions
               </span>
             </Link>
