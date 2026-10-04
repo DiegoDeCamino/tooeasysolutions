@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Offline | Too Easy</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: #f5f2ec; color: #2a2522; text-align: center;
+      }
+      @media (prefers-color-scheme: dark) { body { background: #141312; color: #f2eee7; } }
+      img { width: 96px; height: 96px; border-radius: 24px; }
+      h1 { font-size: 22px; margin: 20px 0 6px; }
+      p { margin: 0 0 20px; opacity: .75; }
+      button {
+        font: inherit; font-weight: 700; border: 0; border-radius: 999px; padding: 12px 22px;
+        background: #0a7472; color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/icons/icon-192.png" alt="" />
+      <h1>You're offline</h1>
+      <p>Check your connection and try again.</p>
+      <button onclick="location.reload()">Try again</button>
+    </main>
+  </body>
+</html>

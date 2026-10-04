@@ -3,10 +3,12 @@ import nodemailer from "nodemailer";
 type SendArgs = {
   subject: string;
   html: string;
+  /** Defaults to the business inbox (CONTACT_EMAIL). */
+  to?: string;
 };
 
-export async function sendEmail({ subject, html }: SendArgs) {
-  const to = process.env.CONTACT_EMAIL || "tooeasysolutionswa@gmail.com";
+export async function sendEmail({ subject, html, to: recipient }: SendArgs) {
+  const to = recipient || process.env.CONTACT_EMAIL || "tooeasysolutionswa@gmail.com";
   const from = process.env.MAIL_FROM || "website@tooeasy.local";
 
   // Prefer SMTP creds from env; if not present, fallback to nodemailer ethereal for dev
