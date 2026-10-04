@@ -1,13 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
-import {
-  PackageSearch,
-  Truck,
-  HelpCircle,
-  Phone,
-  Briefcase,
-  Heart,
-} from "lucide-react";
+import { Phone } from "lucide-react";
 import MobileNav from "@/components/shared/MobileNav";
+import { CONTACT, SITE_NAV } from "@/components/site/nav";
 
 export default function SiteLayout({
   children,
@@ -15,48 +10,71 @@ export default function SiteLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-dvh bg-brand-cream">
-      <header className="w-full sticky top-0 z-50 bg-white border-b border-black/5 shadow-sm">
-        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
-          <Link href="/" className="flex items-center gap-3">
-            <Truck className="text-brand-orange" size={28} />
-            <span className="font-tangkiwood text-2xl sm:text-3xl tracking-tight text-brand-charcoal leading-none">
-              Too Easy Solutions
+    <div className="flex min-h-dvh flex-col bg-canvas text-ink">
+      <header className="sticky top-0 z-50 w-full border-b border-line/70 bg-canvas/90 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 lg:h-[72px]">
+          <Link href="/" className="flex items-center gap-2.5 text-ink" aria-label="Too Easy Solutions, home">
+            <Image src="/images/logo-mark.svg" alt="" width={54} height={40} priority className="h-9 w-auto lg:h-10" />
+            <span className="flex items-baseline gap-1.5">
+              <span className="font-display text-2xl font-extrabold tracking-tight">Too Easy</span>
+              <span className="hidden text-sm font-bold text-ink-2 sm:inline">Solutions</span>
             </span>
           </Link>
-          <nav className="hidden sm:flex items-center gap-6 text-sm font-semibold">
-            <Link href="/" className="hover:text-brand-teal flex items-center gap-1">
-              <PackageSearch size={18} /> Home
-            </Link>
-            <Link href="/about" className="hover:text-brand-teal flex items-center gap-1">
-              <Truck size={18} /> About Us
-            </Link>
-            <Link href="/community" className="hover:text-brand-teal flex items-center gap-1">
-              <Heart size={18} /> Community
-            </Link>
-            <Link href="/projects" className="hover:text-brand-teal flex items-center gap-1">
-              <Briefcase size={18} /> Our Projects
-            </Link>
-            <Link href="/faq" className="hover:text-brand-teal flex items-center gap-1">
-              <HelpCircle size={18} /> FAQ
-            </Link>
-            <Link href="/contact" className="hover:text-brand-teal flex items-center gap-1">
-              <Phone size={18} /> Contact
-            </Link>
+          <nav className="hidden items-center gap-7 text-[15px] font-bold text-ink-2 lg:flex">
+            {SITE_NAV.map((item) => (
+              <Link key={item.href} href={item.href} className="transition-colors hover:text-ink">
+                {item.label}
+              </Link>
+            ))}
           </nav>
-          <MobileNav />
+          <div className="flex items-center gap-2">
+            <a
+              href={CONTACT.phoneHref}
+              className="hidden items-center gap-2 text-[15px] font-bold text-ink-2 hover:text-ink xl:flex"
+            >
+              <Phone size={16} /> {CONTACT.phone}
+            </a>
+            <Link href="/#quote" className="btn-primary hidden h-10 sm:inline-flex xl:ml-4">
+              Get a free quote
+            </Link>
+            <MobileNav />
+          </div>
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
-      <footer className="mt-16 border-t border-black/5 py-8 text-sm text-black/70">
-        <div className="mx-auto max-w-6xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>
-            © {new Date().getFullYear()} Too Easy Solutions. All rights
-            reserved.
-          </p>
-          <p>
-            Servicing Perth to Augusta, Western Australia — Local. Affordable.
-            Too Easy.
+
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:py-12">{children}</main>
+
+      <footer className="mt-20 border-t border-line bg-surface-2/60">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
+          <div className="grid content-start gap-4">
+            <Image src="/images/logo.svg" alt="Too Easy Solutions" width={160} height={156} className="h-28 w-auto" />
+            <p className="max-w-[40ch] text-ink-2">
+              Carpentry, removals, cleaning and home maintenance. A local crew working for the Margaret River and
+              South West community.
+            </p>
+          </div>
+          <div className="grid content-start gap-2">
+            <span className="font-bold">Explore</span>
+            {SITE_NAV.map((item) => (
+              <Link key={item.href} href={item.href} className="text-ink-2 hover:text-ink">
+                {item.label}
+              </Link>
+            ))}
+          </div>
+          <div className="grid content-start gap-2">
+            <span className="font-bold">Talk to us</span>
+            <a href={CONTACT.phoneHref} className="text-ink-2 hover:text-ink">
+              {CONTACT.phone}
+            </a>
+            <a href={`mailto:${CONTACT.email}`} className="break-all text-ink-2 hover:text-ink">
+              {CONTACT.email}
+            </a>
+            <span className="text-ink-2">Margaret River, Perth to Augusta</span>
+          </div>
+        </div>
+        <div className="border-t border-line">
+          <p className="mx-auto max-w-6xl px-4 py-5 text-sm text-ink-2">
+            © {new Date().getFullYear()} Too Easy Solutions. Local. Affordable. Too Easy.
           </p>
         </div>
       </footer>

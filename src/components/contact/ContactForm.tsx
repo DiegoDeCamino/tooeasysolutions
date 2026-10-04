@@ -22,8 +22,8 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={submit} className="card p-5 space-y-3">
-      <h2 className="text-xl font-bold">Send us a message</h2>
+    <form onSubmit={submit} className="card site-form grid gap-4 p-5 sm:p-8">
+      <h2 className="font-display text-2xl font-bold tracking-tight">Send us a message</h2>
       <TextField label="Name" value={name} onChange={setName} required />
       <TextField
         label="Email"

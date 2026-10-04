@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       </div>
 
       <div class="footer">
-        <p><strong>Too Easy Parcel Delivery</strong></p>
+        <p><strong>Too Easy Solutions</strong></p>
         <p>tooeasysolutionswa@gmail.com • 0432 689 687</p>
       </div>
     </body>

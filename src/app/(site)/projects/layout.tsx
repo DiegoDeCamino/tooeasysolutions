@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Our Projects | Too Easy Solutions",
+  title: "Carpentry projects | Too Easy Solutions",
   description:
-    "View our completed projects including carpentry, renovations, removals, and maintenance work across the South West.",
+    "Decks, pergolas, verandas, sheds and custom timber built for the Margaret River and South West WA community. See before and after photos of our work.",
 };
 
 export default function ProjectsLayout({
@@ -13,6 +13,3 @@ export default function ProjectsLayout({
 }) {
   return <>{children}</>;
 }
-
-
-

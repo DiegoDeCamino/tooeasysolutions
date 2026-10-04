@@ -1,86 +1,63 @@
 "use client";
 
 import { useState } from "react";
-import ParcelForm from "@/components/quote/forms/ParcelForm";
+import CarpentryForm from "@/components/quote/forms/CarpentryForm";
 import RemovalsForm from "@/components/quote/forms/RemovalsForm";
 import CleaningForm from "@/components/quote/forms/CleaningForm";
 import MaintenanceForm from "@/components/quote/forms/MaintenanceForm";
-import { Package, Move, Cog, Sparkles } from "lucide-react";
+import { cn } from "@/lib/cn";
 
-type TabKey = "parcel" | "removals" | "cleaning" | "maintenance";
+type TabKey = "carpentry" | "removals" | "cleaning" | "maintenance";
 
-export default function QuoteTabs() {
-  const [activeTab, setActiveTab] = useState<TabKey>("parcel");
+const TABS: { key: TabKey; label: string }[] = [
+  { key: "carpentry", label: "Carpentry" },
+  { key: "removals", label: "Removals" },
+  { key: "cleaning", label: "Cleaning" },
+  { key: "maintenance", label: "Home maintenance" },
+];
+
+export default function QuoteTabs({ initial = "carpentry" }: { initial?: TabKey }) {
+  const [activeTab, setActiveTab] = useState<TabKey>(initial);
 
   return (
-    <div>
-      <div className="flex gap-2 flex-wrap">
-        <TabButton
-          tab="parcel"
-          label="Parcel Delivery"
-          icon={<Package size={16} />}
-          active={activeTab}
-          onClick={setActiveTab}
-        />
-        <TabButton
-          tab="removals"
-          label="Removals"
-          icon={<Move size={16} />}
-          active={activeTab}
-          onClick={setActiveTab}
-        />
-        <TabButton
-          tab="cleaning"
-          label="Cleaning"
-          icon={<Sparkles size={16} />}
-          active={activeTab}
-          onClick={setActiveTab}
-        />
-        <TabButton
-          tab="maintenance"
-          label="Home Maintenance"
-          icon={<Cog size={16} />}
-          active={activeTab}
-          onClick={setActiveTab}
-        />
+    <div className="grid gap-6">
+      <div
+        role="tablist"
+        aria-label="Choose a service"
+        className="grid grid-cols-2 gap-1 rounded-2xl bg-surface-2 p-1 sm:flex sm:rounded-full"
+      >
+        {TABS.map((t) => {
+          const on = activeTab === t.key;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              aria-controls={`quote-panel-${t.key}`}
+              id={`quote-tab-${t.key}`}
+              onClick={() => setActiveTab(t.key)}
+              className={cn(
+                "h-10 grow rounded-full px-4 text-sm font-bold whitespace-nowrap transition",
+                on ? "bg-surface text-ink shadow-soft" : "text-ink-2 hover:text-ink",
+              )}
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </div>
-      <div className="mt-4">
-        {activeTab === "parcel" && <ParcelForm />}
+      <div
+        role="tabpanel"
+        id={`quote-panel-${activeTab}`}
+        aria-labelledby={`quote-tab-${activeTab}`}
+        className="site-form"
+      >
+        {activeTab === "carpentry" && <CarpentryForm />}
         {activeTab === "removals" && <RemovalsForm />}
         {activeTab === "cleaning" && <CleaningForm />}
         {activeTab === "maintenance" && <MaintenanceForm />}
       </div>
     </div>
-  );
-}
-
-function TabButton({
-  tab,
-  label,
-  icon,
-  active,
-  onClick,
-}: {
-  tab: TabKey;
-  label: string;
-  icon?: React.ReactNode;
-  active: TabKey;
-  onClick: (t: TabKey) => void;
-}) {
-  const isActive = active === tab;
-  return (
-    <button
-      type="button"
-      onClick={() => onClick(tab)}
-      className={`px-4 py-2 rounded-full border transition-colors flex items-center gap-2 ${
-        isActive
-          ? "bg-brand-orange text-white border-brand-orange"
-          : "bg-white border-black/10 hover:border-brand-orange hover:text-brand-orange"
-      }`}
-      aria-pressed={isActive}
-    >
-      {icon}
-      <span>{label}</span>
-    </button>
   );
 }

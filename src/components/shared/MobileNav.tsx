@@ -1,134 +1,100 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  Menu,
-  X,
-  Home,
-  Info,
-  HelpCircle,
-  Phone,
-  Briefcase,
-  Heart,
-} from "lucide-react";
+import { Menu, Phone, X } from "lucide-react";
+import { CONTACT, SITE_NAV } from "@/components/site/nav";
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
-    <div className="sm:hidden">
+    <div className="lg:hidden">
       <button
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
-        className="p-2 rounded-md border border-black/10 bg-white/70 hover:bg-white"
+        className="flex size-11 items-center justify-center rounded-full border border-line bg-surface text-ink"
         onClick={() => setOpen((v) => !v)}
       >
         {open ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-[60] bg-black/60"
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setOpen(false)}
-        >
-          <nav
-            className="absolute right-0 top-0 h-full w-[78%] max-w-[320px] bg-white shadow-2xl p-5 flex flex-col gap-4"
-            onClick={(e) => e.stopPropagation()}
+      {/* Portal: the header's backdrop-filter would otherwise become the containing block for this fixed overlay. */}
+      {open &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[60] bg-ink/50"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
+            onClick={() => setOpen(false)}
           >
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold">Menu</span>
-              <button
-                aria-label="Close menu"
-                className="p-2 rounded-md border border-black/10"
-                onClick={() => setOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <ul className="flex flex-col gap-2">
-              <li>
-                <NavLink
-                  href="/"
-                  icon={<Home size={16} />}
-                  text="Home"
-                  onNavigate={() => setOpen(false)}
+            <nav
+              className="absolute right-0 top-0 flex h-full w-[82%] max-w-[340px] flex-col gap-6 bg-surface p-5 shadow-lift"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between">
+                <Image
+                  src="/images/logo.svg"
+                  alt="Too Easy Solutions"
+                  width={82}
+                  height={80}
+                  className="h-16 w-auto"
                 />
-              </li>
-              <li>
-                <NavLink
-                  href="/about"
-                  icon={<Info size={16} />}
-                  text="About Us"
-                  onNavigate={() => setOpen(false)}
-                />
-              </li>
-              <li>
-                <NavLink
-                  href="/community"
-                  icon={<Heart size={16} />}
-                  text="Community"
-                  onNavigate={() => setOpen(false)}
-                />
-              </li>
-              <li>
-                <NavLink
-                  href="/projects"
-                  icon={<Briefcase size={16} />}
-                  text="Our Projects"
-                  onNavigate={() => setOpen(false)}
-                />
-              </li>
-              <li>
-                <NavLink
-                  href="/faq"
-                  icon={<HelpCircle size={16} />}
-                  text="FAQ"
-                  onNavigate={() => setOpen(false)}
-                />
-              </li>
-              <li>
-                <NavLink
-                  href="/contact"
-                  icon={<Phone size={16} />}
-                  text="Contact"
-                  onNavigate={() => setOpen(false)}
-                />
-              </li>
-            </ul>
-            <div className="mt-auto text-sm text-black/70">
-              <p>tooeasysolutionswa@gmail.com</p>
-              <p>0432 689 687</p>
-            </div>
-          </nav>
-        </div>
-      )}
+                <button
+                  aria-label="Close menu"
+                  className="flex size-11 items-center justify-center rounded-full border border-line"
+                  onClick={() => setOpen(false)}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <ul className="grid gap-1">
+                {SITE_NAV.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="block rounded-2xl px-3 py-3 font-display text-xl font-bold text-ink hover:bg-surface-2"
+                      onClick={() => setOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-auto grid gap-3">
+                <Link
+                  href="/#quote"
+                  className="btn-primary h-12"
+                  onClick={() => setOpen(false)}
+                >
+                  Get a free quote
+                </Link>
+                <a href={CONTACT.phoneHref} className="btn-secondary h-12">
+                  <Phone size={16} /> {CONTACT.phone}
+                </a>
+                <p className="text-center text-sm text-ink-2">
+                  {CONTACT.email}
+                </p>
+              </div>
+            </nav>
+          </div>,
+          document.body,
+        )}
     </div>
-  );
-}
-
-function NavLink({
-  href,
-  icon,
-  text,
-  onNavigate,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  text: string;
-  onNavigate: () => void;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-brand-cream"
-      onClick={onNavigate}
-    >
-      <span className="text-brand-teal">{icon}</span>
-      <span className="font-semibold">{text}</span>
-    </Link>
   );
 }

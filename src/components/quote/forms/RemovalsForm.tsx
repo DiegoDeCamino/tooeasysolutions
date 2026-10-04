@@ -47,9 +47,6 @@ export default function RemovalsForm() {
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <h3 className="text-lg font-extrabold">
-        Book Your Move – We&apos;ll Need the Following Details:
-      </h3>
       <div className="grid sm:grid-cols-2 gap-4">
         <AddressAutocomplete
           label="Pick-up Location"

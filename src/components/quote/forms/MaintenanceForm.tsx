@@ -52,9 +52,6 @@ export default function MaintenanceForm() {
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <h3 className="text-lg font-extrabold">
-        Book House Maintenance – Please Provide:
-      </h3>
       <AddressAutocomplete
         label="Full Address or Suburb"
         value={address}
@@ -93,16 +90,6 @@ export default function MaintenanceForm() {
             }
           />{" "}
           Gardening
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={kinds.carpentry}
-            onChange={(e) =>
-              setKinds({ ...kinds, carpentry: e.target.checked })
-            }
-          />{" "}
-          Carpentry
         </label>
       </fieldset>
       <div>

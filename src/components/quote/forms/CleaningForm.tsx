@@ -59,9 +59,6 @@ export default function CleaningForm() {
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <h3 className="text-lg font-extrabold">
-        Book a Clean – Please Provide:
-      </h3>
       <AddressAutocomplete
         label="Full Address or Suburb"
         value={address}

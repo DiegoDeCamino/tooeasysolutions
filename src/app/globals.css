@@ -34,6 +34,7 @@
   --color-brand-charcoal: var(--charcoal);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, sans-serif;
   --font-tangkiwood: "TAN TANGKIWOOD", var(--font-rye), "Alfa Slab One",
     Georgia, serif;
 }
@@ -48,18 +49,22 @@ body {
   color: var(--charcoal);
 }
 
+/* Legacy class names, restyled to the shared radius rule (buttons pill, cards 2xl). */
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-lg text-white px-5 py-2.5 font-semibold transition-all shadow-sm
-  bg-gradient-to-r from-brand-teal to-cyan-500 hover:to-cyan-400 active:scale-[.99];
+  @apply inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 font-bold text-white transition
+  bg-[#0a7472] hover:bg-[#0c8583] active:scale-[.98] disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a7472];
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-lg text-white px-4 py-2 font-semibold transition-all shadow-sm
-  bg-gradient-to-r from-brand-orange to-amber-500 hover:to-amber-400 active:scale-[.99];
+  @apply inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border px-5 font-bold transition
+  border-[#e2dcd1] bg-white text-[#2a2522] hover:bg-[#efebe3] active:scale-[.98];
 }
 
 .card {
-  @apply bg-white/95 text-brand-charcoal backdrop-blur shadow-xl rounded-2xl border border-black/10;
+  @apply bg-white text-[#2a2522] rounded-2xl border border-[#e2dcd1];
+  box-shadow:
+    0 1px 2px rgb(42 37 34 / 0.05),
+    0 12px 32px -18px rgb(42 37 34 / 0.25);
 }
 
 /* Improve readability inside cards */
@@ -67,6 +72,21 @@ body {
 .card textarea,
 .card select {
   @apply text-black placeholder:text-black/50 bg-white;
+}
+
+/* Quote and contact forms on the public site */
+.site-form input:not([type="checkbox"]):not([type="radio"]),
+.site-form textarea,
+.site-form select {
+  @apply w-full rounded-xl border border-[#d9d2c6] bg-white px-3.5 py-2.5 text-[15px] text-[#2a2522] transition
+  placeholder:text-[#8a8178] focus:border-[#0a7472] focus:outline-none focus:ring-2 focus:ring-[#0a7472]/20;
+}
+.site-form input[type="checkbox"],
+.site-form input[type="radio"] {
+  @apply size-4 accent-[#0a7472];
+}
+.site-form label {
+  @apply text-[#2a2522];
 }
 
 /* Selection */

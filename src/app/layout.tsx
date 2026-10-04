@@ -1,10 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito, Rye } from "next/font/google";
+import { Bricolage_Grotesque, Nunito, Rye } from "next/font/google";
 import "./globals.css";
 
 const nunito = Nunito({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const display = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
 });
 
 // Fallback display font for "TAN TANGKIWOOD" — kicks in until a real
@@ -16,13 +22,16 @@ const rye = Rye({
 });
 
 export const metadata: Metadata = {
-  title:
-    "Too Easy Solutions — Removals, Couriers, Cleaning & Home Maintenance",
+  title: "Too Easy Solutions | Carpentry, Removals, Cleaning and Home Maintenance in Margaret River",
   description:
-    "One page. Every service. All South West WA. Removals, couriers, cleaning and home maintenance from Perth to Augusta — booked right here.",
+    "Local carpentry, removals, cleaning and home maintenance for Margaret River and the South West of WA. Decks, pergolas, verandas, sheds and custom timber work.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tooeasy.example"),
   keywords: [
-    "courier",
+    "carpentry",
+    "decks",
+    "pergolas",
+    "verandas",
+    "sheds",
     "removals",
     "cleaning",
     "home maintenance",
@@ -53,7 +62,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} ${rye.variable} antialiased min-h-dvh`}>
+      <body className={`${nunito.variable} ${display.variable} ${rye.variable} antialiased min-h-dvh`}>
         {children}
       </body>
     </html>
