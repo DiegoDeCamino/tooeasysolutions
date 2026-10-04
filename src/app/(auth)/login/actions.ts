@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/env";
 
 export type LoginState = { error?: "invalid" | "noAccess"; resetSent?: boolean } | null;
@@ -27,6 +28,14 @@ export async function signIn(_: LoginState, form: FormData): Promise<LoginState>
     return { error: "noAccess" };
   }
   const next = safeNext(form.get("next"));
+  if (profile.role === "client") {
+    // Attach bookings made with this email before the account existed.
+    await createAdminClient()
+      .from("bookings")
+      .update({ client_user_id: data.user.id })
+      .eq("client_email", parsed.data.email.toLowerCase())
+      .is("client_user_id", null);
+  }
   if (profile.role === "client") redirect(next?.startsWith("/app") ? "/account" : (next ?? "/account"));
   redirect(next ?? "/app");
 }
