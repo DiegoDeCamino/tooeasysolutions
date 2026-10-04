@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "db:types": "supabase gen types typescript --linked > src/lib/supabase/types.ts",
     "user:create": "node --env-file=.env.local scripts/create-user.mjs",
-    "seed:demo": "node --env-file=.env.local scripts/seed-demo.mjs"
+    "seed:demo": "node --env-file=.env.local scripts/seed-demo.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

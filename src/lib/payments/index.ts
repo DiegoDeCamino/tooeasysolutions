@@ -11,6 +11,7 @@ export type Checkout = { url: string; ref: string };
  * metadata.booking_id), return its url and id, and handle
  * checkout.session.completed in /api/stripe/webhook by running the mark_paid transition.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function createCheckout(_booking: { id: string; ref: string; amount: number; email: string }): Promise<Checkout | null> {
   if (!features.stripe) return null;
   return null;

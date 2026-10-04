@@ -7,7 +7,6 @@ import type { TFn } from "@/lib/i18n";
 import { loadShifts } from "@/lib/shifts";
 import { addDays, firstName, formatDate, formatMoney, formatTime, todayPerth } from "@/lib/format";
 import { Card, EmptyState, ProgressRing } from "@/components/ui/Display";
-import { ButtonLink } from "@/components/ui/Button";
 import { ShiftCard } from "@/components/app/ShiftCard";
 import { PushToggle } from "@/components/app/PushToggle";
 import { InstallPrompt } from "@/components/app/InstallPrompt";
@@ -28,7 +27,7 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
   return (
     <div className="grid gap-6">
       <header className="grid gap-1">
-        <p className="text-sm font-bold capitalize text-ink-2">{formatDate(todayPerth(), locale, { weekday: "long", month: "long" })}</p>
+        <p className="text-sm font-bold text-ink-2 first-letter:uppercase">{formatDate(todayPerth(), locale, { weekday: "long", month: "long" })}</p>
         <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">{greeting(t, viewer.profile.full_name)}</h1>
       </header>
       {welcome && (
@@ -192,7 +191,7 @@ async function CrewHome({ viewer, t }: { viewer: Viewer; t: TFn }) {
           className="flex items-center gap-4 rounded-2xl bg-ink p-5 text-canvas transition active:scale-[0.99]"
         >
           <span className="tabular text-4xl font-extrabold">{open.length}</span>
-          <span className="flex-1 font-extrabold">{open.length === 1 ? t("home.openShift") : t("home.openShifts", { n: open.length })}</span>
+          <span className="flex-1 font-extrabold">{open.length === 1 ? t("home.openShift") : t("home.openShifts")}</span>
           <ArrowRight className="size-6" />
         </Link>
       )}
@@ -208,11 +207,6 @@ async function CrewHome({ viewer, t }: { viewer: Viewer; t: TFn }) {
           <EmptyState icon={<Hammer className="size-6" />} title={t("projects.emptyMine")} />
         )}
       </section>
-      {mine.length === 0 && open.length > 0 && (
-        <ButtonLink href="/app/shifts" size="lg" className="justify-self-start">
-          {t("home.browseShifts")}
-        </ButtonLink>
-      )}
     </>
   );
 }
