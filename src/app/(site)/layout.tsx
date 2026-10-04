@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Phone } from "lucide-react";
 import MobileNav from "@/components/shared/MobileNav";
 import { CONTACT, SITE_NAV } from "@/components/site/nav";
 
@@ -13,28 +12,22 @@ export default function SiteLayout({
     <div className="flex min-h-dvh flex-col bg-canvas text-ink">
       <header className="sticky top-0 z-50 w-full border-b border-line/70 bg-canvas/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 lg:h-[72px]">
-          <Link href="/" className="flex items-center gap-2.5 text-ink" aria-label="Too Easy Solutions, home">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5 text-ink" aria-label="Too Easy Solutions, home">
             <Image src="/images/logo-mark.svg" alt="" width={54} height={40} priority className="h-9 w-auto lg:h-10" />
-            <span className="flex items-baseline gap-1.5">
+            <span className="flex items-baseline gap-1.5 whitespace-nowrap">
               <span className="font-display text-2xl font-extrabold tracking-tight">Too Easy</span>
-              <span className="hidden text-sm font-bold text-ink-2 sm:inline">Solutions</span>
+              <span className="hidden text-sm font-bold text-ink-2 sm:inline lg:hidden xl:inline">Solutions</span>
             </span>
           </Link>
-          <nav className="hidden items-center gap-7 text-[15px] font-bold text-ink-2 lg:flex">
+          <nav className="hidden items-center gap-5 whitespace-nowrap text-sm font-bold text-ink-2 lg:flex xl:gap-7 xl:text-[15px]">
             {SITE_NAV.map((item) => (
               <Link key={item.href} href={item.href} className="transition-colors hover:text-ink">
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
-            <a
-              href={CONTACT.phoneHref}
-              className="hidden items-center gap-2 text-[15px] font-bold text-ink-2 hover:text-ink xl:flex"
-            >
-              <Phone size={16} /> {CONTACT.phone}
-            </a>
-            <Link href="/#quote" className="btn-primary hidden h-10 sm:inline-flex xl:ml-4">
+          <div className="flex shrink-0 items-center gap-2">
+            <Link href="/#quote" className="btn-primary hidden h-10 sm:inline-flex">
               Get a free quote
             </Link>
             <MobileNav />

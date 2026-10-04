@@ -1,5 +1,6 @@
 export const SITE_NAV = [
   { href: "/projects", label: "Carpentry" },
+  { href: "/removals", label: "Removals" },
   { href: "/#services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/community", label: "Community" },

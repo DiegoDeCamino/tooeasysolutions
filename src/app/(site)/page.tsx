@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Hammer, Mail, Phone } from "lucide-react";
+import { ArrowRight, Mail, Phone } from "lucide-react";
 import QuoteTabs from "@/components/quote/QuoteTabs";
+import { QuoteLink } from "@/components/quote/QuoteLink";
 import { ProjectGallery } from "@/components/site/ProjectGallery";
 import { Reveal } from "@/components/site/Reveal";
 import { CONTACT } from "@/components/site/nav";
-import { BEFORE_AFTER, CARPENTRY_PROJECTS, CARPENTRY_SERVICES } from "@/data/carpentry";
+import { BEFORE_AFTER, CARPENTRY_PROJECTS } from "@/data/carpentry";
+import { REMOVAL_PHOTOS, REMOVAL_SERVICES } from "@/data/removals";
 
 // The hero shows the spa pergola and the before/after band shows the deck and veranda,
 // so the bento sticks to the rest to avoid repeating photos.
@@ -13,24 +15,20 @@ const HOME_PROJECTS = ["covered-outdoor-area", "shed-and-alfresco", "resort-deck
   (slug) => CARPENTRY_PROJECTS.find((p) => p.slug === slug)!,
 );
 
-const OTHER_SERVICES = [
-  {
-    title: "Removals",
-    body: "House and business moves, single items and furniture. Wrapped, loaded and carried with care.",
-    src: "/images/house and commercial removal.jpg",
-    alt: "Two of the crew moving a fridge on a trolley",
-  },
+const MORE_SERVICES = [
   {
     title: "Cleaning",
     body: "Regular cleans, end-of-lease and holiday homes between guests.",
     src: "/images/cleaning.jpg",
     alt: "A cleaner vacuuming a living room",
+    service: "cleaning" as const,
   },
   {
     title: "Home maintenance",
     body: "Repairs, odd jobs, gardening and the list that keeps growing.",
     src: "/images/home maintenance.jpg",
     alt: "A tradesman fixing a cabinet",
+    service: "maintenance" as const,
   },
 ];
 
@@ -46,9 +44,9 @@ export default function Home() {
       <Hero />
       <CarpentryWork />
       <BeforeAfter />
-      <WhatWeBuild />
+      <Removals />
       <Community />
-      <OtherServices />
+      <MoreServices />
       <Quote />
     </div>
   );
@@ -58,15 +56,13 @@ function Hero() {
   return (
     <section className="grid items-center gap-10 pt-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-14">
       <Reveal className="grid gap-6">
-        <span className="flex items-center gap-2 text-sm font-bold text-accent-strong">
-          <Hammer size={16} aria-hidden /> Local carpentry in Margaret River
-        </span>
+        <span className="text-sm font-bold text-accent-strong">Carpentry and removals in Margaret River</span>
         <h1 className="font-display text-[2.6rem] font-extrabold leading-[1.02] tracking-tight text-ink sm:text-6xl lg:text-[3.6rem] xl:text-[4rem]">
-          Built by locals, for locals.
+          Built and moved by locals.
         </h1>
         <p className="max-w-[46ch] text-lg leading-relaxed text-ink-2">
-          Decks, pergolas, verandas, sheds and custom timber for the Margaret River community. Plus removals, cleaning
-          and home maintenance.
+          Decks, pergolas, sheds and custom timber. House moves, furniture and single items. Plus cleaning and home
+          maintenance for the South West.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href="#quote" className="btn-primary h-12 px-6 text-base">
@@ -89,11 +85,11 @@ function Hero() {
             className="object-cover"
           />
         </div>
-        <div className="absolute -bottom-12 -left-4 hidden w-[27%] overflow-hidden rounded-2xl border-[6px] border-canvas shadow-lift sm:block lg:-left-12">
+        <div className="absolute -bottom-12 -left-4 hidden w-[31%] overflow-hidden rounded-2xl border-[6px] border-canvas shadow-lift sm:block lg:-left-12">
           <div className="relative aspect-[3/4]">
             <Image
-              src="/images/carpentry/live-edge-benchtop.jpg"
-              alt="Close-up of a live-edge timber benchtop"
+              src={REMOVAL_PHOTOS.dresser.src}
+              alt={REMOVAL_PHOTOS.dresser.alt}
               fill
               sizes="20vw"
               className="object-cover"
@@ -110,7 +106,7 @@ function CarpentryWork() {
     <section id="carpentry" className="grid scroll-mt-28 gap-10">
       <Reveal className="grid max-w-3xl gap-4">
         <h2 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight md:text-5xl">
-          Recent carpentry around Margaret River
+          Carpentry around Margaret River
         </h2>
         <p className="max-w-[60ch] text-lg leading-relaxed text-ink-2">
           Every one of these was built for neighbours in and around the region. Tap a project to see more photos.
@@ -130,87 +126,117 @@ function CarpentryWork() {
 
 function BeforeAfter() {
   return (
-    <section className="-mx-4 bg-surface-2 px-4 py-16 sm:mx-0 sm:rounded-2xl sm:px-8 md:px-12 md:py-20">
-      <div className="grid gap-14">
-        <Reveal className="grid max-w-2xl gap-4">
-          <h2 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight md:text-5xl">
+    <section className="-mx-4 bg-surface-2 px-4 py-14 sm:mx-0 sm:rounded-2xl sm:px-8 md:px-10 md:py-16">
+      <div className="grid gap-10">
+        <Reveal className="grid max-w-2xl gap-3">
+          <h2 className="font-display text-3xl font-extrabold leading-[1.05] tracking-tight md:text-4xl">
             Before and after
           </h2>
           <p className="text-lg leading-relaxed text-ink-2">
             Two local homes, before we started and after we packed up the tools.
           </p>
         </Reveal>
-        {BEFORE_AFTER.map((project) => (
-          <Reveal key={project.slug} className="grid gap-5">
-            <div
-              className="grid gap-4 md:grid-cols-[1fr_1.45fr] md:items-end md:gap-6"
-            >
-              <figure className="grid gap-2">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                  <Image
-                    src={project.before!.src}
-                    alt={project.before!.alt}
-                    fill
-                    sizes="(min-width: 768px) 40vw, 100vw"
-                    className="object-cover saturate-[0.85]"
-                  />
-                </div>
-                <figcaption className="text-sm font-bold text-ink-2">Before</figcaption>
-              </figure>
-              <figure className="grid gap-2">
-                <div className={`relative overflow-hidden rounded-2xl ${project.cover.ratio === "portrait" ? "aspect-[4/5] md:aspect-[5/4]" : "aspect-[5/4]"}`}>
-                  <Image
-                    src={project.cover.src}
-                    alt={project.cover.alt}
-                    fill
-                    sizes="(min-width: 768px) 58vw, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-                <figcaption className="text-sm font-bold text-accent-strong">After</figcaption>
-              </figure>
-            </div>
-            <div className="grid max-w-2xl gap-1">
-              <h3 className="font-display text-2xl font-bold tracking-tight">{project.title}</h3>
-              <p className="leading-relaxed text-ink-2">{project.summary}</p>
-            </div>
-          </Reveal>
-        ))}
+        <div className="grid gap-10 md:grid-cols-2 md:gap-8">
+          {BEFORE_AFTER.map((project, i) => (
+            <Reveal key={project.slug} delay={i * 0.08} className="grid content-start gap-4">
+              <div className="grid grid-cols-2 gap-3">
+                <BeforeAfterPhoto photo={project.before!} label="Before" />
+                <BeforeAfterPhoto photo={project.cover} label="After" />
+              </div>
+              <div className="grid gap-1">
+                <h3 className="font-display text-xl font-bold tracking-tight">{project.title}</h3>
+                <p className="leading-relaxed text-ink-2">{project.summary}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-function WhatWeBuild() {
+function BeforeAfterPhoto({ photo, label }: { photo: { src: string; alt: string }; label: "Before" | "After" }) {
+  const before = label === "Before";
   return (
-    <section className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
-      <Reveal className="grid content-start gap-6 lg:sticky lg:top-28">
-        <h2 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight md:text-5xl">
-          What we build
-        </h2>
-        <p className="max-w-[48ch] text-lg leading-relaxed text-ink-2">
-          From a single garden gate to a full veranda. If it&apos;s made of timber or goes over your outdoor area, ask us.
-        </p>
-        <div className="relative hidden aspect-[4/3] overflow-hidden rounded-2xl lg:block">
+    <figure className="grid gap-2">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          fill
+          sizes="(min-width: 768px) 25vw, 50vw"
+          className={before ? "object-cover saturate-[0.85]" : "object-cover"}
+        />
+      </div>
+      <figcaption className={before ? "text-sm font-bold text-ink-2" : "text-sm font-bold text-accent-strong"}>
+        {label}
+      </figcaption>
+    </figure>
+  );
+}
+
+function Removals() {
+  return (
+    <section
+      id="removals"
+      className="grid scroll-mt-28 items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14"
+    >
+      <Reveal className="order-2 grid grid-cols-[1.15fr_1fr] gap-4">
+        <div className="relative row-span-2 min-h-[320px] overflow-hidden rounded-2xl sm:min-h-[460px]">
           <Image
-            src="/images/carpentry/veranda-rafters.jpg"
-            alt="Hardwood rafters of a timber veranda against a blue sky"
+            src={REMOVAL_PHOTOS.truck.src}
+            alt={REMOVAL_PHOTOS.truck.alt}
             fill
-            sizes="40vw"
+            sizes="(min-width: 1024px) 28vw, 55vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="relative aspect-square overflow-hidden rounded-2xl">
+          <Image
+            src={REMOVAL_PHOTOS.fridge.src}
+            alt={REMOVAL_PHOTOS.fridge.alt}
+            fill
+            sizes="(min-width: 1024px) 22vw, 45vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="relative aspect-square overflow-hidden rounded-2xl">
+          <Image
+            src={REMOVAL_PHOTOS.assembly.src}
+            alt={REMOVAL_PHOTOS.assembly.alt}
+            fill
+            sizes="(min-width: 1024px) 22vw, 45vw"
             className="object-cover"
           />
         </div>
       </Reveal>
-      <ul className="grid content-start gap-x-8 sm:grid-cols-2">
-        {CARPENTRY_SERVICES.map((s, i) => (
-          <li key={s.title} className="border-t border-line py-6">
-            <Reveal delay={(i % 2) * 0.06} className="grid gap-2">
-              <span className="font-display text-xl font-bold tracking-tight">{s.title}</span>
-              <span className="leading-relaxed text-ink-2">{s.body}</span>
-            </Reveal>
-          </li>
-        ))}
-      </ul>
+      <Reveal className="order-1 grid content-start gap-8">
+        <div className="grid gap-4">
+          <h2 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight md:text-5xl">
+            Removals across the South West
+          </h2>
+          <p className="max-w-[52ch] text-lg leading-relaxed text-ink-2">
+            From Margaret River to Perth and Augusta. Your things wrapped, loaded and carried in like they were ours.
+          </p>
+        </div>
+        <ul className="grid gap-x-8 sm:grid-cols-2">
+          {REMOVAL_SERVICES.map((r) => (
+            <li key={r.title} className="grid content-start gap-1 border-t border-line py-4">
+              <span className="font-display text-lg font-bold tracking-tight">{r.title}</span>
+              <span className="text-[15px] leading-relaxed text-ink-2">{r.body}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <QuoteLink service="removals" className="btn-primary h-12 px-6">
+            Get a free quote <ArrowRight size={18} aria-hidden />
+          </QuoteLink>
+          <Link href="/removals" className="group inline-flex items-center gap-2 font-bold text-accent-strong">
+            More about removals
+            <ArrowRight size={18} className="transition group-hover:translate-x-1" aria-hidden />
+          </Link>
+        </div>
+      </Reveal>
     </section>
   );
 }
@@ -247,41 +273,42 @@ function Community() {
   );
 }
 
-function OtherServices() {
-  const [lead, ...rest] = OTHER_SERVICES;
+function MoreServices() {
   return (
-    <section id="services" className="grid scroll-mt-28 gap-10">
-      <Reveal className="grid max-w-3xl gap-4">
-        <h2 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight md:text-5xl">
-          Moving, cleaning and the rest
+    <section id="services" className="grid scroll-mt-28 gap-8">
+      <Reveal className="grid max-w-2xl gap-3">
+        <h2 className="font-display text-3xl font-extrabold leading-[1.05] tracking-tight md:text-4xl">
+          Cleaning and home maintenance
         </h2>
-        <p className="max-w-[60ch] text-lg leading-relaxed text-ink-2">
-          The same crew, the same care. One call for the jobs around your home.
-        </p>
+        <p className="text-lg leading-relaxed text-ink-2">The same crew and the same care, for the rest of the list.</p>
       </Reveal>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-        <Reveal className="grid gap-4">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl lg:aspect-auto lg:h-full lg:min-h-[420px]">
-            <Image src={lead.src} alt={lead.alt} fill sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
-          </div>
-          <div className="grid gap-1">
-            <h3 className="font-display text-2xl font-bold tracking-tight">{lead.title}</h3>
-            <p className="max-w-[52ch] leading-relaxed text-ink-2">{lead.body}</p>
-          </div>
-        </Reveal>
-        <div className="grid gap-5">
-          {rest.map((s, i) => (
-            <Reveal key={s.title} delay={0.06 * (i + 1)} className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] items-center gap-5">
-              <div className="relative aspect-square overflow-hidden rounded-2xl">
-                <Image src={s.src} alt={s.alt} fill sizes="(min-width: 1024px) 20vw, 45vw" className="object-cover" />
+      <div className="grid gap-5 md:grid-cols-2">
+        {MORE_SERVICES.map((s, i) => (
+          <Reveal key={s.title} delay={i * 0.06}>
+            <QuoteLink
+              service={s.service}
+              className="group grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] items-center gap-5 rounded-2xl"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+                <Image
+                  src={s.src}
+                  alt={s.alt}
+                  fill
+                  sizes="(min-width: 768px) 20vw, 40vw"
+                  className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                />
               </div>
               <div className="grid gap-1">
                 <h3 className="font-display text-2xl font-bold tracking-tight">{s.title}</h3>
                 <p className="leading-relaxed text-ink-2">{s.body}</p>
+                <span className="mt-1 inline-flex items-center gap-1.5 text-sm font-bold text-accent-strong">
+                  Get a quote
+                  <ArrowRight size={16} className="transition group-hover:translate-x-1" aria-hidden />
+                </span>
               </div>
-            </Reveal>
-          ))}
-        </div>
+            </QuoteLink>
+          </Reveal>
+        ))}
       </div>
     </section>
   );

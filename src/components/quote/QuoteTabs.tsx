@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CarpentryForm from "@/components/quote/forms/CarpentryForm";
 import RemovalsForm from "@/components/quote/forms/RemovalsForm";
 import CleaningForm from "@/components/quote/forms/CleaningForm";
 import MaintenanceForm from "@/components/quote/forms/MaintenanceForm";
+import { QUOTE_SELECT_EVENT, type QuoteService } from "@/components/quote/QuoteLink";
 import { cn } from "@/lib/cn";
 
-type TabKey = "carpentry" | "removals" | "cleaning" | "maintenance";
+type TabKey = QuoteService;
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "carpentry", label: "Carpentry" },
@@ -18,6 +19,19 @@ const TABS: { key: TabKey; label: string }[] = [
 
 export default function QuoteTabs({ initial = "carpentry" }: { initial?: TabKey }) {
   const [activeTab, setActiveTab] = useState<TabKey>(initial);
+
+  // Preselect from ?service=… (links from other pages) or a QuoteLink click on this page.
+  useEffect(() => {
+    const isTab = (v: unknown): v is TabKey => TABS.some((t) => t.key === v);
+    const fromUrl = new URLSearchParams(window.location.search).get("service");
+    if (isTab(fromUrl)) setActiveTab(fromUrl);
+    const onSelect = (e: Event) => {
+      const v = (e as CustomEvent).detail;
+      if (isTab(v)) setActiveTab(v);
+    };
+    window.addEventListener(QUOTE_SELECT_EVENT, onSelect);
+    return () => window.removeEventListener(QUOTE_SELECT_EVENT, onSelect);
+  }, []);
 
   return (
     <div className="grid gap-6">
