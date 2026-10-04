@@ -73,3 +73,128 @@ body {
 ::selection {
   @apply bg-brand-teal text-white;
 }
+
+/* ==========================================================================
+   Ops UI tokens (booking flow, client pages, crew app)
+   Radius rule: buttons and chips rounded-full, cards rounded-2xl, inputs rounded-xl.
+   One accent (teal). Orange only means "needs attention".
+   ========================================================================== */
+:root {
+  --canvas: #f5f2ec;
+  --surface: #fffdf9;
+  --surface-2: #efebe3;
+  --ink: #2a2522;
+  --ink-2: #6a625b;
+  --line: #e2dcd1;
+  --accent: #0ea5a4;
+  --accent-strong: #0a7472;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcf1ef;
+  --attention: #c2501a;
+  --attention-soft: #fde9dd;
+  --ok: #2f7d4f;
+  --ok-soft: #e1f2e7;
+  --danger: #b4322b;
+  --danger-soft: #fbe3e1;
+  --shadow-tint: 42 37 34;
+}
+
+/* The crew app follows the system theme; public pages stay light. */
+@media (prefers-color-scheme: dark) {
+  .app {
+    --canvas: #141312;
+    --surface: #1d1b19;
+    --surface-2: #282522;
+    --ink: #f2eee7;
+    --ink-2: #a9a198;
+    --line: #35312d;
+    --accent: #3cc7c4;
+    --accent-strong: #2bb3b0;
+    --accent-ink: #062b2a;
+    --accent-soft: #123432;
+    --attention: #f59a63;
+    --attention-soft: #3a2316;
+    --ok: #6fcf97;
+    --ok-soft: #173023;
+    --danger: #f08a83;
+    --danger-soft: #3a1b19;
+    --shadow-tint: 0 0 0;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-attention: var(--attention);
+  --color-attention-soft: var(--attention-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+}
+
+.app {
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+.shadow-soft {
+  box-shadow:
+    0 1px 2px rgb(var(--shadow-tint) / 0.06),
+    0 10px 30px -14px rgb(var(--shadow-tint) / 0.22);
+}
+
+.shadow-lift {
+  box-shadow:
+    0 2px 6px rgb(var(--shadow-tint) / 0.08),
+    0 24px 48px -20px rgb(var(--shadow-tint) / 0.35);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
