@@ -44,14 +44,6 @@ export default function SiteLayout({
             <Link href="/contact" className="hover:text-brand-teal flex items-center gap-1">
               <Phone size={18} /> Contact
             </Link>
-            {OPS_ENABLED && (
-              <Link
-                href="/book/cleaning"
-                className="hidden lg:inline-flex items-center rounded-full bg-brand-charcoal text-white px-4 py-2 hover:bg-black/80 transition-colors"
-              >
-                Book a clean
-              </Link>
-            )}
           </nav>
           <MobileNav />
         </div>
