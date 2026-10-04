@@ -6,6 +6,7 @@ import RemovalsForm from "@/components/quote/forms/RemovalsForm";
 import CleaningForm from "@/components/quote/forms/CleaningForm";
 import MaintenanceForm from "@/components/quote/forms/MaintenanceForm";
 import Link from "next/link";
+import { OPS_ENABLED } from "@/lib/flags";
 import { Package, Move, Cog, Sparkles, ArrowRight } from "lucide-react";
 
 type TabKey = "parcel" | "removals" | "cleaning" | "maintenance";
@@ -50,23 +51,23 @@ export default function QuoteTabs() {
         {activeTab === "removals" && <RemovalsForm />}
         {activeTab === "cleaning" && (
           <>
-            <OnlineCta
+            {OPS_ENABLED && <OnlineCta
               href="/book/cleaning"
               title="See your price now"
               body="Book online in two minutes and get an instant estimate."
               label="Book a clean"
-            />
+            />}
             <CleaningForm />
           </>
         )}
         {activeTab === "maintenance" && (
           <>
-            <OnlineCta
+            {OPS_ENABLED && <OnlineCta
               href="/carpentry"
               title="Planning a deck, pergola or kitchen?"
               body="Send us photos of the job and we'll come back with a plan."
               label="Carpentry enquiry"
-            />
+            />}
             <MaintenanceForm />
           </>
         )}

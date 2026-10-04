@@ -8,6 +8,7 @@ import {
   Heart,
 } from "lucide-react";
 import MobileNav from "@/components/shared/MobileNav";
+import { OPS_ENABLED } from "@/lib/flags";
 
 export default function SiteLayout({
   children,
@@ -43,12 +44,14 @@ export default function SiteLayout({
             <Link href="/contact" className="hover:text-brand-teal flex items-center gap-1">
               <Phone size={18} /> Contact
             </Link>
-            <Link
-              href="/book/cleaning"
-              className="hidden lg:inline-flex items-center rounded-full bg-brand-charcoal text-white px-4 py-2 hover:bg-black/80 transition-colors"
-            >
-              Book a clean
-            </Link>
+            {OPS_ENABLED && (
+              <Link
+                href="/book/cleaning"
+                className="hidden lg:inline-flex items-center rounded-full bg-brand-charcoal text-white px-4 py-2 hover:bg-black/80 transition-colors"
+              >
+                Book a clean
+              </Link>
+            )}
           </nav>
           <MobileNav />
         </div>
@@ -65,11 +68,13 @@ export default function SiteLayout({
             Too Easy.
           </p>
         </div>
-        <div className="mx-auto max-w-6xl px-4 mt-4 flex flex-wrap items-center justify-center sm:justify-end gap-x-5 gap-y-2">
-          <Link href="/book/cleaning" className="hover:text-brand-teal">Book a clean</Link>
-          <Link href="/carpentry" className="hover:text-brand-teal">Carpentry</Link>
-          <Link href="/login" className="hover:text-brand-teal">Crew login</Link>
-        </div>
+        {OPS_ENABLED && (
+          <div className="mx-auto max-w-6xl px-4 mt-4 flex flex-wrap items-center justify-center sm:justify-end gap-x-5 gap-y-2">
+            <Link href="/book/cleaning" className="hover:text-brand-teal">Book a clean</Link>
+            <Link href="/carpentry" className="hover:text-brand-teal">Carpentry</Link>
+            <Link href="/login" className="hover:text-brand-teal">Crew login</Link>
+          </div>
+        )}
       </footer>
     </div>
   );
