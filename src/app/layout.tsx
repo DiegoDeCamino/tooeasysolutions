@@ -1,16 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Nunito, Rye } from "next/font/google";
-import Link from "next/link";
-// Image is not used directly; keep import removed to avoid lint warning
-import {
-  PackageSearch,
-  Truck,
-  HelpCircle,
-  Phone,
-  Briefcase,
-  Heart,
-} from "lucide-react";
-import MobileNav from "@/components/shared/MobileNav";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -31,7 +20,7 @@ export const metadata: Metadata = {
     "Too Easy Solutions — Removals, Couriers, Cleaning & Home Maintenance",
   description:
     "One page. Every service. All South West WA. Removals, couriers, cleaning and home maintenance from Perth to Augusta — booked right here.",
-  metadataBase: new URL("https://tooeasy.example"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://tooeasy.example"),
   keywords: [
     "courier",
     "removals",
@@ -42,6 +31,19 @@ export const metadata: Metadata = {
     "Augusta",
     "South West WA",
   ],
+  appleWebApp: {
+    capable: true,
+    title: "Too Easy",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f3e9" },
+    { media: "(prefers-color-scheme: dark)", color: "#171513" },
+  ],
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -51,71 +53,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${nunito.variable} ${rye.variable} antialiased min-h-screen bg-brand-cream`}
-      >
-        <header className="w-full sticky top-0 z-50 bg-white border-b border-black/5 shadow-sm">
-          <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
-            <Link href="/" className="flex items-center gap-3">
-              <Truck className="text-brand-orange" size={28} />
-              <span className="font-tangkiwood text-2xl sm:text-3xl tracking-tight text-brand-charcoal leading-none">
-                Too Easy Solutions
-              </span>
-            </Link>
-            <nav className="hidden sm:flex items-center gap-6 text-sm font-semibold">
-              <Link
-                href="/"
-                className="hover:text-brand-teal flex items-center gap-1"
-              >
-                <PackageSearch size={18} /> Home
-              </Link>
-              <Link
-                href="/about"
-                className="hover:text-brand-teal flex items-center gap-1"
-              >
-                <Truck size={18} /> About Us
-              </Link>
-              <Link
-                href="/community"
-                className="hover:text-brand-teal flex items-center gap-1"
-              >
-                <Heart size={18} /> Community
-              </Link>
-              <Link
-                href="/projects"
-                className="hover:text-brand-teal flex items-center gap-1"
-              >
-                <Briefcase size={18} /> Our Projects
-              </Link>
-              <Link
-                href="/faq"
-                className="hover:text-brand-teal flex items-center gap-1"
-              >
-                <HelpCircle size={18} /> FAQ
-              </Link>
-              <Link
-                href="/contact"
-                className="hover:text-brand-teal flex items-center gap-1"
-              >
-                <Phone size={18} /> Contact
-              </Link>
-            </nav>
-            <MobileNav />
-          </div>
-        </header>
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
-        <footer className="mt-16 border-t border-black/5 py-8 text-sm text-black/70">
-          <div className="mx-auto max-w-6xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>
-              © {new Date().getFullYear()} Too Easy Solutions. All rights
-              reserved.
-            </p>
-            <p>
-              Servicing Perth to Augusta, Western Australia — Local. Affordable.
-              Too Easy.
-            </p>
-          </div>
-        </footer>
+      <body className={`${nunito.variable} ${rye.variable} antialiased min-h-dvh`}>
+        {children}
       </body>
     </html>
   );
