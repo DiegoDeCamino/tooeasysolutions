@@ -370,6 +370,7 @@ export const en = {
     addTemplate: "Add template",
     hoursUnit: "h",
     active: "Active",
+    unsaved: "Unsaved changes",
   },
   me: {
     title: "Me",

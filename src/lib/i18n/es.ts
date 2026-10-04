@@ -372,6 +372,7 @@ export const es: Dict = {
     addTemplate: "Agregar plantilla",
     hoursUnit: "h",
     active: "Activo",
+    unsaved: "Cambios sin guardar",
   },
   me: {
     title: "Yo",
