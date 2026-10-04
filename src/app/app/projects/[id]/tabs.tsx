@@ -71,7 +71,7 @@ export function FeedTab({ data, onCompose }: { data: ProjectData; onCompose: () 
               <Avatar name={u.author} />
               <div className="grid min-w-0 flex-1">
                 <span className="truncate font-extrabold">{u.author}</span>
-                <span className="text-xs font-semibold text-ink-2">
+                <span suppressHydrationWarning className="text-xs font-semibold text-ink-2">
                   {timeAgo(u.created_at, locale)}
                   {stageName(u.stage_id) && ` · ${stageName(u.stage_id)}`}
                 </span>

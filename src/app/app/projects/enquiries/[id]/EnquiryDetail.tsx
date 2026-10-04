@@ -83,7 +83,7 @@ export function EnquiryDetail({
         subtitle={
           <span className="flex flex-wrap items-center gap-2">
             <Badge tone={e.status === "new" ? "attention" : "accent"}>{t(`enquiryStatus.${e.status}`)}</Badge>
-            <span className="text-sm font-bold">
+            <span suppressHydrationWarning className="text-sm font-bold">
               {CATEGORY[e.category] ?? e.category} · {timeAgo(e.created_at, locale)}
             </span>
           </span>

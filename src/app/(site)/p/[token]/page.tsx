@@ -62,8 +62,9 @@ export default async function ProjectPortal({ params }: { params: Promise<{ toke
       <header className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center">
         <div className="grid gap-3">
           <p className="text-sm font-bold text-ink-2">
-            {categoryLabel(project.category)}
-            {project.client_name ? ` for ${firstName(project.client_name)}` : ""}
+            {project.client_name
+              ? `Hi ${firstName(project.client_name)}, here's how your ${categoryLabel(project.category).toLowerCase() || "project"} is going`
+              : "Project progress"}
           </p>
           <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight md:text-5xl">{project.title}</h1>
           <div className="flex items-center gap-4 pt-2">

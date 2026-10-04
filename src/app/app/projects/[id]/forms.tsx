@@ -73,7 +73,7 @@ export function UpdateForm({ open, onClose, data }: FormProps) {
       }
     >
       <div className="grid gap-5">
-        <PhotoPicker value={photos} onChange={setPhotos} max={10} label={t("projects.update")} />
+        <PhotoPicker value={photos} onChange={setPhotos} max={10} label={t("projects.updateHint")} />
         <Field label={t("projects.note")}>
           {(p) => <Textarea {...p} rows={3} placeholder={t("projects.whatsNew")} value={body} onChange={(e) => setBody(e.target.value)} />}
         </Field>

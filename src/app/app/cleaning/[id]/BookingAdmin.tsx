@@ -255,7 +255,7 @@ export function BookingAdmin({
                       {e.actor && <span className="font-semibold text-ink-2"> · {e.actor}</span>}
                     </span>
                     {e.message && <span className="text-sm text-ink-2">{e.message}</span>}
-                    <span className="text-xs font-semibold text-ink-2">{timeAgo(e.at, locale)}</span>
+                    <span suppressHydrationWarning className="text-xs font-semibold text-ink-2">{timeAgo(e.at, locale)}</span>
                   </div>
                 </li>
               ))}
