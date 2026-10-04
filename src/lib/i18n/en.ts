@@ -186,6 +186,7 @@ export const en = {
     unknownArea: "Not sure",
     payment: "Payment",
     paymentPending: "Waiting for the client to pay",
+    edited: "Quote edited",
   },
   calendar: {
     prev: "Previous month",

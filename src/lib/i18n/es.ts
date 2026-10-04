@@ -188,6 +188,7 @@ export const es: Dict = {
     unknownArea: "No sabe",
     payment: "Pago",
     paymentPending: "Esperando que el cliente pague",
+    edited: "Presupuesto editado",
   },
   calendar: {
     prev: "Mes anterior",
