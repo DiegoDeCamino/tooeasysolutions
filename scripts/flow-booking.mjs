@@ -26,15 +26,15 @@ const shot = async (n) => values.shots && page.screenshot({ path: `screenshots/f
 const cont = () => page.getByRole("button", { name: "Continue" }).last().click();
 
 await page.goto(`${values.base}/book/cleaning`, { waitUntil: "networkidle" });
-await page.getByRole("radio", { name: new RegExp(values.type) }).click();
-await page.getByRole("checkbox", { name: /Inside oven/ }).click();
-await shot("1-service");
-await cont();
-
 await page.getByRole("button", { name: "Increase" }).nth(1).click(); // bathrooms 2 -> 3
 await page.getByText("Pets at home", { exact: true }).click();
 await page.getByRole("radio", { name: "Driveway" }).click();
-await shot("2-home");
+await shot("1-home");
+await cont();
+
+await page.getByRole("radio", { name: new RegExp(values.type) }).click();
+await page.getByRole("checkbox", { name: /Inside oven/ }).click();
+await shot("2-service");
 await cont();
 
 await page.getByRole("radiogroup", { name: "Day" }).getByRole("radio").nth(2).click();

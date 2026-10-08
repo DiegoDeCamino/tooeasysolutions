@@ -37,7 +37,7 @@ const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
   office: Building2,
 };
 
-const STEPS = ["Service", "Home", "When", "You"] as const;
+const STEPS = ["Home", "Service", "When", "You"] as const;
 const TIMES = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"];
 const PARKING = ["Driveway", "Street parking", "Paid or limited"];
 
@@ -201,7 +201,7 @@ export function BookingWizard({ pricing, today, turnstileSiteKey }: { pricing: P
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               className="grid gap-6"
             >
-              {step === 0 && (
+              {step === 1 && (
                 <>
                   <StepTitle title="What kind of clean?" />
                   <div role="radiogroup" aria-label="Clean type" className="grid gap-3 sm:grid-cols-2">
@@ -261,7 +261,7 @@ export function BookingWizard({ pricing, today, turnstileSiteKey }: { pricing: P
                 </>
               )}
 
-              {step === 1 && (
+              {step === 0 && (
                 <>
                   <StepTitle title="Tell us about the place" />
                   <div className="divide-y divide-line rounded-2xl border border-line bg-surface px-4">
