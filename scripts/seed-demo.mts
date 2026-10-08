@@ -87,7 +87,7 @@ const bookings: B[] = [
   { name: "Noah Bennett", email: "noah.demo@example.com", phone: "0438 902 115", address: "7 Bussell Highway", suburb: "Margaret River", date: day(5), time: "10:00", type: "regular", bedrooms: 2, bathrooms: 1, sqm: 95, parking: "Street parking", status: "requested", createdHoursAgo: 5 },
   { name: "Chloe Nguyen", email: "chloe.demo@example.com", phone: "0401 337 264", address: "22 Queen Street", suburb: "Busselton", date: day(4), time: "08:00", type: "deep", addons: ["Inside fridge"], bedrooms: 4, bathrooms: 2, sqm: 210, levels: 2, parking: "Driveway", status: "awaiting_payment", createdHoursAgo: 26 },
   { name: "Oliver Smith", email: "oliver.demo@example.com", phone: "0417 448 092", address: "3 Marine Terrace", suburb: "Busselton", date: day(2), time: "09:00", type: "regular", bedrooms: 3, bathrooms: 2, sqm: 150, access: "Key in the lockbox by the side gate, code 4471", parking: "Driveway", status: "scheduled", brief: "Regular clean. Bring the extendable duster for the high windows in the lounge.", crew: [kiri], createdHoursAgo: 50 },
-  { name: "Mia Robinson", email: "mia.demo@example.com", phone: "0422 610 553", address: "41 Bottlebrush Drive", suburb: "Cowaramup", date: day(6), time: "11:00", type: "airbnb", addons: ["Laundry and linen"], bedrooms: 2, bathrooms: 2, sqm: 120, status: "scheduled", brief: "Holiday rental turnover. Fresh linen is in the hallway cupboard. Guests arrive at 3pm.", crew: [sofia, kiri], createdHoursAgo: 70 },
+  { name: "Mia Robinson", email: "mia.demo@example.com", phone: "0422 610 553", address: "41 Bottlebrush Drive", suburb: "Cowaramup", date: day(6), time: "11:00", type: "airbnb", addons: ["Laundry and linen"], bedrooms: 2, bathrooms: 2, sqm: 120, status: "scheduled", brief: "Holiday rental turnover. Fresh linen is in the hallway cupboard. Guests arrive at 3pm.", crew: [sofia], createdHoursAgo: 70 },
   { name: "Ethan Clarke", email: "ethan.demo@example.com", phone: "0409 771 380", address: "9 Gifford Road", suburb: "Dunsborough", date: day(-4), time: "09:00", type: "deep", bedrooms: 3, bathrooms: 2, sqm: 170, status: "completed", crew: [kiri, sofia], createdHoursAgo: 200 },
 ];
 
@@ -230,6 +230,6 @@ must(await db.from("notifications").insert([
   { profile_id: admin, kind: "booking_requested", title: "New cleaning request in Dunsborough", body: "End of lease. Change suggested", href: "/app/cleaning?tab=new", created_at: ago(2) },
   { profile_id: admin, kind: "enquiry_new", title: "New kitchen enquiry from Grace Walker", body: "Busselton. 1 photo", href: "/app/projects/enquiries", created_at: ago(3) },
   { profile_id: admin, kind: "project_update", title: "Tama Rewi posted on Merbau deck, Yallingup", body: "Bearers are down and level.", href: "/app/projects", created_at: ago(6), read_at: ago(5) },
-  { profile_id: kiri, kind: "shift_new", title: "New shift in Cowaramup", body: "Holiday rental turnover, 2 spots", href: "/app/shifts", created_at: ago(10) },
+  { profile_id: kiri, kind: "shift_new", title: "New shift in Cowaramup", body: "Holiday rental turnover, 1 spot left", href: "/app/shifts", created_at: ago(10) },
 ]), "notifications");
 console.log("done ✓");
