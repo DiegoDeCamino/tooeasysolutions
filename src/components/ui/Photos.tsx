@@ -69,15 +69,15 @@ export function PhotoPicker({
           type="button"
           onClick={() => inputRef.current?.click()}
           className={cn(
-            "flex items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-line bg-surface text-ink-2 transition hover:border-accent hover:text-ink",
-            compact ? "h-14 text-sm font-bold" : "flex-col py-7",
+            "flex items-center justify-center gap-3 rounded-(--r-card) border-2 border-dashed border-line bg-surface text-ink-2 transition hover:border-accent hover:text-ink",
+            compact ? "h-14 text-sm font-medium" : "flex-col py-7",
           )}
         >
           <span className={cn("flex items-center justify-center rounded-full bg-accent-soft text-accent-strong", compact ? "size-8" : "size-12")}>
             {compact ? <Camera className="size-4" /> : <ImagePlus className="size-6" />}
           </span>
           <span className="grid gap-0.5 text-center">
-            <span className="font-extrabold text-ink">{label}</span>
+            <span className="font-semibold text-ink">{label}</span>
             {!compact && <span className="text-[13px]">{value.length ? `${value.length} of ${max}` : `Up to ${max}`}</span>}
           </span>
         </button>
@@ -102,7 +102,7 @@ export function PhotoGrid({ urls, className }: { urls: string[]; className?: str
   const many = urls.length > 1;
   return (
     <>
-      <div className={cn("grid gap-1.5 overflow-hidden rounded-2xl", many ? "grid-cols-2" : "grid-cols-1", className)}>
+      <div className={cn("grid gap-1.5 overflow-hidden rounded-(--r-card)", many ? "grid-cols-2" : "grid-cols-1", className)}>
         {urls.slice(0, 4).map((u, i) => (
           <button
             key={u}
@@ -117,7 +117,7 @@ export function PhotoGrid({ urls, className }: { urls: string[]; className?: str
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={u} alt="" loading="lazy" className="size-full object-cover transition hover:scale-[1.02]" />
             {i === 3 && urls.length > 4 && (
-              <span className="absolute inset-0 flex items-center justify-center bg-[rgb(20_18_16/0.5)] text-xl font-extrabold text-white">
+              <span className="absolute inset-0 flex items-center justify-center bg-[rgb(20_18_16/0.5)] text-xl font-semibold text-white">
                 +{urls.length - 4}
               </span>
             )}
@@ -190,7 +190,7 @@ function Lightbox({ urls, start, onClose }: { urls: string[]; start: number; onC
           >
             <ChevronRight className="size-7" />
           </button>
-          <span className="tabular absolute bottom-[calc(16px+env(safe-area-inset-bottom))] rounded-full bg-white/10 px-3 py-1 text-sm font-bold text-white">
+          <span className="tabular absolute bottom-[calc(16px+env(safe-area-inset-bottom))] rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white">
             {i + 1} / {urls.length}
           </span>
         </>

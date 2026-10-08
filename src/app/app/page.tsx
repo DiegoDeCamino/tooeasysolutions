@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { ArrowRight, CalendarClock, ChevronRight, Hammer, Inbox, PartyPopper, Sparkles, UsersRound, Wallet } from "lucide-react";
+import { ArrowRight, ChevronRight, Hammer, Inbox, PartyPopper, Sparkles, UsersRound, Wallet } from "lucide-react";
 import { requireStaff, type Viewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getServerT } from "@/lib/i18n/server";
 import type { TFn } from "@/lib/i18n";
 import { loadShifts } from "@/lib/shifts";
 import { addDays, firstName, formatDate, formatMoney, formatTime, todayPerth } from "@/lib/format";
-import { Card, EmptyState, ProgressRing } from "@/components/ui/Display";
+import { Card, EmptyState, ProgressBar } from "@/components/ui/Display";
+import { cn } from "@/lib/cn";
 import { ShiftCard } from "@/components/app/ShiftCard";
 import { PushToggle } from "@/components/app/PushToggle";
 import { InstallPrompt } from "@/components/app/InstallPrompt";
@@ -27,15 +28,15 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
   return (
     <div className="grid gap-6">
       <header className="grid gap-1">
-        <p className="text-sm font-bold text-ink-2 first-letter:uppercase">{formatDate(todayPerth(), locale, { weekday: "long", month: "long" })}</p>
-        <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">{greeting(t, viewer.profile.full_name)}</h1>
+        <h1 className="text-2xl font-semibold leading-9 tracking-[-0.02em] md:text-[28px]">{greeting(t, viewer.profile.full_name)}</h1>
+        <p className="text-sm text-ink-2 first-letter:uppercase">{formatDate(todayPerth(), locale, { weekday: "long", month: "long" })}</p>
       </header>
       {welcome && (
-        <Card className="grid gap-5 border-accent p-5">
+        <Card className="grid gap-5 p-5">
           <div className="flex items-start gap-3">
             <PartyPopper className="mt-0.5 size-6 shrink-0 text-accent-strong" />
             <div className="grid gap-1">
-              <h2 className="text-lg font-extrabold">{t("home.welcomeTitle")}</h2>
+              <h2 className="text-lg font-semibold">{t("home.welcomeTitle")}</h2>
               <p className="text-ink-2">{t("home.welcomeBody")}</p>
             </div>
           </div>
@@ -85,24 +86,37 @@ async function AdminHome({ t, locale }: { t: TFn; locale: "en" | "es" }) {
   return (
     <>
       <section className="grid gap-3">
-        <h2 className="font-extrabold">{t("home.needsAttention")}</h2>
+        <h2 className="text-[15px] font-semibold">{t("home.needsAttention")}</h2>
         {attention ? (
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            {tiles.map(({ href, icon: Icon, label, count, extra }) => (
+          <Card className="grid overflow-hidden sm:grid-cols-2 lg:grid-cols-4">
+            {tiles.map(({ href, icon: Icon, label, count, extra }, i) => (
               <Link
                 key={href}
                 href={href}
-                className={`grid gap-3 rounded-2xl border p-4 transition active:scale-[0.98] ${count ? "border-attention/30 bg-attention-soft" : "border-line bg-surface"}`}
+                className={cn(
+                  "flex items-center gap-3 border-line p-4 transition-colors hover:bg-surface-2",
+                  i > 0 && "border-t sm:border-t-0",
+                  i % 2 === 1 && "sm:border-l",
+                  i > 1 && "sm:border-t lg:border-t-0",
+                  i > 0 && "lg:border-l",
+                )}
               >
-                <Icon className={`size-5 ${count ? "text-attention" : "text-ink-2"}`} />
-                <div className="grid gap-0.5">
-                  <span className="tabular text-3xl font-extrabold leading-none">{count}</span>
-                  <span className="text-sm font-bold leading-snug text-ink-2">{label}</span>
-                  {extra && <span className="tabular text-sm font-extrabold text-ink">{extra}</span>}
-                </div>
+                <span
+                  className={cn(
+                    "inline-flex size-9 shrink-0 items-center justify-center rounded-lg",
+                    count ? "bg-attention-soft text-attention" : "bg-surface-2 text-ink-2",
+                  )}
+                >
+                  <Icon className="size-[18px]" />
+                </span>
+                <span className="grid min-w-0 flex-1">
+                  <span className="text-sm leading-snug text-ink-2">{label}</span>
+                  {extra && <span className="tabular text-sm font-medium text-ink">{extra}</span>}
+                </span>
+                <span className={cn("tabular text-2xl font-semibold", !count && "text-ink-2")}>{count}</span>
               </Link>
             ))}
-          </div>
+          </Card>
         ) : (
           <EmptyState icon={<PartyPopper className="size-6" />} title={t("home.allClear")} />
         )}
@@ -113,15 +127,15 @@ async function AdminHome({ t, locale }: { t: TFn; locale: "en" | "es" }) {
           <SectionHead title={t("home.newRequests")} href="/app/cleaning?tab=new" t={t} />
           <Card className="divide-y divide-line overflow-hidden">
             {requests!.slice(0, 4).map((b) => (
-              <Link key={b.id} href={`/app/cleaning/${b.id}`} className="flex items-center gap-3 p-4 hover:bg-surface-2">
+              <Link key={b.id} href={`/app/cleaning/${b.id}`} className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2">
                 <span className="grid min-w-0 flex-1">
-                  <span className="truncate font-extrabold">{b.client_name}</span>
+                  <span className="truncate font-medium">{b.client_name}</span>
                   <span className="truncate text-sm text-ink-2">
                     {formatDate(b.service_date, locale)}, {b.suburb}
                   </span>
                 </span>
-                <span className="tabular font-extrabold">{formatMoney(b.final_price)}</span>
-                <ChevronRight className="size-5 text-ink-2" />
+                <span className="tabular font-medium">{formatMoney(b.final_price)}</span>
+                <ChevronRight className="size-4 text-ink-2" />
               </Link>
             ))}
           </Card>
@@ -134,16 +148,24 @@ async function AdminHome({ t, locale }: { t: TFn; locale: "en" | "es" }) {
           {upcoming?.length ? (
             <Card className="divide-y divide-line overflow-hidden">
               {upcoming.map((b) => (
-                <Link key={b.id} href={`/app/cleaning/${b.id}`} className="flex items-center gap-3 p-4 hover:bg-surface-2">
-                  <CalendarClock className="size-5 shrink-0 text-accent-strong" />
+                <Link key={b.id} href={`/app/cleaning/${b.id}`} className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2">
+                  <span
+                    className={cn(
+                      "tabular w-[72px] shrink-0 text-sm",
+                      b.service_date === today ? "font-semibold text-accent-strong" : "text-ink-2",
+                    )}
+                  >
+                    {formatTime(b.start_time, locale)}
+                  </span>
                   <span className="grid min-w-0 flex-1">
-                    <span className="truncate font-extrabold">
-                      {b.service_date === today ? t("common.today") : formatDate(b.service_date, locale)}, {formatTime(b.start_time, locale)}
-                    </span>
-                    <span className="truncate text-sm text-ink-2">
+                    <span className="truncate font-medium">
                       {b.client_name}, {b.suburb}
                     </span>
+                    <span className="truncate text-sm text-ink-2">
+                      {b.service_date === today ? t("common.today") : formatDate(b.service_date, locale)}
+                    </span>
                   </span>
+                  <ChevronRight className="size-4 text-ink-2" />
                 </Link>
               ))}
             </Card>
@@ -154,11 +176,11 @@ async function AdminHome({ t, locale }: { t: TFn; locale: "en" | "es" }) {
         <section className="grid content-start gap-3">
           <SectionHead title={t("home.activeProjects")} href="/app/projects" t={t} />
           {projects.length ? (
-            <div className="grid gap-3">
+            <Card className="divide-y divide-line overflow-hidden">
               {projects.slice(0, 4).map((p) => (
-                <ProjectRow key={p.id} p={p} t={t} />
+                <ProjectRow key={p.id} p={p} />
               ))}
-            </div>
+            </Card>
           ) : (
             <EmptyState icon={<Hammer className="size-6" />} title={t("projects.empty")} />
           )}
@@ -182,27 +204,27 @@ async function CrewHome({ viewer, t }: { viewer: Viewer; t: TFn }) {
   return (
     <>
       <section className="grid gap-3">
-        <h2 className="font-extrabold">{t("home.nextShift")}</h2>
+        <h2 className="text-[15px] font-semibold">{t("home.nextShift")}</h2>
         {mine[0] ? <ShiftCard shift={mine[0]} viewer={me} /> : <EmptyState title={t("home.noShift")} />}
       </section>
       {profile.skills.includes("cleaning") && (
         <Link
           href="/app/shifts"
-          className="flex items-center gap-4 rounded-2xl bg-ink p-5 text-canvas transition active:scale-[0.99]"
+          className="flex items-center gap-4 rounded-(--r-card) bg-accent-strong p-5 text-accent-ink transition hover:brightness-105 active:scale-[0.99]"
         >
-          <span className="tabular text-4xl font-extrabold">{open.length}</span>
-          <span className="flex-1 font-extrabold">{open.length === 1 ? t("home.openShift") : t("home.openShifts")}</span>
-          <ArrowRight className="size-6" />
+          <span className="tabular text-4xl font-semibold">{open.length}</span>
+          <span className="flex-1 font-medium">{open.length === 1 ? t("home.openShift") : t("home.openShifts")}</span>
+          <ArrowRight className="size-5" />
         </Link>
       )}
       <section className="grid gap-3">
         <SectionHead title={t("home.myProjects")} href="/app/projects" t={t} />
         {projects.length ? (
-          <div className="grid gap-3 md:grid-cols-2">
+          <Card className="divide-y divide-line overflow-hidden">
             {projects.map((p) => (
-              <ProjectRow key={p.id} p={p} t={t} />
+              <ProjectRow key={p.id} p={p} />
             ))}
-          </div>
+          </Card>
         ) : (
           <EmptyState icon={<Hammer className="size-6" />} title={t("projects.emptyMine")} />
         )}
@@ -214,25 +236,25 @@ async function CrewHome({ viewer, t }: { viewer: Viewer; t: TFn }) {
 function SectionHead({ title, href, t }: { title: string; href: string; t: TFn }) {
   return (
     <div className="flex items-center justify-between">
-      <h2 className="font-extrabold">{title}</h2>
-      <Link href={href} className="text-sm font-extrabold text-accent-strong">
+      <h2 className="text-[15px] font-semibold">{title}</h2>
+      <Link href={href} className="text-sm font-medium text-ink-2 underline-offset-4 transition-colors hover:text-accent-strong hover:underline">
         {t("common.seeAll")}
       </Link>
     </div>
   );
 }
 
-function ProjectRow({ p, t }: { p: Awaited<ReturnType<typeof loadProjectCards>>[number]; t: TFn }) {
+function ProjectRow({ p }: { p: Awaited<ReturnType<typeof loadProjectCards>>[number] }) {
   return (
-    <Link href={`/app/projects/${p.id}`} className="flex items-center gap-4 rounded-2xl border border-line bg-surface p-4 shadow-soft hover:border-ink-2/30">
-      <ProgressRing value={p.total ? p.done / p.total : 0} size={52} />
-      <span className="grid min-w-0 flex-1 gap-0.5">
-        <span className="truncate font-extrabold">{p.title}</span>
-        <span className="truncate text-sm text-ink-2">
-          {p.currentStage ?? t("projects.progress", { done: p.done, total: p.total })}
+    <Link href={`/app/projects/${p.id}`} className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2">
+      <span className="grid min-w-0 flex-1 gap-1.5">
+        <span className="flex items-baseline justify-between gap-3">
+          <span className="truncate font-medium">{p.title}</span>
+          <span className="shrink-0 truncate text-sm text-ink-2">{p.currentStage}</span>
         </span>
+        <ProgressBar value={p.total ? p.done / p.total : 0} label={`${p.done}/${p.total}`} />
       </span>
-      <ChevronRight className="size-5 text-ink-2" />
+      <ChevronRight className="size-4 text-ink-2" />
     </Link>
   );
 }

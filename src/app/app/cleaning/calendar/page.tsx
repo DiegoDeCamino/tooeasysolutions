@@ -69,7 +69,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
     <Link
       key={b.id}
       href={`/app/cleaning/${b.id}`}
-      className={cn("block truncate rounded-lg px-2 py-1 text-xs font-extrabold transition hover:brightness-95", TONE[b.status])}
+      className={cn("block truncate rounded-md px-1.5 py-1 text-xs font-medium transition hover:brightness-95", TONE[b.status])}
     >
       <span className="tabular">{formatTime(b.start_time, locale)}</span> {b.suburb}
       {fill(b) && <span className="tabular ml-1 opacity-80">{fill(b)}</span>}
@@ -83,11 +83,11 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
         title={t("nav.calendar")}
         actions={
           <div className="flex items-center gap-1">
-            <Link href={`?month=${mb.prev}`} aria-label={t("calendar.prev")} className="inline-flex size-11 items-center justify-center rounded-full hover:bg-surface-2">
+            <Link href={`?month=${mb.prev}`} aria-label={t("calendar.prev")} className="inline-flex size-11 items-center justify-center rounded-(--r-control) hover:bg-surface-2">
               <ChevronLeft className="size-5" />
             </Link>
-            <span className="min-w-36 text-center font-extrabold capitalize">{monthLabel}</span>
-            <Link href={`?month=${mb.next}`} aria-label={t("calendar.next")} className="inline-flex size-11 items-center justify-center rounded-full hover:bg-surface-2">
+            <span className="min-w-36 text-center text-sm font-medium capitalize">{monthLabel}</span>
+            <Link href={`?month=${mb.next}`} aria-label={t("calendar.next")} className="inline-flex size-11 items-center justify-center rounded-(--r-control) hover:bg-surface-2">
               <ChevronRight className="size-5" />
             </Link>
           </div>
@@ -96,16 +96,16 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
 
       {/* Month grid from tablet up */}
       <Card className="hidden overflow-hidden md:block">
-        <div className="grid grid-cols-7 border-b border-line bg-surface-2/60">
+        <div className="grid grid-cols-7 border-b border-line">
           {weekdays.map((w) => (
-            <div key={w} className="px-3 py-2 text-xs font-extrabold uppercase text-ink-2">
+            <div key={w} className="px-3 py-2.5 text-xs font-medium text-ink-2">
               {w}
             </div>
           ))}
         </div>
         <div className="grid grid-cols-7">
           {Array.from({ length: mb.lead }, (_, i) => (
-            <div key={`lead-${i}`} className="min-h-28 border-b border-r border-line bg-surface-2/30" />
+            <div key={`lead-${i}`} className="min-h-28 border-b border-r border-line bg-surface-2/50" />
           ))}
           {Array.from({ length: mb.days }, (_, i) => {
             const d = mb.date(i + 1);
@@ -114,14 +114,14 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
               <div key={d} className="grid min-h-28 content-start gap-1 border-b border-r border-line p-1.5">
                 <span
                   className={cn(
-                    "tabular inline-flex size-7 items-center justify-center rounded-full text-sm font-extrabold",
+                    "tabular inline-flex size-6 items-center justify-center rounded-full text-xs font-medium",
                     d === today ? "bg-accent-strong text-accent-ink" : "text-ink-2",
                   )}
                 >
                   {i + 1}
                 </span>
                 {items.slice(0, 3).map(chip)}
-                {items.length > 3 && <span className="px-2 text-xs font-bold text-ink-2">+{items.length - 3}</span>}
+                {items.length > 3 && <span className="px-2 text-xs font-medium text-ink-2">+{items.length - 3}</span>}
               </div>
             );
           })}
@@ -133,19 +133,19 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
         {[...byDay.entries()].length === 0 && <p className="text-ink-2">{t("calendar.noJobs")}</p>}
         {[...byDay.entries()].map(([d, items]) => (
           <section key={d} className="grid gap-2">
-            <h2 className={cn("text-sm font-extrabold", d === today ? "text-accent-strong" : "text-ink-2")}>
+            <h2 className={cn("text-sm font-semibold", d === today ? "text-accent-strong" : "text-ink-2")}>
               {d === today ? `${t("common.today")}, ` : ""}
               {formatDate(d, locale)}
             </h2>
             <div className="grid gap-2">
               {items.map((b) => (
-                <Link key={b.id} href={`/app/cleaning/${b.id}`} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-3">
-                  <span className={cn("tabular rounded-lg px-2 py-1 text-sm font-extrabold", TONE[b.status])}>{formatTime(b.start_time, locale)}</span>
+                <Link key={b.id} href={`/app/cleaning/${b.id}`} className="flex items-center gap-3 rounded-(--r-card) border border-line bg-surface p-3">
+                  <span className={cn("tabular rounded-lg px-2 py-1 text-sm font-semibold", TONE[b.status])}>{formatTime(b.start_time, locale)}</span>
                   <span className="grid min-w-0 flex-1">
-                    <span className="truncate font-extrabold">{b.client_name}</span>
+                    <span className="truncate font-semibold">{b.client_name}</span>
                     <span className="truncate text-sm text-ink-2">{b.suburb}</span>
                   </span>
-                  {fill(b) && <span className="tabular text-sm font-extrabold text-ink-2">{fill(b)}</span>}
+                  {fill(b) && <span className="tabular text-sm font-semibold text-ink-2">{fill(b)}</span>}
                 </Link>
               ))}
             </div>

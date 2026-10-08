@@ -32,14 +32,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               exit={{ opacity: 0, y: 8 }}
               transition={{ type: "spring", stiffness: 500, damping: 34 }}
               className={cn(
-                "pointer-events-auto flex max-w-md items-center gap-2.5 rounded-full px-4 py-3 text-[15px] font-bold shadow-lift",
-                "bg-ink text-canvas",
+                "pointer-events-auto flex max-w-md items-center gap-2.5 rounded-(--r-card) border border-line px-4 py-3 text-sm font-medium shadow-lift",
+                "bg-surface text-ink",
               )}
             >
               {t.tone === "ok" ? (
-                <CheckCircle2 className="size-5 shrink-0 text-accent" />
+                <CheckCircle2 className="size-5 shrink-0 text-ok" />
               ) : (
-                <AlertCircle className="size-5 shrink-0 text-attention" />
+                <AlertCircle className="size-5 shrink-0 text-danger" />
               )}
               {t.message}
             </motion.div>

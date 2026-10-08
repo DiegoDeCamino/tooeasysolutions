@@ -78,11 +78,11 @@ export function PushToggle({ compact }: { compact?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
-          <BellRing className="size-5" />
+        <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+          <BellRing className="size-[18px]" />
         </span>
         <span className="grid gap-0.5">
-          <span className="font-extrabold">{t("me.notifications")}</span>
+          <span className="font-medium">{t("me.notifications")}</span>
           <span className="text-[13px] text-ink-2">{description}</span>
         </span>
       </div>

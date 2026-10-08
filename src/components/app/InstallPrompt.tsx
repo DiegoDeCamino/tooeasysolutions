@@ -42,11 +42,11 @@ export function InstallPrompt() {
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
+        <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
           <Smartphone className="size-5" />
         </span>
         <span className="grid gap-0.5">
-          <span className="font-extrabold">{mode === "installed" ? t("me.installed") : t("me.install")}</span>
+          <span className="font-semibold">{mode === "installed" ? t("me.installed") : t("me.install")}</span>
           {mode !== "installed" && (
             <span className="text-[13px] text-ink-2">
               {mode === "ios" ? (

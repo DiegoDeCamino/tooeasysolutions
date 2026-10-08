@@ -4,12 +4,12 @@ import { useId } from "react";
 import { cn } from "@/lib/cn";
 
 const control =
-  "w-full rounded-xl border border-line bg-surface px-3.5 text-[16px] text-ink placeholder:text-ink-2/70 " +
-  "outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15 disabled:opacity-60 " +
+  "w-full rounded-(--r-field) border border-line bg-surface px-3 text-base text-ink placeholder:text-ink-2/70 md:text-[15px] " +
+  "outline-none transition focus:border-accent focus:ring-3 focus:ring-accent/15 disabled:opacity-60 " +
   "aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/15";
 
-export const inputClass = cn(control, "h-12");
-export const textareaClass = cn(control, "py-3 min-h-28 leading-relaxed");
+export const inputClass = cn(control, "h-11 md:h-10");
+export const textareaClass = cn(control, "py-2.5 min-h-24 leading-relaxed");
 
 type FieldProps = {
   label: React.ReactNode;
@@ -28,9 +28,9 @@ export function Field({ label, hint, error, optional, className, children }: Fie
   const describedBy = [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(" ") || undefined;
   return (
     <div className={cn("grid gap-1.5", className)}>
-      <label htmlFor={id} className="text-sm font-bold text-ink">
+      <label htmlFor={id} className="text-sm font-medium text-ink">
         {label}
-        {optional && <span className="ml-1.5 font-semibold text-ink-2">({optional})</span>}
+        {optional && <span className="ml-1.5 font-normal text-ink-2">({optional})</span>}
       </label>
       {children({ id, "aria-invalid": error ? true : undefined, "aria-describedby": describedBy })}
       {hint && !error && (
@@ -39,7 +39,7 @@ export function Field({ label, hint, error, optional, className, children }: Fie
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-[13px] font-semibold text-danger">
+        <p id={errorId} className="text-[13px] font-medium text-danger">
           {error}
         </p>
       )}
@@ -56,7 +56,7 @@ export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
 }
 
 export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={cn(inputClass, "appearance-none bg-no-repeat pr-10", props.className)} />;
+  return <select {...props} className={cn(inputClass, "select-chevron appearance-none pr-9", props.className)} />;
 }
 
 /** Toggle row: label + description on the left, switch on the right. */
@@ -76,7 +76,7 @@ export function Switch({
   return (
     <label className={cn("flex min-h-11 cursor-pointer items-center justify-between gap-4", disabled && "opacity-60")}>
       <span className="grid gap-0.5">
-        <span className="text-[15px] font-bold text-ink">{label}</span>
+        <span className="text-[15px] font-medium text-ink">{label}</span>
         {description && <span className="text-[13px] text-ink-2">{description}</span>}
       </span>
       <span className="relative inline-flex shrink-0">
@@ -88,8 +88,8 @@ export function Switch({
           disabled={disabled}
           onChange={(e) => onChange(e.target.checked)}
         />
-        <span className="h-7 w-12 rounded-full bg-line transition peer-checked:bg-accent-strong peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent" />
-        <span className="absolute left-1 top-1 size-5 rounded-full bg-surface shadow transition peer-checked:translate-x-5" />
+        <span className="h-6 w-10 rounded-full bg-line transition peer-checked:bg-accent-strong peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent" />
+        <span className="absolute left-0.5 top-0.5 size-5 rounded-full bg-white shadow-sm transition peer-checked:translate-x-4" />
       </span>
     </label>
   );

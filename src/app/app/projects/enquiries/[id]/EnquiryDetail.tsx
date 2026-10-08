@@ -83,7 +83,7 @@ export function EnquiryDetail({
         subtitle={
           <span className="flex flex-wrap items-center gap-2">
             <Badge tone={e.status === "new" ? "attention" : "accent"}>{t(`enquiryStatus.${e.status}`)}</Badge>
-            <span suppressHydrationWarning className="text-sm font-bold">
+            <span suppressHydrationWarning className="text-sm font-medium">
               {CATEGORY[e.category] ?? e.category} · {timeAgo(e.created_at, locale)}
             </span>
           </span>
@@ -115,7 +115,7 @@ export function EnquiryDetail({
 
       <Card className="grid gap-3 p-5">
         <div>
-          <p className="font-extrabold">{e.name}</p>
+          <p className="font-semibold">{e.name}</p>
           <p className="text-sm text-ink-2">
             {e.email}
             {e.phone ? `, ${e.phone}` : ""}
@@ -123,7 +123,7 @@ export function EnquiryDetail({
         </div>
         <div className="flex flex-wrap gap-2">
           {e.phone && (
-            <a href={`tel:${e.phone}`} className="inline-flex h-11 items-center gap-2 rounded-full bg-accent-soft px-4 font-extrabold text-accent-strong">
+            <a href={`tel:${e.phone}`} className="inline-flex h-11 items-center gap-2 rounded-(--r-control) bg-accent-soft px-4 font-semibold text-accent-strong">
               <Phone className="size-4" /> {t("common.call")}
             </a>
           )}
@@ -132,19 +132,19 @@ export function EnquiryDetail({
               href={`https://wa.me/${phoneDigits.replace("+", "")}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-surface-2 px-4 font-extrabold"
+              className="inline-flex h-11 items-center gap-2 rounded-(--r-control) bg-surface-2 px-4 font-semibold"
             >
               <MessageCircle className="size-4" /> WhatsApp
             </a>
           )}
-          <a href={`mailto:${e.email}?subject=Your enquiry ${e.ref}`} className="inline-flex h-11 items-center gap-2 rounded-full bg-surface-2 px-4 font-extrabold">
+          <a href={`mailto:${e.email}?subject=Your enquiry ${e.ref}`} className="inline-flex h-11 items-center gap-2 rounded-(--r-control) bg-surface-2 px-4 font-semibold">
             <Mail className="size-4" /> {t("common.email")}
           </a>
         </div>
       </Card>
 
       {e.status === "converted" && e.project_id ? (
-        <Link href={`/app/projects/${e.project_id}`} className="font-extrabold text-accent-strong">
+        <Link href={`/app/projects/${e.project_id}`} className="font-semibold text-accent-strong">
           {t("projects.title")} →
         </Link>
       ) : (
@@ -181,7 +181,7 @@ export function EnquiryDetail({
           <Field label={t("projects.name")}>{(p) => <Input {...p} value={title} onChange={(ev) => setTitle(ev.target.value)} />}</Field>
           <Field label={t("projects.address")}>{(p) => <Input {...p} value={address} onChange={(ev) => setAddress(ev.target.value)} />}</Field>
           <div className="grid gap-2">
-            <span className="text-sm font-bold">{t("projects.template")}</span>
+            <span className="text-sm font-medium">{t("projects.template")}</span>
             <Chips value={templateId} onChange={setTemplateId} options={templates.map((x) => ({ value: x.id, label: x.name }))} />
             {tpl && <p className="text-sm text-ink-2">{tpl.stages.join(", ")}</p>}
           </div>

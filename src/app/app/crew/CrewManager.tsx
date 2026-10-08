@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, Link2, MessageCircle, Phone, Share2, UserPlus, Users } from "lucide-react";
+import { Check, ChevronRight, Copy, Link2, MessageCircle, Phone, Share2, UserPlus, Users } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
 import { formatInstantDate } from "@/lib/format";
 import { cn } from "@/lib/cn";
@@ -70,18 +70,18 @@ export function CrewManager({ me, people, invites, siteUrl }: { me: string; peop
 
   return (
     <>
-      <Button size="lg" icon={<UserPlus className="size-5" />} onClick={() => setInviteOpen(true)} className="justify-self-start">
+      <Button icon={<UserPlus className="size-4" />} onClick={() => setInviteOpen(true)} className="justify-self-start">
         {t("crew.inviteTitle")}
       </Button>
 
       {invites.length > 0 && (
         <section className="grid gap-2">
-          <h2 className="text-sm font-extrabold text-ink-2">{t("crew.pending")}</h2>
+          <h2 className="text-[15px] font-semibold">{t("crew.pending")}</h2>
           <Card className="divide-y divide-line">
             {invites.map((i) => (
               <div key={i.id} className="flex flex-wrap items-center gap-3 p-4">
-                <span className="flex size-10 items-center justify-center rounded-full bg-surface-2 text-ink-2">
-                  <Link2 className="size-5" />
+                <span className="flex size-9 items-center justify-center rounded-lg bg-surface-2 text-ink-2">
+                  <Link2 className="size-4" />
                 </span>
                 <div className="grid min-w-0 flex-1 gap-0.5">
                   <div className="flex flex-wrap gap-1.5">
@@ -119,26 +119,21 @@ export function CrewManager({ me, people, invites, siteUrl }: { me: string; peop
       )}
 
       <section className="grid gap-2">
-        <h2 className="text-sm font-extrabold text-ink-2">
-          {t("crew.people")} ({people.filter((p) => p.active).length})
+        <h2 className="text-[15px] font-semibold">
+          {t("crew.people")} <span className="tabular font-normal text-ink-2">{people.filter((p) => p.active).length}</span>
         </h2>
         {people.length === 0 ? (
           <EmptyState icon={<Users className="size-6" />} title={t("crew.noCrew")} />
         ) : (
           <Card className="divide-y divide-line overflow-hidden">
             {people.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setEditing(p)}
-                className={cn("flex w-full items-center gap-3 p-4 text-left hover:bg-surface-2", !p.active && "opacity-50")}
-              >
-                <Avatar name={p.full_name} size={44} />
-                <div className="grid min-w-0 flex-1 gap-1">
-                  <span className="truncate font-extrabold">
+              <div key={p.id} className={cn("relative flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2", !p.active && "opacity-50")}>
+                <Avatar name={p.full_name} size={36} />
+                <div className="grid min-w-0 flex-1 gap-1 sm:flex sm:items-center sm:gap-3">
+                  <button type="button" onClick={() => setEditing(p)} className="truncate text-left font-medium after:absolute after:inset-0 sm:w-56 sm:shrink-0">
                     {p.full_name}
-                    {p.id === me && <span className="ml-1.5 text-sm font-bold text-ink-2">({t("nav.me")})</span>}
-                  </span>
+                    {p.id === me && <span className="ml-1.5 text-sm font-normal text-ink-2">({t("nav.me")})</span>}
+                  </button>
                   <div className="flex flex-wrap gap-1.5">
                     <Badge tone={p.role === "admin" ? "accent" : "neutral"}>{t(`roles.${p.role}` as "roles.worker")}</Badge>
                     {p.skills.map((s) => (
@@ -150,14 +145,14 @@ export function CrewManager({ me, people, invites, siteUrl }: { me: string; peop
                 {p.phone && (
                   <a
                     href={`tel:${p.phone}`}
-                    onClick={(e) => e.stopPropagation()}
                     aria-label={`${t("common.call")} ${p.full_name}`}
-                    className="inline-flex size-11 items-center justify-center rounded-full bg-accent-soft text-accent-strong"
+                    className="relative z-10 inline-flex size-10 items-center justify-center rounded-(--r-control) text-ink-2 transition-colors hover:bg-accent-soft hover:text-accent-strong"
                   >
-                    <Phone className="size-5" />
+                    <Phone className="size-[18px]" />
                   </a>
                 )}
-              </button>
+                <ChevronRight className="size-4 shrink-0 text-ink-2" />
+              </div>
             ))}
           </Card>
         )}
@@ -182,7 +177,7 @@ export function CrewManager({ me, people, invites, siteUrl }: { me: string; peop
       >
         {link ? (
           <div className="grid gap-3">
-            <div className="break-all rounded-xl bg-surface-2 p-3 font-mono text-sm">{link}</div>
+            <div className="break-all rounded-lg bg-surface-2 p-3 font-mono text-[13px]">{link}</div>
             <div className="grid grid-cols-3 gap-2">
               <Button variant="secondary" icon={copied ? <Check className="size-4" /> : <Copy className="size-4" />} onClick={() => copy(link)}>
                 {copied ? t("common.copied") : t("common.copy")}
@@ -194,7 +189,7 @@ export function CrewManager({ me, people, invites, siteUrl }: { me: string; peop
                 href={`https://wa.me/?text=${encodeURIComponent(shareText(link))}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 text-[15px] font-bold text-[#0b2e17]"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-(--r-control) bg-[#25D366] px-4 text-sm font-semibold text-[#0b2e17]"
               >
                 <MessageCircle className="size-4" /> {t("crew.whatsapp")}
               </a>
@@ -203,15 +198,15 @@ export function CrewManager({ me, people, invites, siteUrl }: { me: string; peop
         ) : (
           <div className="grid gap-5">
             <div className="grid gap-2">
-              <span className="text-sm font-bold">{t("crew.role")}</span>
+              <span className="text-sm font-medium">{t("crew.role")}</span>
               <Chips value={role} onChange={setRole} options={roles} />
             </div>
             <div className="grid gap-2">
-              <span className="text-sm font-bold">{t("crew.skills")}</span>
+              <span className="text-sm font-medium">{t("crew.skills")}</span>
               <Chips multiple value={skills} onChange={setSkills} options={skillOptions} />
             </div>
             <div className="grid gap-2">
-              <span className="text-sm font-bold">{t("crew.expires")}</span>
+              <span className="text-sm font-medium">{t("crew.expires")}</span>
               <Chips
                 value={days}
                 onChange={setDays}
@@ -223,7 +218,7 @@ export function CrewManager({ me, people, invites, siteUrl }: { me: string; peop
               />
             </div>
             <div className="grid gap-2">
-              <span className="text-sm font-bold">{t("crew.uses")}</span>
+              <span className="text-sm font-medium">{t("crew.uses")}</span>
               <Chips
                 value={uses}
                 onChange={setUses}
@@ -283,11 +278,11 @@ function MemberSheet({ person, me, onClose }: { person: Person | null; me: strin
     >
       <div className="grid gap-5">
         <div className="grid gap-2">
-          <span className="text-sm font-bold">{t("crew.role")}</span>
+          <span className="text-sm font-medium">{t("crew.role")}</span>
           <Chips value={r} onChange={setR} options={roles} />
         </div>
         <div className="grid gap-2">
-          <span className="text-sm font-bold">{t("crew.skills")}</span>
+          <span className="text-sm font-medium">{t("crew.skills")}</span>
           <Chips multiple value={s} onChange={setS} options={skillOptions} />
         </div>
         {person?.id !== me && <Switch checked={active} onChange={setActive} label={t("crew.active")} />}

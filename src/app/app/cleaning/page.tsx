@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { CalendarDays, ClipboardList, MessageSquareQuote, Sparkles } from "lucide-react";
+import { CalendarDays, ChevronRight, ClipboardList, MessageSquareQuote, Sparkles } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getServerT } from "@/lib/i18n/server";
 import { formatHours, formatMoney, formatTime, todayPerth } from "@/lib/format";
 import { BOOKING_TONE } from "@/lib/bookings/ui";
-import { Badge, EmptyState, PageHeader } from "@/components/ui/Display";
+import { Badge, Card, EmptyState, PageHeader } from "@/components/ui/Display";
+import { cn } from "@/lib/cn";
 import { Segmented } from "@/components/ui/Segmented";
 import { ButtonLink } from "@/components/ui/Button";
 
@@ -40,7 +41,7 @@ export default async function CleaningPage({ searchParams }: { searchParams: Pro
   const today = todayPerth();
 
   return (
-    <div className="grid gap-5">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-5">
       <PageHeader
         title={t("cleaning.title")}
         actions={
@@ -67,39 +68,30 @@ export default async function CleaningPage({ searchParams }: { searchParams: Pro
       {!bookings?.length ? (
         <EmptyState icon={<Sparkles className="size-6" />} title={t("cleaning.empty")} />
       ) : (
-        <div className="grid gap-3 md:grid-cols-2">
+        <Card className="divide-y divide-line overflow-hidden">
           {bookings.map((b) => {
             const d = new Date(`${b.service_date}T12:00:00+08:00`);
+            const intl = locale === "es" ? "es-AR" : "en-AU";
             const isToday = b.service_date === today;
             return (
-              <Link
-                key={b.id}
-                href={`/app/cleaning/${b.id}`}
-                className="flex gap-4 rounded-2xl border border-line bg-surface p-4 shadow-soft transition hover:border-ink-2/30 active:scale-[0.99]"
-              >
+              <Link key={b.id} href={`/app/cleaning/${b.id}`} className="group flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-surface-2 sm:px-5">
                 <div
-                  className={`flex w-14 shrink-0 flex-col items-center justify-center rounded-xl py-2 ${isToday ? "bg-accent-strong text-accent-ink" : "bg-surface-2"}`}
+                  className={cn(
+                    "flex w-12 shrink-0 flex-col items-center rounded-lg py-1.5 leading-none",
+                    isToday ? "bg-accent-strong text-accent-ink" : "bg-surface-2 text-ink",
+                  )}
                 >
-                  <span className="text-[11px] font-extrabold uppercase opacity-80">
-                    {d.toLocaleDateString(locale === "es" ? "es-AR" : "en-AU", { weekday: "short", timeZone: "Australia/Perth" })}
+                  <span className="text-[10px] font-medium uppercase tracking-wide opacity-75">
+                    {d.toLocaleDateString(intl, { weekday: "short", timeZone: "Australia/Perth" })}
                   </span>
-                  <span className="tabular text-2xl font-extrabold leading-none">{d.getUTCDate()}</span>
-                  <span className="text-[11px] font-bold opacity-80">
-                    {d.toLocaleDateString(locale === "es" ? "es-AR" : "en-AU", { month: "short", timeZone: "Australia/Perth" })}
+                  <span className="tabular my-0.5 text-lg font-semibold">{d.getUTCDate()}</span>
+                  <span className="text-[10px] font-medium opacity-75">
+                    {d.toLocaleDateString(intl, { month: "short", timeZone: "Australia/Perth" })}
                   </span>
                 </div>
-                <div className="grid min-w-0 flex-1 gap-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="truncate font-extrabold">{b.client_name}</span>
-                    <span className="tabular shrink-0 font-extrabold">{formatMoney(b.final_price)}</span>
-                  </div>
-                  <span className="truncate text-sm text-ink-2">
-                    {(b.clean_types as { name: string } | null)?.name}, {b.suburb}
-                  </span>
-                  <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                    <span className="tabular text-sm font-bold">
-                      {formatTime(b.start_time, locale)} · {b.final_crew} × {formatHours(b.final_hours)}
-                    </span>
+                <div className="grid min-w-0 flex-1 gap-0.5">
+                  <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="max-w-full truncate font-medium">{b.client_name}</span>
                     {tab === "past" && <Badge tone={BOOKING_TONE[b.status]}>{t(`bookingStatus.${b.status}`)}</Badge>}
                     {b.suggestion && b.status === "requested" && (
                       <Badge tone="attention">
@@ -107,11 +99,20 @@ export default async function CleaningPage({ searchParams }: { searchParams: Pro
                       </Badge>
                     )}
                   </div>
+                  <span className="truncate text-sm text-ink-2">
+                    <span className="tabular sm:hidden">{formatTime(b.start_time, locale)} · </span>
+                    {(b.clean_types as { name: string } | null)?.name}, {b.suburb}
+                  </span>
                 </div>
+                <span className="tabular hidden w-40 shrink-0 text-sm text-ink-2 sm:block">
+                  {formatTime(b.start_time, locale)} · {b.final_crew} × {formatHours(b.final_hours)}
+                </span>
+                <span className="tabular w-16 shrink-0 text-right font-medium">{formatMoney(b.final_price)}</span>
+                <ChevronRight className="hidden size-4 shrink-0 text-ink-2 sm:block" />
               </Link>
             );
           })}
-        </div>
+        </Card>
       )}
     </div>
   );

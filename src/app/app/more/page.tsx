@@ -30,10 +30,10 @@ export default async function MorePage() {
       {groups.map((items, i) => (
         <Card key={i} className="divide-y divide-line overflow-hidden">
           {items.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} className="flex h-14 items-center gap-3 px-4 font-bold hover:bg-surface-2">
-              <Icon className="size-5 text-accent-strong" />
-              <span className="flex-1">{label}</span>
-              <ChevronRight className="size-5 text-ink-2" />
+            <Link key={href} href={href} className="flex h-13 items-center gap-3 px-4 transition-colors hover:bg-surface-2">
+              <Icon className="size-[18px] text-ink-2" />
+              <span className="flex-1 font-medium">{label}</span>
+              <ChevronRight className="size-4 text-ink-2" />
             </Link>
           ))}
         </Card>

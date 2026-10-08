@@ -11,9 +11,9 @@ export default function ResetPasswordPage() {
   const [state, action, pending] = useActionState(updatePassword, null);
   return (
     <form action={action} className="grid gap-5">
-      <h1 className="text-3xl font-extrabold tracking-tight">{t("auth.newPassword")}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{t("auth.newPassword")}</h1>
       {state?.error && (
-        <p role="alert" className="rounded-2xl bg-danger-soft px-4 py-3 font-bold text-danger">
+        <p role="alert" className="rounded-(--r-card) bg-danger-soft px-4 py-3 font-medium text-danger">
           {state.error === "short" ? t("auth.passwordHint") : t("common.error")}
         </p>
       )}

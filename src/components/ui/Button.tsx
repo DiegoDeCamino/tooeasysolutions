@@ -6,21 +6,21 @@ type Variant = "primary" | "secondary" | "ghost" | "danger" | "ink";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-bold whitespace-nowrap select-none transition " +
+  "inline-flex items-center justify-center gap-2 rounded-(--r-control) font-semibold whitespace-nowrap select-none transition " +
   "active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 const variants: Record<Variant, string> = {
   primary: "bg-accent-strong text-accent-ink shadow-soft hover:brightness-110",
-  secondary: "bg-surface text-ink border border-line hover:bg-surface-2",
-  ghost: "text-ink hover:bg-surface-2",
+  secondary: "bg-surface text-ink border border-line shadow-soft hover:bg-surface-2",
+  ghost: "text-ink-2 hover:bg-surface-2 hover:text-ink",
   danger: "bg-danger-soft text-danger hover:brightness-95",
   ink: "bg-ink text-canvas hover:opacity-90",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-sm",
-  md: "h-11 px-5 text-[15px]",
-  lg: "h-[52px] px-6 text-base",
+  sm: "h-9 px-3 text-sm",
+  md: "h-10 px-4 text-sm",
+  lg: "h-12 px-5 text-[15px]",
 };
 
 export function buttonClass({
@@ -71,7 +71,7 @@ export function ButtonLink({ variant, size, block, icon, className, children, ..
   );
 }
 
-/** Round icon-only button with a 44px hit area. */
+/** Icon-only button with a 44px hit area. */
 export function IconButton({
   label,
   className,
@@ -84,7 +84,7 @@ export function IconButton({
       aria-label={label}
       title={label}
       className={cn(
-        "inline-flex size-11 items-center justify-center rounded-full text-ink transition hover:bg-surface-2 active:scale-95",
+        "inline-flex size-11 items-center justify-center rounded-(--r-control) text-ink-2 transition hover:bg-surface-2 hover:text-ink active:scale-95",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40",
         className,
       )}

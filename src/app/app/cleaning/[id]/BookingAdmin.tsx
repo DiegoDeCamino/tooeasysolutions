@@ -23,7 +23,7 @@ import { formatDateLong, formatHours, formatMoney, formatTime, timeAgo } from "@
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/cn";
 import { AvatarStack, Badge, Card, PageHeader } from "@/components/ui/Display";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonClass } from "@/components/ui/Button";
 import { Field, Textarea } from "@/components/ui/Field";
 import { Stepper } from "@/components/ui/Stepper";
 import { Sheet } from "@/components/ui/Sheet";
@@ -141,7 +141,7 @@ export function BookingAdmin({
         subtitle={
           <span className="flex flex-wrap items-center gap-2">
             <Badge tone={BOOKING_TONE[b.status]}>{t(`bookingStatus.${b.status}`)}</Badge>
-            <span className="tabular text-sm font-bold">
+            <span className="tabular text-sm text-ink-2">
               {t("cleaning.ref")} {b.ref}
             </span>
           </span>
@@ -151,7 +151,7 @@ export function BookingAdmin({
             href={`${siteUrl}/b/${b.token}`}
             target="_blank"
             rel="noreferrer"
-            className="hidden h-10 items-center gap-1.5 rounded-full border border-line bg-surface px-4 text-sm font-bold sm:inline-flex"
+            className={buttonClass({ variant: "secondary", size: "sm", className: "max-sm:hidden" })}
           >
             {t("cleaning.openClientPage")} <ExternalLink className="size-4" />
           </a>
@@ -161,11 +161,11 @@ export function BookingAdmin({
       <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid gap-5">
           {b.sugg && b.status === "requested" && (
-            <div className="grid gap-3 rounded-2xl border border-attention/30 bg-attention-soft p-5">
-              <div className="flex items-center gap-2 font-extrabold text-attention">
-                <MessageSquareQuote className="size-5" /> {t("cleaning.suggestion")}
+            <div className="grid gap-2.5 rounded-(--r-card) border border-attention/25 bg-attention-soft p-5">
+              <div className="flex items-center gap-2 text-sm font-medium text-attention">
+                <MessageSquareQuote className="size-4" /> {t("cleaning.suggestion")}
               </div>
-              <p className="text-lg font-extrabold text-ink">
+              <p className="text-lg font-semibold text-ink">
                 {b.sugg.crew && (b.sugg.crew === 1 ? t("cleaning.person") : t("cleaning.people", { n: b.sugg.crew }))}
                 {b.sugg.hours ? ` × ${formatHours(b.sugg.hours)}` : ""}
               </p>
@@ -181,7 +181,7 @@ export function BookingAdmin({
           <Card className="grid gap-px overflow-hidden bg-line sm:grid-cols-2">
             <Info icon={CalendarDays} label={t("cleaning.when")}>
               {formatDateLong(b.service_date, locale)}, {formatTime(b.start_time, locale)}
-              {b.flexible && <span className="block text-sm font-semibold text-accent-strong">{t("cleaning.flexible")}</span>}
+              {b.flexible && <span className="block text-sm font-medium text-accent-strong">{t("cleaning.flexible")}</span>}
             </Info>
             <Info icon={MapPin} label={t("projects.address")}>
               <a className="underline-offset-4 hover:underline" href={`https://maps.google.com/?q=${encodeURIComponent(`${b.address}, ${b.suburb}, WA`)}`} target="_blank" rel="noreferrer">
@@ -190,11 +190,11 @@ export function BookingAdmin({
             </Info>
             <Info icon={Sparkles} label={t("cleaning.service")}>
               {b.cleanTypeName}
-              {b.addonNames.length > 0 && <span className="block text-sm font-semibold text-ink-2">+ {b.addonNames.join(", ")}</span>}
+              {b.addonNames.length > 0 && <span className="block text-sm font-medium text-ink-2">+ {b.addonNames.join(", ")}</span>}
             </Info>
             <Info icon={Home} label={t("cleaning.home")}>
               {b.bedrooms} {t("cleaning.bedrooms").toLowerCase()}, {b.bathrooms} {t("cleaning.bathrooms").toLowerCase()}
-              <span className="block text-sm font-semibold text-ink-2">
+              <span className="block text-sm font-medium text-ink-2">
                 {[
                   b.sqm ? `${b.sqm} m²` : t("cleaning.unknownArea"),
                   b.levels > 1 && `${b.levels} ${t("cleaning.levels").toLowerCase()}`,
@@ -211,13 +211,13 @@ export function BookingAdmin({
             <Card className="grid gap-3 p-5">
               {b.access_notes && (
                 <div>
-                  <p className="text-sm font-bold text-ink-2">{t("cleaning.access")}</p>
+                  <p className="text-sm font-medium text-ink-2">{t("cleaning.access")}</p>
                   <p className="whitespace-pre-line">{b.access_notes}</p>
                 </div>
               )}
               {b.notes && (
                 <div>
-                  <p className="text-sm font-bold text-ink-2">{t("common.notes")}</p>
+                  <p className="text-sm font-medium text-ink-2">{t("common.notes")}</p>
                   <p className="whitespace-pre-line">{b.notes}</p>
                 </div>
               )}
@@ -225,37 +225,37 @@ export function BookingAdmin({
           )}
 
           <Card className="p-5">
-            <h2 className="mb-2 font-extrabold">{t("cleaning.client")}</h2>
-            <p className="font-bold">{b.client_name}</p>
+            <h2 className="mb-3 text-[15px] font-semibold">{t("cleaning.client")}</h2>
+            <p className="font-medium">{b.client_name}</p>
             <p className="text-sm text-ink-2">
               {b.client_email}
               {b.client_phone ? `, ${b.client_phone}` : ""}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {b.client_phone && (
-                <a href={`tel:${b.client_phone}`} className="inline-flex h-10 items-center gap-1.5 rounded-full bg-accent-soft px-4 text-sm font-extrabold text-accent-strong">
+                <a href={`tel:${b.client_phone}`} className={buttonClass({ variant: "secondary", size: "sm" })}>
                   <Phone className="size-4" /> {t("common.call")}
                 </a>
               )}
-              <a href={`mailto:${b.client_email}`} className="inline-flex h-10 items-center gap-1.5 rounded-full bg-surface-2 px-4 text-sm font-extrabold">
+              <a href={`mailto:${b.client_email}`} className={buttonClass({ variant: "secondary", size: "sm" })}>
                 <Mail className="size-4" /> {t("common.email")}
               </a>
             </div>
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-3 font-extrabold">{t("cleaning.timeline")}</h2>
+            <h2 className="mb-4 text-[15px] font-semibold">{t("cleaning.timeline")}</h2>
             <ol className="grid gap-3">
               {events.map((e) => (
                 <li key={e.id} className="flex gap-3">
-                  <span className="mt-2 size-2 shrink-0 rounded-full bg-accent" aria-hidden />
+                  <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
                   <div className="grid gap-0.5">
-                    <span className="text-sm font-extrabold">
+                    <span className="text-sm font-medium">
                       {e.kind === "edited" ? t("cleaning.edited") : STATUSES.includes(e.kind) ? t(`bookingStatus.${e.kind}` as "bookingStatus.requested") : e.kind}
-                      {e.actor && <span className="font-semibold text-ink-2"> · {e.actor}</span>}
+                      {e.actor && <span className="font-medium text-ink-2"> · {e.actor}</span>}
                     </span>
                     {e.message && <span className="text-sm text-ink-2">{e.message}</span>}
-                    <span suppressHydrationWarning className="text-xs font-semibold text-ink-2">{timeAgo(e.at, locale)}</span>
+                    <span suppressHydrationWarning className="text-xs font-medium text-ink-2">{timeAgo(e.at, locale)}</span>
                   </div>
                 </li>
               ))}
@@ -266,27 +266,27 @@ export function BookingAdmin({
         <aside className="grid gap-5 lg:sticky lg:top-8">
           <Card className="grid gap-4 p-5">
             <div className="flex items-baseline justify-between gap-2">
-              <h2 className="font-extrabold">{editable ? t("cleaning.finalQuote") : t("cleaning.price")}</h2>
-              <span className="tabular text-sm font-bold text-ink-2">
+              <h2 className="text-[15px] font-semibold">{editable ? t("cleaning.finalQuote") : t("cleaning.price")}</h2>
+              <span className="tabular text-sm font-medium text-ink-2">
                 {t("cleaning.totalWork")} {formatHours(labour)}
               </span>
             </div>
-            <label className="flex h-16 items-center rounded-2xl border border-line bg-surface-2/50 px-4 focus-within:border-accent">
-              <span className="text-2xl font-extrabold text-ink-2">$</span>
+            <label className="flex h-14 items-center rounded-(--r-field) border border-line bg-surface px-3.5 transition focus-within:border-accent focus-within:ring-3 focus-within:ring-accent/15">
+              <span className="text-xl text-ink-2">$</span>
               <input
                 inputMode="decimal"
                 aria-label={t("cleaning.price")}
                 disabled={!editable}
                 value={price}
                 onChange={(e) => setPrice(e.target.value.replace(/[^\d.]/g, ""))}
-                className="tabular w-full bg-transparent pl-1 text-3xl font-extrabold text-ink outline-none disabled:opacity-80"
+                className="tabular w-full bg-transparent pl-1 text-2xl font-semibold text-ink outline-none disabled:opacity-80"
               />
               {editable && recalc && Number(price) !== recalc.price && (
                 <button
                   type="button"
                   onClick={() => setPrice(String(recalc.price))}
                   title={t("cleaning.recalc")}
-                  className="inline-flex h-9 shrink-0 items-center gap-1 rounded-full bg-surface px-3 text-xs font-extrabold text-accent-strong shadow-soft"
+                  className="inline-flex h-8 shrink-0 items-center gap-1 rounded-lg bg-accent-soft px-2.5 text-xs font-medium text-accent-strong transition hover:brightness-95"
                 >
                   <RotateCcw className="size-3.5" /> {formatMoney(recalc.price)}
                 </button>
@@ -307,7 +307,7 @@ export function BookingAdmin({
             </div>
             {crewOnShift && (
               <div className="flex items-center justify-between rounded-xl bg-surface-2 p-3">
-                <span className="text-sm font-bold">{t("shifts.spots", { taken: crewOnShift.names.length, spots: crewOnShift.spots })}</span>
+                <span className="text-sm font-medium">{t("shifts.spots", { taken: crewOnShift.names.length, spots: crewOnShift.spots })}</span>
                 <AvatarStack names={crewOnShift.names} />
               </div>
             )}
@@ -323,7 +323,7 @@ export function BookingAdmin({
               </Button>
             )}
             {b.status === "awaiting_payment" && (
-              <p className="rounded-xl bg-attention-soft p-3 text-sm font-bold text-attention">{t("cleaning.paymentPending")}</p>
+              <p className="rounded-lg bg-attention-soft p-3 text-sm text-attention">{t("cleaning.paymentPending")}</p>
             )}
           </Card>
 
@@ -406,11 +406,11 @@ function SecondaryActions({
 
 function Info({ icon: Icon, label, children }: { icon: React.ComponentType<{ className?: string }>; label: string; children: React.ReactNode }) {
   return (
-    <div className="flex gap-3 bg-surface p-4">
-      <Icon className="mt-0.5 size-5 shrink-0 text-accent-strong" />
+    <div className="flex gap-3 bg-surface p-4 sm:p-5">
+      <Icon className="mt-0.5 size-[18px] shrink-0 text-ink-2" />
       <div className="grid gap-0.5">
-        <span className="text-[13px] font-bold text-ink-2">{label}</span>
-        <span className="font-extrabold">{children}</span>
+        <span className="text-[13px] text-ink-2">{label}</span>
+        <span className="font-medium">{children}</span>
       </div>
     </div>
   );

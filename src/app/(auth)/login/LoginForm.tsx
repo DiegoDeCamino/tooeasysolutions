@@ -19,10 +19,10 @@ export function LoginForm({ next, denied }: { next?: string; denied?: boolean })
     return (
       <form action={resetAction} className="grid gap-5">
         <div className="grid gap-1.5">
-          <h1 className="text-3xl font-extrabold tracking-tight">{t("auth.forgot")}</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">{t("auth.forgot")}</h1>
         </div>
         {resetState?.resetSent ? (
-          <p className="rounded-2xl bg-accent-soft p-4 text-[15px] font-semibold text-ink">{t("auth.resetSent")}</p>
+          <p className="rounded-(--r-card) bg-accent-soft p-4 text-[15px] font-medium text-ink">{t("auth.resetSent")}</p>
         ) : (
           <>
             <Field label={t("auth.email")}>
@@ -43,11 +43,11 @@ export function LoginForm({ next, denied }: { next?: string; denied?: boolean })
   return (
     <form action={loginAction} className="grid gap-5">
       <div className="grid gap-1.5">
-        <h1 className="text-3xl font-extrabold tracking-tight">{t("auth.signInTitle")}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{t("auth.signInTitle")}</h1>
         <p className="text-ink-2">{t("auth.signInSub")}</p>
       </div>
       {error && (
-        <p role="alert" className="rounded-2xl bg-danger-soft px-4 py-3 text-[15px] font-bold text-danger">
+        <p role="alert" className="rounded-(--r-card) bg-danger-soft px-4 py-3 text-[15px] font-medium text-danger">
           {error}
         </p>
       )}
@@ -61,7 +61,7 @@ export function LoginForm({ next, denied }: { next?: string; denied?: boolean })
       <Button type="submit" size="lg" block loading={loggingIn}>
         {t("auth.signIn")}
       </Button>
-      <button type="button" onClick={() => setMode("reset")} className="justify-self-center text-sm font-bold text-ink-2 underline-offset-4 hover:underline">
+      <button type="button" onClick={() => setMode("reset")} className="justify-self-center text-sm font-medium text-ink-2 underline-offset-4 hover:underline">
         {t("auth.forgot")}
       </button>
     </form>

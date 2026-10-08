@@ -48,6 +48,9 @@ export const en = {
     pricing: "Pricing",
     templates: "Stage templates",
     notifications: "Notifications",
+    bookings: "Bookings",
+    carpentry: "Carpentry",
+    manage: "Manage",
   },
   roles: {
     admin: "Admin",
@@ -375,6 +378,10 @@ export const en = {
   },
   me: {
     title: "Me",
+    theme: "Appearance",
+    theme_light: "Light",
+    theme_dark: "Dark",
+    theme_system: "System",
     profile: "Profile",
     language: "Language",
     notifications: "Notifications",

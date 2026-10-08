@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Camera, Clock, MapPin, Package, Plus, Receipt } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
 import { formatDate } from "@/lib/format";
-import { Badge, PageHeader, ProgressRing, type Tone } from "@/components/ui/Display";
+import { Badge, PageHeader, ProgressBar, type Tone } from "@/components/ui/Display";
+import { buttonClass } from "@/components/ui/Button";
 import { Segmented } from "@/components/ui/Segmented";
 import { Sheet } from "@/components/ui/Sheet";
 import { FeedTab, MaterialsTab, MoneyTab, SettingsTab, StagesTab, TeamTab } from "./tabs";
@@ -87,10 +88,10 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
   const close = () => setQuick(null);
 
   return (
-    <div className="grid gap-5 pb-20 lg:pb-0">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-5 pb-20 lg:pb-0">
       <PageHeader back="/app/projects" title={p.title} />
 
-      <section className="grid overflow-hidden rounded-2xl border border-line bg-surface shadow-soft md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+      <section className="grid overflow-hidden rounded-(--r-card) border border-line bg-surface shadow-soft md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <div className="relative aspect-[16/9] bg-surface-2 md:aspect-auto md:min-h-56">
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -102,30 +103,30 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
           )}
         </div>
         <div className="grid content-center gap-4 p-5">
-          <div className="flex items-center gap-4">
-            <ProgressRing value={stages.length ? done / stages.length : 0} size={68} stroke={7} />
-            <div className="grid gap-1">
-              <Badge tone={STATUS_TONE[p.status]} className="justify-self-start">
-                {t(`projectStatus.${p.status}`)}
-              </Badge>
-              <span className="font-extrabold">{current ? current.name : t("projects.progress", { done, total: stages.length })}</span>
-              <span className="tabular text-sm text-ink-2">{t("projects.progress", { done, total: stages.length })}</span>
+          <div className="grid gap-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="grid gap-0.5">
+                <span className="text-[13px] text-ink-2">{t("projects.stages")}</span>
+                <span className="text-lg font-semibold leading-snug">{current ? current.name : t("projects.progress", { done, total: stages.length })}</span>
+              </div>
+              <Badge tone={STATUS_TONE[p.status]}>{t(`projectStatus.${p.status}`)}</Badge>
             </div>
+            <ProgressBar value={stages.length ? done / stages.length : 0} label={t("projects.progress", { done, total: stages.length })} />
           </div>
-          <div className="grid gap-1.5 text-sm">
-            {p.client_name && <span className="font-bold">{p.client_name}</span>}
+          <div className="grid gap-1.5 border-t border-line pt-4 text-sm">
+            {p.client_name && <span className="font-medium">{p.client_name}</span>}
             {p.address && (
               <a
                 href={`https://maps.google.com/?q=${encodeURIComponent(p.address + ", WA")}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 font-semibold text-ink-2 hover:text-ink"
+                className="flex items-center gap-1.5 text-ink-2 hover:text-ink"
               >
                 <MapPin className="size-4" /> {p.address}
               </a>
             )}
             {(p.start_date || p.due_date) && (
-              <span className="tabular font-semibold text-ink-2">
+              <span className="tabular text-ink-2">
                 {p.start_date && `${t("projects.start")} ${formatDate(p.start_date, locale)}`}
                 {p.start_date && p.due_date && " · "}
                 {p.due_date && `${t("projects.due")} ${formatDate(p.due_date, locale)}`}
@@ -140,9 +141,9 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
         <button
           type="button"
           onClick={() => setMenu(true)}
-          className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-accent-strong px-5 font-extrabold text-accent-ink shadow-soft lg:inline-flex"
+          className={buttonClass({ className: "shrink-0 max-lg:hidden" })}
         >
-          <Plus className="size-5" /> {t("projects.quickAdd")}
+          <Plus className="size-4" /> {t("projects.quickAdd")}
         </button>
       </div>
 
@@ -175,13 +176,13 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
                   setMenu(false);
                   setQuick(key);
                 }}
-                className="flex items-center gap-4 rounded-2xl border border-line p-4 text-left transition hover:bg-surface-2 active:scale-[0.99]"
+                className="flex items-center gap-3.5 rounded-(--r-card) border border-line p-3.5 text-left transition hover:bg-surface-2 active:scale-[0.99]"
               >
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-strong">
-                  <Icon className="size-6" />
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+                  <Icon className="size-5" />
                 </span>
                 <span className="grid gap-0.5">
-                  <span className="font-extrabold">{label}</span>
+                  <span className="font-medium">{label}</span>
                   <span className="text-sm text-ink-2">{hint}</span>
                 </span>
               </button>

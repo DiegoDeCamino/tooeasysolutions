@@ -13,8 +13,8 @@ export default async function JoinPage({ params }: { params: Promise<{ token: st
   if (!invite) {
     return (
       <div className="grid gap-3">
-        <h1 className="text-3xl font-extrabold tracking-tight">{t("auth.joinTitle")}</h1>
-        <p className="rounded-2xl bg-attention-soft p-4 font-semibold text-ink">{t("auth.inviteInvalid")}</p>
+        <h1 className="text-3xl font-semibold tracking-tight">{t("auth.joinTitle")}</h1>
+        <p className="rounded-(--r-card) bg-attention-soft p-4 font-medium text-ink">{t("auth.inviteInvalid")}</p>
       </div>
     );
   }

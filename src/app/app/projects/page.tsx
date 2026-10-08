@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Hammer, Inbox, Plus } from "lucide-react";
+import { ChevronRight, Hammer, Inbox, Plus } from "lucide-react";
 import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getServerT } from "@/lib/i18n/server";
 import { loadProjectCards } from "@/lib/projects";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/cn";
-import { AvatarStack, Badge, EmptyState, PageHeader, ProgressRing, type Tone } from "@/components/ui/Display";
+import { AvatarStack, Badge, EmptyState, PageHeader, ProgressBar, type Tone } from "@/components/ui/Display";
 import { ButtonLink } from "@/components/ui/Button";
 import { Segmented } from "@/components/ui/Segmented";
 
@@ -27,7 +27,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
   ]);
 
   return (
-    <div className="grid gap-5">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-5">
       <PageHeader
         title={t("projects.title")}
         actions={
@@ -41,14 +41,23 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       {isAdmin && (
         <Link
           href="/app/projects/enquiries"
-          className={cn(
-            "flex items-center gap-3 rounded-2xl border p-4 font-extrabold transition active:scale-[0.99]",
-            newEnquiries.count ? "border-attention/30 bg-attention-soft" : "border-line bg-surface",
-          )}
+          className="flex items-center gap-3 rounded-(--r-card) border border-line bg-surface px-4 py-3 shadow-soft transition-colors hover:bg-surface-2"
         >
-          <Inbox className={cn("size-5", newEnquiries.count ? "text-attention" : "text-ink-2")} />
-          <span className="flex-1">{t("projects.enquiries")}</span>
-          {!!newEnquiries.count && <span className="tabular rounded-full bg-attention px-2.5 text-sm leading-6 text-white">{newEnquiries.count}</span>}
+          <span
+            className={cn(
+              "inline-flex size-8 items-center justify-center rounded-lg",
+              newEnquiries.count ? "bg-attention-soft text-attention" : "bg-surface-2 text-ink-2",
+            )}
+          >
+            <Inbox className="size-4" />
+          </span>
+          <span className="flex-1 text-sm font-medium">{t("projects.enquiries")}</span>
+          {!!newEnquiries.count && (
+            <span className="tabular inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-attention px-1.5 text-[11px] font-semibold text-attention-ink">
+              {newEnquiries.count}
+            </span>
+          )}
+          <ChevronRight className="size-4 text-ink-2" />
         </Link>
       )}
       <Segmented
@@ -66,31 +75,33 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
             <Link
               key={p.id}
               href={`/app/projects/${p.id}`}
-              className="group overflow-hidden rounded-2xl border border-line bg-surface shadow-soft transition hover:border-ink-2/30 active:scale-[0.99]"
+              className="group overflow-hidden rounded-(--r-card) border border-line bg-surface shadow-soft transition hover:border-ink-2/30"
             >
               <div className="relative aspect-[16/9] bg-surface-2">
                 {p.coverUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={p.coverUrl} alt="" className="size-full object-cover transition duration-500 group-hover:scale-[1.03]" />
                 ) : (
-                  <div className="flex size-full items-center justify-center text-ink-2">
+                  <div className="flex size-full items-center justify-center text-ink-2/60">
                     <Hammer className="size-8" />
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-4 p-4">
-                <div className="grid min-w-0 flex-1 gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate font-extrabold">{p.title}</span>
+              <div className="grid gap-3 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="grid min-w-0 gap-0.5">
+                    <span className="truncate font-medium">{p.title}</span>
+                    <span className="truncate text-sm text-ink-2">{p.currentStage ?? t("projects.progress", { done: p.done, total: p.total })}</span>
                   </div>
-                  <span className="truncate text-sm text-ink-2">{p.currentStage ?? t("projects.progress", { done: p.done, total: p.total })}</span>
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
-                    <Badge tone={TONE[p.status]}>{t(`projectStatus.${p.status}`)}</Badge>
-                    {p.due_date && <span className="text-xs font-bold text-ink-2">{t("projects.due")} {formatDate(p.due_date, locale)}</span>}
+                  <Badge tone={TONE[p.status]}>{t(`projectStatus.${p.status}`)}</Badge>
+                </div>
+                <ProgressBar value={p.total ? p.done / p.total : 0} label={`${p.done}/${p.total}`} />
+                {(p.due_date || p.members.length > 0) && (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-ink-2">{p.due_date && `${t("projects.due")} ${formatDate(p.due_date, locale)}`}</span>
                     {p.members.length > 0 && <AvatarStack names={p.members} size={24} />}
                   </div>
-                </div>
-                <ProgressRing value={p.total ? p.done / p.total : 0} size={54} />
+                )}
               </div>
             </Link>
           ))}

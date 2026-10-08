@@ -17,7 +17,7 @@ export function JoinForm({ token, role, skills }: { token: string; role: string;
   return (
     <form action={action} className="grid gap-5">
       <div className="grid gap-2">
-        <h1 className="text-3xl font-extrabold tracking-tight">{t("auth.joinTitle")}</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{t("auth.joinTitle")}</h1>
         <p className="text-ink-2">{t("auth.joinSub")}</p>
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <Badge tone="accent">{t("auth.joinAs", { role: roleLabel })}</Badge>
@@ -28,7 +28,7 @@ export function JoinForm({ token, role, skills }: { token: string; role: string;
       </div>
 
       {state?.error && (
-        <p role="alert" className="rounded-2xl bg-danger-soft px-4 py-3 font-bold text-danger">
+        <p role="alert" className="rounded-(--r-card) bg-danger-soft px-4 py-3 font-medium text-danger">
           {state.error === "invite" ? t("auth.inviteInvalid") : state.error === "emailTaken" ? t("auth.emailTaken") : t("common.error")}
           {state.error === "emailTaken" && (
             <Link href="/login" className="ml-2 underline">

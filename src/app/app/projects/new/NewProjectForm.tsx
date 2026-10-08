@@ -56,7 +56,7 @@ export function NewProjectForm({ templates }: { templates: { id: string; name: s
       <Card className="grid gap-5 p-5">
         <Field label={t("projects.name")}>{(p) => <Input {...p} required value={f.title} onChange={(e) => set("title")(e.target.value)} />}</Field>
         <div className="grid gap-2">
-          <span className="text-sm font-bold">{t("projects.category_")}</span>
+          <span className="text-sm font-medium">{t("projects.category_")}</span>
           <Chips value={f.category} onChange={set("category")} options={CATEGORIES} />
         </div>
         <Field label={t("projects.description")} optional={t("common.optional")}>
@@ -70,7 +70,7 @@ export function NewProjectForm({ templates }: { templates: { id: string; name: s
       </Card>
 
       <Card className="grid gap-5 p-5">
-        <h2 className="font-extrabold">{t("projects.client")}</h2>
+        <h2 className="font-semibold">{t("projects.client")}</h2>
         <Field label={t("auth.fullName")}>{(p) => <Input {...p} value={f.client_name} onChange={(e) => set("client_name")(e.target.value)} />}</Field>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label={t("auth.email")}>{(p) => <Input {...p} type="email" value={f.client_email} onChange={(e) => set("client_email")(e.target.value)} />}</Field>
@@ -80,7 +80,7 @@ export function NewProjectForm({ templates }: { templates: { id: string; name: s
 
       <Card className="grid gap-5 p-5">
         <div className="grid gap-2">
-          <span className="text-sm font-bold">{t("projects.template")}</span>
+          <span className="text-sm font-medium">{t("projects.template")}</span>
           <Chips value={f.templateId} onChange={set("templateId")} options={templates.map((x) => ({ value: x.id, label: x.name }))} />
           {tpl && <p className="text-sm text-ink-2">{tpl.stages.join(", ")}</p>}
         </div>

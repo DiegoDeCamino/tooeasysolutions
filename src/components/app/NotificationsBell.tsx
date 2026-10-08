@@ -48,7 +48,7 @@ export function NotificationsBell({
 
   if (variant === "count") {
     return unread ? (
-      <span className="tabular rounded-full bg-attention px-2 text-xs font-extrabold leading-5 text-white">{unread}</span>
+      <span className="tabular rounded-full bg-attention px-2 text-xs font-semibold leading-5 text-attention-ink">{unread}</span>
     ) : null;
   }
 
@@ -56,11 +56,11 @@ export function NotificationsBell({
     <Link
       href="/app/notifications"
       aria-label={`${t("nav.notifications")}${unread ? ` (${unread})` : ""}`}
-      className="relative inline-flex size-11 items-center justify-center rounded-full text-ink hover:bg-surface-2"
+      className="relative inline-flex size-11 items-center justify-center rounded-(--r-control) text-ink hover:bg-surface-2"
     >
       <Bell className="size-[22px]" strokeWidth={2.2} />
       {unread > 0 && (
-        <span className="tabular absolute right-1.5 top-1.5 min-w-[18px] rounded-full bg-attention px-1 text-center text-[10px] font-extrabold leading-[18px] text-white">
+        <span className="tabular absolute right-1.5 top-1.5 min-w-[18px] rounded-full bg-attention px-1 text-center text-[10px] font-semibold leading-[18px] text-attention-ink">
           {unread > 9 ? "9+" : unread}
         </span>
       )}

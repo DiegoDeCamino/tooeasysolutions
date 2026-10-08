@@ -29,7 +29,7 @@ export default async function NotificationsPage() {
         actions={
           unread && (
             <form action={markAllRead}>
-              <button type="submit" className="h-10 rounded-full px-4 text-sm font-extrabold text-accent-strong hover:bg-accent-soft">
+              <button type="submit" className="h-9 rounded-(--r-control) px-3 text-sm font-medium text-accent-strong transition hover:bg-accent-soft">
                 {t("notifications.markAll")}
               </button>
             </form>
@@ -45,9 +45,9 @@ export default async function NotificationsPage() {
               <>
                 <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", n.read_at ? "bg-transparent" : "bg-attention")} aria-hidden />
                 <span className="grid min-w-0 flex-1 gap-0.5">
-                  <span className={cn("text-[15px]", n.read_at ? "font-semibold text-ink-2" : "font-extrabold")}>{n.title}</span>
+                  <span className={cn("text-[15px]", n.read_at ? "text-ink-2" : "font-medium")}>{n.title}</span>
                   {n.body && <span className="truncate text-sm text-ink-2">{n.body}</span>}
-                  <span className="text-xs font-semibold text-ink-2">{timeAgo(n.created_at, locale)}</span>
+                  <span className="text-xs text-ink-2">{timeAgo(n.created_at, locale)}</span>
                 </span>
                 {n.href && <ChevronRight className="mt-1 size-5 shrink-0 text-ink-2" />}
               </>

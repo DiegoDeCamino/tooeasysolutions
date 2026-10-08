@@ -8,7 +8,7 @@ import { formatHours, formatMoney } from "@/lib/format";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/cn";
 import { Card } from "@/components/ui/Display";
-import { Button, IconButton } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Field";
 import { Stepper } from "@/components/ui/Stepper";
 import { Chips } from "@/components/ui/Chips";
@@ -40,6 +40,7 @@ function NumberInput({
   prefix,
   suffix,
   step = "0.25",
+  bare,
 }: {
   label: string;
   value: string;
@@ -47,12 +48,14 @@ function NumberInput({
   prefix?: string;
   suffix?: string;
   step?: string;
+  /** Hide the visible label (column header carries it). */
+  bare?: boolean;
 }) {
   return (
     <label className="grid gap-1.5">
-      <span className="text-sm font-bold text-ink">{label}</span>
-      <span className="flex h-12 items-center rounded-xl border border-line bg-surface px-3.5 focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15">
-        {prefix && <span className="mr-1 font-bold text-ink-2">{prefix}</span>}
+      <span className={bare ? "sr-only" : "text-sm font-medium text-ink"}>{label}</span>
+      <span className="flex h-10 items-center rounded-(--r-field) border border-line bg-surface px-3 transition focus-within:border-accent focus-within:ring-3 focus-within:ring-accent/15">
+        {prefix && <span className="mr-1 text-ink-2">{prefix}</span>}
         <input
           type="number"
           inputMode="decimal"
@@ -60,9 +63,9 @@ function NumberInput({
           min="0"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="tabular w-full min-w-0 bg-transparent text-[16px] font-bold text-ink outline-none"
+          className="tabular w-full min-w-0 bg-transparent text-base text-ink outline-none md:text-[15px]"
         />
-        {suffix && <span className="ml-1 whitespace-nowrap text-sm font-bold text-ink-2">{suffix}</span>}
+        {suffix && <span className="ml-1 whitespace-nowrap text-sm text-ink-2">{suffix}</span>}
       </span>
     </label>
   );
@@ -70,15 +73,15 @@ function NumberInput({
 
 function Section({ title, hint, action, children }: { title: string; hint?: string; action?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <Card className="p-5">
-      <div className="mb-4 flex items-start justify-between gap-3">
+    <Card className="overflow-hidden">
+      <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
         <div className="grid gap-0.5">
-          <h2 className="text-lg font-extrabold">{title}</h2>
+          <h2 className="text-[15px] font-semibold">{title}</h2>
           {hint && <p className="text-sm text-ink-2">{hint}</p>}
         </div>
         {action}
       </div>
-      {children}
+      <div className="p-5">{children}</div>
     </Card>
   );
 }
@@ -202,23 +205,26 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
             </Button>
           }
         >
-          <div className="grid gap-3">
+          <div className="-mx-5 -my-5 divide-y divide-line">
+            <RowHead cols={TYPE_COLS} labels={[t("settings.name"), t("settings.description"), t("settings.multiplier"), t("settings.active")]} />
             {types.map((c, i) => {
               const set = touch((patch: Partial<typeof c>) => setTypes((x) => x.map((y, j) => (j === i ? { ...y, ...patch } : y))));
               return (
-                <div key={c.id} className={cn("grid gap-3 rounded-xl border border-line p-3 sm:grid-cols-[1fr_120px_auto]", !c.active && "opacity-60")}>
-                  <div className="grid gap-2">
-                    <Input aria-label={t("settings.name")} placeholder={t("settings.name")} value={c.name} onChange={(e) => set({ name: e.target.value })} />
-                    <Input
-                      aria-label={t("settings.description")}
-                      placeholder={t("settings.description")}
-                      value={c.description}
-                      onChange={(e) => set({ description: e.target.value })}
-                      className="h-10 text-sm"
-                    />
+                <div key={c.id} className={cn("grid gap-2 px-5 py-3 md:items-center md:gap-3", TYPE_COLS, !c.active && "opacity-55")}>
+                  <Input aria-label={t("settings.name")} placeholder={t("settings.name")} value={c.name} onChange={(e) => set({ name: e.target.value })} />
+                  <Input
+                    aria-label={t("settings.description")}
+                    placeholder={t("settings.description")}
+                    value={c.description}
+                    onChange={(e) => set({ description: e.target.value })}
+                    className="text-ink-2"
+                  />
+                  <div className="flex items-center justify-between gap-3 md:contents">
+                    <div className="w-28 md:w-auto">
+                      <NumberInput bare label={t("settings.multiplier")} suffix="×" step="0.05" value={c.multiplier} onChange={(v) => set({ multiplier: v })} />
+                    </div>
+                    <ActiveToggle active={c.active} onChange={(active) => set({ active })} label={t("settings.active")} />
                   </div>
-                  <NumberInput label={t("settings.multiplier")} suffix="x" step="0.05" value={c.multiplier} onChange={(v) => set({ multiplier: v })} />
-                  <ActiveToggle active={c.active} onChange={(active) => set({ active })} label={t("settings.active")} />
                 </div>
               );
             })}
@@ -238,37 +244,37 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
             </Button>
           }
         >
-          <div className="grid gap-3">
+          <div className="-mx-5 -my-5 divide-y divide-line">
+            <RowHead cols={EXTRA_COLS} labels={[t("settings.name"), "", t("settings.value"), t("settings.active"), ""]} />
             {addons.map((a, i) => {
               const set = touch((patch: Partial<typeof a>) => setAddons((x) => x.map((y, j) => (j === i ? { ...y, ...patch } : y))));
               return (
-                <div key={a.id} className={cn("grid gap-3 rounded-xl border border-line p-3", !a.active && "opacity-60")}>
+                <div key={a.id} className={cn("grid gap-2 px-5 py-3 md:items-center md:gap-3", EXTRA_COLS, !a.active && "opacity-55")}>
                   <Input aria-label={t("settings.name")} placeholder={t("settings.name")} value={a.name} onChange={(e) => set({ name: e.target.value })} />
-                  <div className="flex flex-wrap items-end gap-3">
-                  <Select aria-label={t("settings.value")} className="w-40" value={a.kind} onChange={(e) => set({ kind: e.target.value as "hours" | "fixed" })}>
-                    <option value="hours">{t("settings.kindHours")}</option>
-                    <option value="fixed">{t("settings.kindFixed")}</option>
-                  </Select>
-                  <div className="w-28"><NumberInput
-                    label={t("settings.value")}
-                    prefix={a.kind === "fixed" ? "$" : undefined}
-                    suffix={a.kind === "hours" ? "h" : undefined}
-                    step={a.kind === "fixed" ? "5" : "0.25"}
-                    value={a.value}
-                    onChange={(v) => set({ value: v })}
-                  /></div>
-                  <div className="ml-auto flex items-center gap-1">
+                  <div className="flex items-center gap-2 md:contents">
+                    <Select aria-label={t("settings.value")} className="flex-1" value={a.kind} onChange={(e) => set({ kind: e.target.value as "hours" | "fixed" })}>
+                      <option value="hours">{t("settings.kindHours")}</option>
+                      <option value="fixed">{t("settings.kindFixed")}</option>
+                    </Select>
+                    <div className="w-28 md:w-auto">
+                      <NumberInput
+                        bare
+                        label={t("settings.value")}
+                        prefix={a.kind === "fixed" ? "$" : undefined}
+                        suffix={a.kind === "hours" ? "h" : undefined}
+                        step={a.kind === "fixed" ? "5" : "0.25"}
+                        value={a.value}
+                        onChange={(v) => set({ value: v })}
+                      />
+                    </div>
                     <ActiveToggle active={a.active} onChange={(active) => set({ active })} label={t("settings.active")} />
-                    <IconButton
+                    <DeleteButton
                       label={t("common.delete")}
                       onClick={touch(() => {
                         if (!a.id.startsWith("new-")) setDeletedAddons((d) => [...d, a.id]);
                         setAddons((x) => x.filter((_, j) => j !== i));
                       })}
-                    >
-                      <Trash2 className="size-5 text-danger" />
-                    </IconButton>
-                  </div>
+                    />
                   </div>
                 </div>
               );
@@ -299,7 +305,7 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
             {presets.map((p, i) => {
               const set = touch((patch: Partial<typeof p>) => setPresets((x) => x.map((y, j) => (j === i ? { ...y, ...patch } : y))));
               return (
-                <div key={p.id} className={cn("grid gap-3 rounded-xl border border-line p-3", !p.active && "opacity-60")}>
+                <div key={p.id} className={cn("grid gap-3 rounded-lg border border-line bg-canvas/50 p-3.5", !p.active && "opacity-55")}>
                   <div className="grid gap-3 sm:grid-cols-[1fr_200px]">
                     <Input aria-label={t("settings.name")} placeholder={t("settings.name")} value={p.name} onChange={(e) => set({ name: e.target.value })} />
                     <Select aria-label={t("settings.cleanTypes")} value={p.cleanTypeId ?? ""} onChange={(e) => set({ cleanTypeId: e.target.value || null })}>
@@ -320,15 +326,13 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
                     <NumberInput label={t("settings.fixedPrice")} prefix="$" step="5" value={p.fixedPrice} onChange={(v) => set({ fixedPrice: v })} />
                     <div className="col-span-2 flex items-center justify-end gap-1 sm:col-span-1">
                       <ActiveToggle active={p.active} onChange={(active) => set({ active })} label={t("settings.active")} />
-                      <IconButton
+                      <DeleteButton
                         label={t("common.delete")}
                         onClick={touch(() => {
                           if (!p.id.startsWith("new-")) setDeletedPresets((d) => [...d, p.id]);
                           setPresets((x) => x.filter((_, j) => j !== i));
                         })}
-                      >
-                        <Trash2 className="size-5 text-danger" />
-                      </IconButton>
+                      />
                     </div>
                   </div>
                 </div>
@@ -340,7 +344,7 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
 
       <aside className="grid gap-4 lg:sticky lg:top-8">
         <Card className="p-5">
-          <h2 className="text-lg font-extrabold">{t("settings.tryIt")}</h2>
+          <h2 className="text-[15px] font-semibold">{t("settings.tryIt")}</h2>
           <p className="mb-3 text-sm text-ink-2">{t("settings.tryItHint")}</p>
           <Chips
             options={types.filter((c) => c.name).map((c) => ({ value: c.id, label: c.name }))}
@@ -352,12 +356,12 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
             <Stepper label={t("cleaning.bathrooms")} value={sample.bathrooms} max={8} onChange={(bathrooms) => setSample((s) => ({ ...s, bathrooms }))} />
           </div>
           {preview && (
-            <div className="mt-3 rounded-xl bg-surface-2 p-4">
-              <p className="tabular text-3xl font-extrabold">{formatMoney(preview.price)}</p>
-              <p className="tabular text-sm font-bold text-ink-2">
+            <div className="mt-3 rounded-lg bg-surface-2 p-4">
+              <p className="tabular text-[28px] font-semibold leading-tight">{formatMoney(preview.price)}</p>
+              <p className="tabular text-sm text-ink-2">
                 {preview.crew} × {formatHours(preview.hours)} · {t("cleaning.totalWork")} {formatHours(preview.labourHours)}
               </p>
-              {preview.presetId && <p className="mt-1 text-sm font-bold text-accent-strong">{t("settings.presets")}</p>}
+              {preview.presetId && <p className="mt-1 text-sm font-medium text-accent-strong">{t("settings.presets")}</p>}
             </div>
           )}
         </Card>
@@ -365,12 +369,15 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
 
       <div
         className={cn(
-          "fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-30 flex justify-center px-4 transition lg:bottom-6 lg:left-64",
+          "fixed inset-x-0 bottom-[calc(76px+env(safe-area-inset-bottom))] z-30 flex justify-center px-4 transition lg:bottom-6 lg:left-60",
           dirty ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0",
         )}
       >
-        <div className="flex w-full max-w-md items-center justify-between gap-3 rounded-full bg-ink py-2 pl-5 pr-2 text-canvas shadow-lift">
-          <span className="text-sm font-bold">{t("settings.unsaved")}</span>
+        <div className="flex w-full max-w-md items-center justify-between gap-3 rounded-(--r-card) border border-line bg-surface py-2 pl-4 pr-2 text-ink shadow-lift">
+          <span className="flex items-center gap-2 text-sm font-medium">
+            <span className="size-2 rounded-full bg-attention" aria-hidden />
+            {t("settings.unsaved")}
+          </span>
           <Button onClick={save} loading={pending}>
             {t("common.save")}
           </Button>
@@ -388,11 +395,39 @@ function ActiveToggle({ active, onChange, label }: { active: boolean; onChange: 
       aria-checked={active}
       aria-label={label}
       onClick={() => onChange(!active)}
-      className="inline-flex h-11 items-center gap-2 rounded-full px-2 text-sm font-bold text-ink-2"
+      className="inline-flex h-10 items-center justify-center rounded-(--r-control) px-1.5 focus-visible:outline-2 focus-visible:outline-accent"
     >
-      <span className={cn("relative h-7 w-12 rounded-full transition", active ? "bg-accent-strong" : "bg-line")}>
-        <span className={cn("absolute top-1 size-5 rounded-full bg-surface shadow transition", active ? "left-6" : "left-1")} />
+      <span className={cn("relative h-6 w-10 rounded-full transition", active ? "bg-accent-strong" : "bg-line")}>
+        <span className={cn("absolute top-0.5 size-5 rounded-full bg-white shadow-sm transition-[left]", active ? "left-[18px]" : "left-0.5")} />
       </span>
     </button>
+  );
+}
+
+function DeleteButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className="inline-flex size-10 items-center justify-center rounded-(--r-control) text-ink-2 transition hover:bg-danger-soft hover:text-danger focus-visible:outline-2 focus-visible:outline-accent"
+    >
+      <Trash2 className="size-[18px]" />
+    </button>
+  );
+}
+
+const TYPE_COLS = "md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)_110px_56px]";
+const EXTRA_COLS = "md:grid-cols-[minmax(0,1fr)_150px_110px_56px_40px]";
+
+/** Column labels above a row list, from tablet up. */
+function RowHead({ cols, labels }: { cols: string; labels: string[] }) {
+  return (
+    <div className={cn("hidden gap-3 bg-surface-2/60 px-5 py-2 text-xs font-medium text-ink-2 md:grid", cols)} aria-hidden>
+      {labels.map((l, i) => (
+        <span key={i}>{l}</span>
+      ))}
+    </div>
   );
 }

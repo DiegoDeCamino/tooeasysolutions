@@ -50,6 +50,9 @@ export const es: Dict = {
     pricing: "Precios",
     templates: "Plantillas de etapas",
     notifications: "Notificaciones",
+    bookings: "Reservas",
+    carpentry: "Carpintería",
+    manage: "Gestión",
   },
   roles: {
     admin: "Admin",
@@ -377,6 +380,10 @@ export const es: Dict = {
   },
   me: {
     title: "Yo",
+    theme: "Apariencia",
+    theme_light: "Claro",
+    theme_dark: "Oscuro",
+    theme_system: "Sistema",
     profile: "Perfil",
     language: "Idioma",
     notifications: "Notificaciones",

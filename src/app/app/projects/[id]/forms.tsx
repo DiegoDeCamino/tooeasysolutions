@@ -79,7 +79,7 @@ export function UpdateForm({ open, onClose, data }: FormProps) {
         </Field>
         {data.stages.length > 0 && (
           <div className="grid gap-2">
-            <span className="text-sm font-bold">{t("projects.stage")}</span>
+            <span className="text-sm font-medium">{t("projects.stage")}</span>
             <Chips
               scroll
               value={stageId}
@@ -126,7 +126,7 @@ export function HoursForm({ open, onClose, data }: FormProps) {
       <div className="grid gap-5">
         {canPick && (
           <div className="grid gap-2">
-            <span className="text-sm font-bold">{t("projects.person")}</span>
+            <span className="text-sm font-medium">{t("projects.person")}</span>
             <Chips
               scroll
               value={who}
@@ -180,7 +180,7 @@ export function MaterialForm({ open, onClose, data }: FormProps) {
         </Field>
         <Stepper label={t("projects.qty")} value={qty} min={0} max={9999} onChange={setQty} />
         <div className="grid gap-2">
-          <span className="text-sm font-bold">{t("projects.unit")}</span>
+          <span className="text-sm font-medium">{t("projects.unit")}</span>
           <Chips value={unit} onChange={setUnit} options={["pcs", "m", "m²", "L", "box", "bag"].map((u) => ({ value: u, label: u }))} />
         </div>
         {data.viewer.isAdmin && (
@@ -230,19 +230,19 @@ export function ExpenseForm({ open, onClose, data }: FormProps) {
       }
     >
       <div className="grid gap-5">
-        <label className="flex h-16 items-center rounded-2xl border border-line bg-surface px-4 focus-within:border-accent">
-          <span className="text-2xl font-extrabold text-ink-2">$</span>
+        <label className="flex h-16 items-center rounded-(--r-card) border border-line bg-surface px-4 focus-within:border-accent">
+          <span className="text-2xl font-semibold text-ink-2">$</span>
           <input
             inputMode="decimal"
             aria-label={t("projects.amount")}
             placeholder="0"
             value={amount}
             onChange={(e) => setAmount(e.target.value.replace(/[^\d.]/g, ""))}
-            className="tabular w-full bg-transparent pl-1 text-3xl font-extrabold outline-none"
+            className="tabular w-full bg-transparent pl-1 text-3xl font-semibold outline-none"
           />
         </label>
         <div className="grid gap-2">
-          <span className="text-sm font-bold">{t("projects.category")}</span>
+          <span className="text-sm font-medium">{t("projects.category")}</span>
           <Chips
             value={category}
             onChange={setCategory}
@@ -259,7 +259,7 @@ export function ExpenseForm({ open, onClose, data }: FormProps) {
         </Field>
         <Field label={t("projects.date")}>{(p) => <Input {...p} type="date" value={date} onChange={(e) => setDate(e.target.value)} />}</Field>
         <div className="grid gap-2">
-          <span className="text-sm font-bold">{t("projects.receipt")}</span>
+          <span className="text-sm font-medium">{t("projects.receipt")}</span>
           <PhotoPicker value={receipt} onChange={setReceipt} max={1} label={t("projects.receipt")} compact />
         </div>
       </div>

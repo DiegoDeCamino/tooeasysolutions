@@ -72,7 +72,7 @@ export function Sheet({ open, onClose, title, description, children, footer, cla
       {open && (
         <div className="fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6">
           <motion.div
-            className="absolute inset-0 bg-[rgb(20_18_16/0.45)] backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[rgb(20_18_16/0.4)]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -86,15 +86,15 @@ export function Sheet({ open, onClose, title, description, children, footer, cla
             {...panelMotion}
             transition={{ type: "spring", stiffness: 420, damping: 38 }}
             className={cn(
-              "relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-surface text-ink shadow-lift",
-              "md:max-w-lg md:rounded-2xl",
+              "relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[20px] bg-surface text-ink shadow-lift",
+              "md:max-w-lg md:rounded-(--r-card) md:border md:border-line",
               className,
             )}
           >
             <div className="mx-auto mt-2.5 h-1.5 w-10 rounded-full bg-line md:hidden" aria-hidden />
             <div className="flex items-start justify-between gap-3 px-5 pb-2 pt-3 md:pt-5">
               <div className="grid gap-1">
-                <h2 className="text-lg font-extrabold leading-tight">{title}</h2>
+                <h2 className="text-lg font-semibold leading-tight">{title}</h2>
                 {description && <p className="text-sm text-ink-2">{description}</p>}
               </div>
               <button
@@ -102,7 +102,7 @@ export function Sheet({ open, onClose, title, description, children, footer, cla
                 data-close
                 aria-label="Close"
                 onClick={onClose}
-                className="-mr-2 -mt-1 inline-flex size-10 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-surface-2"
+                className="-mr-2 -mt-1 inline-flex size-9 shrink-0 items-center justify-center rounded-(--r-control) text-ink-2 hover:bg-surface-2 hover:text-ink"
               >
                 <X className="size-5" />
               </button>

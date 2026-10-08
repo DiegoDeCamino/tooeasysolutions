@@ -28,7 +28,7 @@ export default async function EnquiriesPage({ searchParams }: { searchParams: Pr
   const thumbs = await signedUrls((rows ?? []).flatMap((r) => r.photo_paths.slice(0, 3)));
 
   return (
-    <div className="mx-auto grid max-w-3xl gap-5">
+    <div className="mx-auto grid max-w-3xl grid-cols-[minmax(0,1fr)] gap-5">
       <PageHeader back="/app/projects" title={t("projects.enquiries")} />
       <Segmented
         active={tab}
@@ -46,11 +46,11 @@ export default async function EnquiriesPage({ searchParams }: { searchParams: Pr
             <Link
               key={e.id}
               href={`/app/projects/enquiries/${e.id}`}
-              className="grid gap-3 rounded-2xl border border-line bg-surface p-4 shadow-soft transition hover:border-ink-2/30 active:scale-[0.99]"
+              className="grid gap-3 rounded-(--r-card) border border-line bg-surface p-4 shadow-soft transition hover:border-ink-2/30 active:scale-[0.99]"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="grid min-w-0 gap-0.5">
-                  <span className="truncate font-extrabold">{e.name}</span>
+                  <span className="truncate font-semibold">{e.name}</span>
                   <span className="text-sm text-ink-2">
                     {categoryLabel(e.category)}
                     {e.suburb ? `, ${e.suburb}` : ""} · {timeAgo(e.created_at, locale)}
@@ -68,7 +68,7 @@ export default async function EnquiriesPage({ searchParams }: { searchParams: Pr
                     ) : null,
                   )}
                   {e.photo_paths.length > 3 && (
-                    <span className="flex size-20 items-center justify-center gap-1 rounded-xl bg-surface-2 text-sm font-extrabold text-ink-2">
+                    <span className="flex size-20 items-center justify-center gap-1 rounded-xl bg-surface-2 text-sm font-semibold text-ink-2">
                       <Camera className="size-4" />+{e.photo_paths.length - 3}
                     </span>
                   )}

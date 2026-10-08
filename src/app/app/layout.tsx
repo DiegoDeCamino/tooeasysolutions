@@ -5,12 +5,16 @@ import { getServerT } from "@/lib/i18n/server";
 import { I18nProvider } from "@/lib/i18n/client";
 import { ToastProvider } from "@/components/ui/Toast";
 import { AppShell, type ShellCounts } from "@/components/app/AppShell";
+import { getServerTheme, themeViewport } from "@/lib/theme.server";
+import { uiFont } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: { default: "Too Easy Crew", template: "%s | Too Easy Crew" },
   manifest: "/manifest.webmanifest",
   icons: { apple: "/icons/apple-touch-icon.png", icon: "/icons/icon-192.png" },
 };
+
+export const generateViewport = themeViewport;
 
 async function loadCounts(profileId: string, role: string, skills: string[]): Promise<ShellCounts> {
   const supabase = await createClient();
@@ -48,23 +52,24 @@ export default async function StaffLayout({ children }: { children: React.ReactN
   const viewer = await requireStaff();
   const { locale, dict } = await getServerT();
   const { profile } = viewer;
-  const counts = await loadCounts(profile.id, profile.role, profile.skills);
+  const [counts, theme] = await Promise.all([loadCounts(profile.id, profile.role, profile.skills), getServerTheme()]);
 
   return (
     <I18nProvider locale={locale} dict={dict}>
-      <ToastProvider>
-        <div className="app min-h-dvh">
+      <div className={`app min-h-dvh ${uiFont.variable}`} data-theme={theme}>
+        <ToastProvider>
           <AppShell
             role={profile.role as "admin" | "supervisor" | "worker"}
             name={profile.full_name || viewer.email}
             profileId={profile.id}
             counts={counts}
+            theme={theme}
           >
             {children}
           </AppShell>
           <div id="sheet-root" />
-        </div>
-      </ToastProvider>
+        </ToastProvider>
+      </div>
     </I18nProvider>
   );
 }

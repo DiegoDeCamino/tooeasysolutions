@@ -21,20 +21,20 @@ export function Stepper({ label, value, onChange, min = 0, max = 99, step = 1, f
   return (
     <div className={cn("flex min-h-14 items-center justify-between gap-3", className)}>
       <div className="grid gap-0.5">
-        <span className="text-[15px] font-bold text-ink">{label}</span>
+        <span className="text-sm font-medium text-ink">{label}</span>
         {hint && <span className="text-[13px] text-ink-2">{hint}</span>}
       </div>
-      <div className="flex items-center gap-1 rounded-full border border-line bg-surface p-1">
+      <div className="flex items-center gap-0.5 rounded-(--r-control) border border-line bg-surface p-0.5">
         <button
           type="button"
           aria-label="Decrease"
           disabled={value <= min}
           onClick={() => set(value - step)}
-          className="inline-flex size-10 items-center justify-center rounded-full text-ink transition hover:bg-surface-2 active:scale-90 disabled:opacity-30"
+          className="inline-flex size-9 items-center justify-center rounded-[calc(var(--r-control)-2px)] text-ink-2 transition hover:bg-surface-2 hover:text-ink active:scale-90 disabled:opacity-30"
         >
-          <Minus className="size-4" strokeWidth={2.5} />
+          <Minus className="size-4" strokeWidth={2.2} />
         </button>
-        <output aria-live="polite" className="tabular min-w-10 text-center text-lg font-extrabold text-ink">
+        <output aria-live="polite" className="tabular min-w-12 text-center text-[15px] font-semibold text-ink">
           {format ? format(value) : value}
         </output>
         <button
@@ -42,9 +42,9 @@ export function Stepper({ label, value, onChange, min = 0, max = 99, step = 1, f
           aria-label="Increase"
           disabled={value >= max}
           onClick={() => set(value + step)}
-          className="inline-flex size-10 items-center justify-center rounded-full text-ink transition hover:bg-surface-2 active:scale-90 disabled:opacity-30"
+          className="inline-flex size-9 items-center justify-center rounded-[calc(var(--r-control)-2px)] text-ink-2 transition hover:bg-surface-2 hover:text-ink active:scale-90 disabled:opacity-30"
         >
-          <Plus className="size-4" strokeWidth={2.5} />
+          <Plus className="size-4" strokeWidth={2.2} />
         </button>
       </div>
     </div>

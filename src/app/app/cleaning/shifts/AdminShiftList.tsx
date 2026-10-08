@@ -47,19 +47,19 @@ export function AdminShiftList({
         {shift && (
           <div className="grid gap-5">
             <section className="grid gap-2">
-              <h3 className="text-sm font-extrabold text-ink-2">
+              <h3 className="text-sm font-semibold text-ink-2">
                 {t("shifts.onShift")} ({shift.crew.length}/{shift.spots})
               </h3>
               {shift.crew.map((c) => (
                 <div key={c.id} className="flex items-center gap-3">
                   <Avatar name={c.name} />
-                  <span className="flex-1 font-bold">{c.name}</span>
+                  <span className="flex-1 font-medium">{c.name}</span>
                   <button
                     type="button"
                     disabled={pending}
                     aria-label={`${t("common.remove")} ${c.name}`}
                     onClick={() => act(() => adminRemoveWorker(shift.id, c.id))}
-                    className="inline-flex size-10 items-center justify-center rounded-full text-danger hover:bg-danger-soft"
+                    className="inline-flex size-10 items-center justify-center rounded-(--r-control) text-danger hover:bg-danger-soft"
                   >
                     <X className="size-5" />
                   </button>
@@ -67,7 +67,7 @@ export function AdminShiftList({
               ))}
             </section>
             <section className="grid gap-2">
-              <h3 className="text-sm font-extrabold text-ink-2">{t("shifts.addWorker")}</h3>
+              <h3 className="text-sm font-semibold text-ink-2">{t("shifts.addWorker")}</h3>
               {crew
                 .filter((c) => !shift.crew.some((x) => x.id === c.id))
                 .map((c) => (
@@ -79,8 +79,8 @@ export function AdminShiftList({
                     className="flex items-center gap-3 rounded-xl p-1 text-left hover:bg-surface-2"
                   >
                     <Avatar name={c.name} />
-                    <span className="flex-1 font-bold">{c.name}</span>
-                    <span className="inline-flex size-10 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
+                    <span className="flex-1 font-medium">{c.name}</span>
+                    <span className="inline-flex size-10 items-center justify-center rounded-(--r-control) bg-accent-soft text-accent-strong">
                       <Plus className="size-5" />
                     </span>
                   </button>

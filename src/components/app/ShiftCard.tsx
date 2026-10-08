@@ -62,33 +62,33 @@ export function ShiftCard({
   return (
     <article
       className={cn(
-        "grid gap-4 rounded-2xl border bg-surface p-4 shadow-soft transition",
+        "grid gap-4 rounded-(--r-card) border bg-surface p-4 shadow-soft transition",
         mine ? "border-accent" : "border-line",
         closed && "opacity-70",
       )}
     >
       <header className="flex items-start gap-3">
-        <div className={cn("flex w-14 shrink-0 flex-col items-center rounded-xl py-2", mine ? "bg-accent-strong text-accent-ink" : "bg-surface-2")}>
-          <span className="text-[11px] font-extrabold uppercase opacity-80">{formatInstantDate(shift.starts_at, locale, { weekday: "short", day: undefined, month: undefined })}</span>
-          <span className="tabular text-2xl font-extrabold leading-none">{formatInstantDate(shift.starts_at, locale, { day: "numeric", weekday: undefined, month: undefined })}</span>
-          <span className="text-[11px] font-bold opacity-80">{formatInstantDate(shift.starts_at, locale, { month: "short", weekday: undefined, day: undefined })}</span>
+        <div className={cn("flex w-12 shrink-0 flex-col items-center rounded-lg py-1.5 leading-none", mine ? "bg-accent-strong text-accent-ink" : "bg-surface-2")}>
+          <span className="text-[11px] font-semibold uppercase opacity-80">{formatInstantDate(shift.starts_at, locale, { weekday: "short", day: undefined, month: undefined })}</span>
+          <span className="tabular text-2xl font-semibold leading-none">{formatInstantDate(shift.starts_at, locale, { day: "numeric", weekday: undefined, month: undefined })}</span>
+          <span className="text-[11px] font-medium opacity-80">{formatInstantDate(shift.starts_at, locale, { month: "short", weekday: undefined, day: undefined })}</span>
         </div>
         <div className="grid min-w-0 flex-1 gap-1">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-extrabold leading-tight">{shift.title}</h3>
+            <h3 className="font-semibold leading-tight">{shift.title}</h3>
             {mine ? (
               <Badge tone="accent">{t("shifts.claimed")}</Badge>
             ) : (
               <Badge tone={SHIFT_TONE[shift.status]}>{left === 1 ? t("shifts.spotLeft") : left > 0 ? t("shifts.spotsLeft", { n: left }) : t(`shiftStatus.${shift.status}`)}</Badge>
             )}
           </div>
-          <p className="flex items-center gap-1.5 text-sm font-bold text-ink-2">
+          <p className="flex items-center gap-1.5 text-sm font-medium text-ink-2">
             <Clock className="size-4" />
             <span className="tabular">
               {formatInstantTime(shift.starts_at, locale)} - {formatInstantTime(shift.ends_at, locale)} ({formatHours(hours)})
             </span>
           </p>
-          <p className="flex items-center gap-1.5 text-sm font-bold text-ink-2">
+          <p className="flex items-center gap-1.5 text-sm font-medium text-ink-2">
             <MapPin className="size-4" /> {shift.suburb}
           </p>
         </div>
@@ -102,7 +102,7 @@ export function ShiftCard({
             href={`https://maps.google.com/?q=${encodeURIComponent(shift.details.address + ", WA")}`}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2 font-extrabold text-accent-strong"
+            className="flex items-center gap-2 font-semibold text-accent-strong"
           >
             <MapPin className="size-4" /> {shift.details.address}
           </a>
@@ -114,13 +114,13 @@ export function ShiftCard({
           )}
         </div>
       ) : (
-        !onManage && <p className="text-[13px] font-semibold text-ink-2">{t("shifts.addressAfter")}</p>
+        !onManage && <p className="text-[13px] font-medium text-ink-2">{t("shifts.addressAfter")}</p>
       )}
 
       <footer className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           {crew.length > 0 && <AvatarStack names={crew.map((c) => c.name)} />}
-          <span className="tabular flex items-center gap-1.5 text-sm font-extrabold">
+          <span className="tabular flex items-center gap-1.5 text-sm font-semibold">
             <Wallet className="size-4 text-accent-strong" />
             {t("common.approx", { amount: formatMoney(shift.pay_rate * hours) })}
           </span>
