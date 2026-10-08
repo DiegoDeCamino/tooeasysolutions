@@ -36,6 +36,10 @@ export const es: Dict = {
     no: "No",
     perHour: "/h",
     approx: "aprox. {amount}",
+    offline: "Sin conexión. Estás viendo la última copia guardada.",
+    offlineTitle: "Sin señal",
+    offlineNotSaved: "No se guardó nada. Inténtalo de nuevo cuando vuelvas a tener conexión.",
+    errorTitle: "Algo salió mal",
   },
   nav: {
     home: "Inicio",

@@ -23,6 +23,7 @@ import type { TKey } from "@/lib/i18n";
 import type { Theme } from "@/lib/theme";
 import { Avatar } from "@/components/ui/Display";
 import { NotificationsBell } from "./NotificationsBell";
+import { OfflineBanner } from "./OfflineBanner";
 import { ServiceWorker } from "./ServiceWorker";
 import { ThemeSwitch } from "./ThemeSwitch";
 
@@ -200,6 +201,7 @@ export function AppShell({
           </div>
         </header>
 
+        <OfflineBanner />
         <main className="mx-auto w-full max-w-6xl px-4 pb-32 pt-5 md:px-8 lg:px-10 lg:pb-16 lg:pt-9">{children}</main>
       </div>
 

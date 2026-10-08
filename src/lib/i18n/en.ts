@@ -34,6 +34,10 @@ export const en = {
     no: "No",
     perHour: "/h",
     approx: "about {amount}",
+    offline: "You're offline. Showing the last saved copy.",
+    offlineTitle: "No signal",
+    offlineNotSaved: "Nothing was saved. Try again once you're back online.",
+    errorTitle: "Something went wrong",
   },
   nav: {
     home: "Home",
