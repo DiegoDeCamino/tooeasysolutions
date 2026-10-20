@@ -40,16 +40,21 @@ export async function joinCrew(token: string, _: JoinState, form: FormData): Pro
     return { error: /already|registered|exists/i.test(error?.message ?? "") ? "emailTaken" : "failed" };
   }
 
-  await admin
-    .from("profiles")
-    .update({
-      full_name: input.fullName,
-      phone: input.phone,
-      locale: input.locale,
-      role: invite.role,
-      skills: invite.skills,
-    })
-    .eq("id", created.user.id);
+  // Upsert, not update: if the auth trigger ever misses, an update matches no row and the
+  // new crew member is left without a profile (and locked out as "no access").
+  const { error: profileError } = await admin.from("profiles").upsert({
+    id: created.user.id,
+    email: input.email,
+    full_name: input.fullName,
+    phone: input.phone,
+    locale: input.locale,
+    role: invite.role,
+    skills: invite.skills,
+  });
+  if (profileError) {
+    await admin.auth.admin.deleteUser(created.user.id);
+    return { error: "failed" };
+  }
   await admin.from("invites").update({ uses: invite.uses + 1 }).eq("id", invite.id);
 
   const supabase = await createClient();
