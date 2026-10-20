@@ -1,8 +1,20 @@
 "use client";
 
-import { useOptimistic, useState, useTransition } from "react";
+import { useId, useOptimistic, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragCancelEvent,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
+  type UniqueIdentifier,
+} from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Check, ChevronDown, GripVertical, ListChecks, Pencil, Plus, Ruler, StickyNote, Trash2, X, Image as ImageIcon } from "lucide-react";
@@ -87,6 +99,21 @@ export function Board({ data }: { data: ProjectData }) {
   const { shown, hidden } = boardPreview(list, expanded);
 
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  // A stable id keeps dnd-kit's aria ids the same on server and client.
+  const dndId = useId();
+  const name = (id: UniqueIdentifier | undefined) => {
+    const c = id ? byId.get(String(id)) : undefined;
+    return c ? c.title || t(`board.${c.kind}`) : "";
+  };
+  const accessibility = {
+    screenReaderInstructions: { draggable: t("board.dragHelp") },
+    announcements: {
+      onDragStart: ({ active }: DragStartEvent) => t("board.dragStart", { card: name(active.id) }),
+      onDragOver: ({ active, over }: DragOverEvent) => (over ? t("board.dragOver", { card: name(active.id), over: name(over.id) }) : undefined),
+      onDragEnd: ({ active, over }: DragEndEvent) => (over ? t("board.dragEnd", { card: name(active.id), over: name(over.id) }) : undefined),
+      onDragCancel: ({ active }: DragCancelEvent) => t("board.dragCancel", { card: name(active.id) }),
+    },
+  };
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
@@ -131,7 +158,7 @@ export function Board({ data }: { data: ProjectData }) {
           {t("board.empty")}
         </button>
       ) : (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd} accessibility={accessibility}>
           <SortableContext items={shown.map((c) => c.id)} strategy={rectSortingStrategy}>
             <div className="grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {shown.map((c) => (
