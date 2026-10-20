@@ -85,3 +85,19 @@ export async function loadOpenClock(client: SupabaseClient<Database>, profileId:
   if (!data?.started_at) return null;
   return { id: data.id, projectId: data.project_id, projectTitle: data.projects?.title ?? "", startedAt: data.started_at };
 }
+
+export type TodayTask = { id: string; title: string; due_date: string; projectId: string; projectTitle: string };
+
+/** Open tasks due today or earlier on the viewer's projects, for them or for anyone. */
+export async function loadTodayTasks(client: SupabaseClient<Database>, profileId: string, today: string): Promise<TodayTask[]> {
+  const { data } = await client
+    .from("project_tasks")
+    .select("id, title, due_date, project_id, created_at, projects(title)")
+    .is("done_at", null)
+    .lte("due_date", today)
+    .or(`assignee_id.is.null,assignee_id.eq.${profileId}`)
+    .order("due_date")
+    .order("created_at")
+    .limit(20);
+  return (data ?? []).map((x) => ({ id: x.id, title: x.title, due_date: x.due_date!, projectId: x.project_id, projectTitle: x.projects?.title ?? "" }));
+}

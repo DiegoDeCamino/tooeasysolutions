@@ -261,6 +261,89 @@ export async function editClockTimes(entryId: string, projectId: string, input: 
   return ok();
 }
 
+// --- tasks ---------------------------------------------------------------------------
+
+const taskSchema = z.object({
+  title: z.string().trim().min(1, "Write the task").max(200),
+  dueDate: dateStr.nullable(),
+  assigneeId: uuid.nullable(),
+});
+
+function notifyAssignee(projectId: string, taskTitle: string, assigneeId: string | null, by: string) {
+  if (!assigneeId || assigneeId === by) return;
+  after(async () => {
+    const { data } = await createAdminClient().from("projects").select("title").eq("id", projectId).single();
+    await notify(
+      { profileIds: [assigneeId] },
+      { kind: "task_assigned", title: `New task: ${taskTitle}`, body: data?.title, href: `/app/projects/${projectId}?tab=tasks` },
+    );
+  });
+}
+
+/** The assignee has to be on the team, so they can see the task. */
+async function onTeam(projectId: string, profileId: string | null) {
+  if (!profileId) return true;
+  const { data } = await createAdminClient().from("project_members").select("profile_id").eq("project_id", projectId).eq("profile_id", profileId);
+  return Boolean(data?.length);
+}
+
+export async function addTask(projectId: string, input: z.input<typeof taskSchema>): Promise<ActionResult> {
+  const viewer = await requireStaff();
+  const parsed = taskSchema.safeParse(input);
+  if (!uuid.safeParse(projectId).success || !parsed.success) return fail(parsed.error?.issues[0]?.message ?? "Check the task");
+  const { title, dueDate, assigneeId } = parsed.data;
+  if (!(await onTeam(projectId, assigneeId))) return fail("That person is not on this project");
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("project_tasks")
+    .insert({ project_id: projectId, title, due_date: dueDate, assignee_id: assigneeId, created_by: viewer.userId });
+  if (error) return fail(error.message.includes("row-level") ? "Only the team on this project can add tasks" : error.message);
+  notifyAssignee(projectId, title, assigneeId, viewer.userId);
+  refresh(projectId);
+  return ok();
+}
+
+export async function updateTask(taskId: string, projectId: string, input: z.input<typeof taskSchema>): Promise<ActionResult> {
+  const viewer = await requireStaff();
+  const parsed = taskSchema.safeParse(input);
+  if (!uuid.safeParse(taskId).success || !parsed.success) return fail(parsed.error?.issues[0]?.message ?? "Check the task");
+  const { title, dueDate, assigneeId } = parsed.data;
+  if (!(await onTeam(projectId, assigneeId))) return fail("That person is not on this project");
+  const supabase = await createClient();
+  const { data: before } = await supabase.from("project_tasks").select("assignee_id").eq("id", taskId).maybeSingle();
+  const { data, error } = await supabase
+    .from("project_tasks")
+    .update({ title, due_date: dueDate, assignee_id: assigneeId })
+    .eq("id", taskId)
+    .select("id");
+  if (error) return fail(error.message);
+  if (!data?.length) return fail("Only the person who added it, supervisors and admins can edit a task");
+  if (before?.assignee_id !== assigneeId) notifyAssignee(projectId, title, assigneeId, viewer.userId);
+  refresh(projectId);
+  return ok();
+}
+
+export async function setTaskDone(taskId: string, projectId: string, done: boolean): Promise<ActionResult> {
+  await requireStaff();
+  if (!uuid.safeParse(taskId).success) return fail("Bad task");
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_task_done", { p_task: taskId, p_done: done });
+  if (error) return fail(error.message);
+  refresh(projectId);
+  return ok();
+}
+
+export async function deleteTask(taskId: string, projectId: string): Promise<ActionResult> {
+  await requireStaff();
+  if (!uuid.safeParse(taskId).success) return fail("Bad task");
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("project_tasks").delete().eq("id", taskId).select("id");
+  if (error) return fail(error.message);
+  if (!data?.length) return fail("Only the person who added it, supervisors and admins can delete a task");
+  refresh(projectId);
+  return ok();
+}
+
 // --- hours, materials, expenses ---------------------------------------------------
 
 const hoursSchema = z.object({

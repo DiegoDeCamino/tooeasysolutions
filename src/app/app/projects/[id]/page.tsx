@@ -8,7 +8,7 @@ import { ProjectView, type ProjectData } from "./ProjectView";
 
 export const metadata = { title: "Project" };
 
-const TABS = ["feed", "stages", "materials", "team", "money", "settings"] as const;
+const TABS = ["feed", "stages", "tasks", "materials", "team", "money", "settings"] as const;
 
 export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string }> }) {
   const { profile } = await requireStaff();
@@ -20,7 +20,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { data: project } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
   if (!project) notFound();
 
-  const [{ data: stages }, { data: updates }, { data: members }, { data: time }, { data: materials }, myClock] = await Promise.all([
+  const [{ data: stages }, { data: updates }, { data: members }, { data: time }, { data: materials }, myClock, { data: tasks }] = await Promise.all([
     supabase.from("project_stages").select("id, name, position, status").eq("project_id", id).order("position"),
     supabase
       .from("project_updates")
@@ -39,6 +39,12 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       ? createAdminClient().from("materials").select("id, name, qty, unit, status, est_cost").eq("project_id", id).order("created_at")
       : supabase.from("materials").select("id, name, qty, unit, status").eq("project_id", id).order("created_at"),
     loadOpenClock(supabase, profile.id),
+    supabase
+      .from("project_tasks")
+      .select(
+        "id, title, due_date, assignee_id, done_at, created_by, created_at, assignee:profiles!project_tasks_assignee_id_fkey(full_name), doneBy:profiles!project_tasks_done_by_fkey(full_name)",
+      )
+      .eq("project_id", id),
   ]);
 
   const myRole = members?.find((m) => m.profile_id === profile.id)?.role ?? null;
@@ -129,6 +135,17 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       auto_closed: e.auto_closed,
     })),
     myClock,
+    tasks: (tasks ?? []).map((x) => ({
+      id: x.id,
+      title: x.title,
+      due_date: x.due_date,
+      assignee_id: x.assignee_id,
+      assignee: x.assignee?.full_name ?? null,
+      done_at: x.done_at,
+      done_by: x.doneBy?.full_name ?? null,
+      created_by: x.created_by,
+      created_at: x.created_at,
+    })),
     money,
     staff,
     viewer: { id: profile.id, isAdmin, isSupervisor, isMember: myRole !== null },

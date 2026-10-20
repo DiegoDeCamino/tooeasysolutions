@@ -680,6 +680,71 @@ export type Database = {
           },
         ]
       }
+      project_tasks: {
+        Row: {
+          assignee_id: string | null
+          created_at: string
+          created_by: string | null
+          done_at: string | null
+          done_by: string | null
+          due_date: string | null
+          id: string
+          project_id: string
+          title: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          done_at?: string | null
+          done_by?: string | null
+          due_date?: string | null
+          id?: string
+          project_id: string
+          title: string
+        }
+        Update: {
+          assignee_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          done_at?: string | null
+          done_by?: string | null
+          due_date?: string | null
+          id?: string
+          project_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_tasks_assignee_id_fkey"
+            columns: ["assignee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_tasks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_tasks_done_by_fkey"
+            columns: ["done_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_updates: {
         Row: {
           author_id: string | null
@@ -1113,6 +1178,7 @@ export type Database = {
       my_role: { Args: never; Returns: Database["public"]["Enums"]["app_role"] }
       random_ref: { Args: never; Returns: string }
       random_token: { Args: { bytes?: number }; Returns: string }
+      set_task_done: { Args: { p_done: boolean; p_task: string }; Returns: undefined }
       remind_open_clocks: {
         Args: { p_after_hours: number }
         Returns: Database["public"]["Tables"]["time_entries"]["Row"][]

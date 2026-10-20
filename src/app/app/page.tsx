@@ -11,7 +11,7 @@ import { cn } from "@/lib/cn";
 import { ShiftCard } from "@/components/app/ShiftCard";
 import { PushToggle } from "@/components/app/PushToggle";
 import { InstallPrompt } from "@/components/app/InstallPrompt";
-import { loadOpenClock, loadProjectCards } from "@/lib/projects";
+import { loadOpenClock, loadProjectCards, loadTodayTasks, type TodayTask } from "@/lib/projects";
 import { ClockPanel } from "@/components/app/Clock";
 
 export const metadata = { title: "Home" };
@@ -26,7 +26,8 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
   const viewer = await requireStaff();
   const { t, locale } = await getServerT();
   const { welcome } = await searchParams;
-  const clock = await loadOpenClock(await createClient(), viewer.profile.id);
+  const supabase = await createClient();
+  const [clock, tasks] = await Promise.all([loadOpenClock(supabase, viewer.profile.id), loadTodayTasks(supabase, viewer.profile.id, todayPerth())]);
   return (
     <div className="grid gap-6">
       <header className="grid gap-1">
@@ -34,6 +35,7 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
         <p className="text-sm text-ink-2 first-letter:uppercase">{formatDate(todayPerth(), locale, { weekday: "long", month: "long" })}</p>
       </header>
       <ClockPanel entry={clock} />
+      {tasks.length > 0 && <TodayTasks tasks={tasks} t={t} locale={locale} />}
       {welcome && (
         <Card className="grid gap-5 p-5">
           <div className="flex items-start gap-3">
@@ -259,5 +261,32 @@ function ProjectRow({ p }: { p: Awaited<ReturnType<typeof loadProjectCards>>[num
       </span>
       <ChevronRight className="size-4 text-ink-2" />
     </Link>
+  );
+}
+
+function TodayTasks({ tasks, t, locale }: { tasks: TodayTask[]; t: TFn; locale: "en" | "es" }) {
+  const today = todayPerth();
+  return (
+    <section className="grid gap-3">
+      <h2 className="text-[15px] font-semibold">{t("tasks.todayTitle")}</h2>
+      <Card className="divide-y divide-line overflow-hidden">
+        {tasks.map((task) => {
+          const late = task.due_date < today;
+          return (
+            <Link key={task.id} href={`/app/projects/${task.projectId}?tab=tasks`} className="flex items-center gap-3 px-4 py-3 transition hover:bg-surface-2">
+              <span className={cn("size-5 shrink-0 rounded-full border-2", late ? "border-danger" : "border-line")} aria-hidden />
+              <span className="grid min-w-0 flex-1 gap-0.5">
+                <span className="truncate font-medium">{task.title}</span>
+                <span className={cn("truncate text-xs font-medium", late ? "text-danger" : "text-ink-2")}>
+                  {task.projectTitle}
+                  {late && ` · ${t("tasks.due", { date: formatDate(task.due_date, locale) })}`}
+                </span>
+              </span>
+              <ChevronRight className="size-4 shrink-0 text-ink-2" />
+            </Link>
+          );
+        })}
+      </Card>
+    </section>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Camera, Clock, MapPin, Package, Plus, Receipt } from "lucide-react";
+import { Camera, Clock, ListTodo, MapPin, Package, Plus, Receipt } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
 import { formatDate } from "@/lib/format";
 import { Badge, PageHeader, ProgressBar, type Tone } from "@/components/ui/Display";
@@ -11,6 +11,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { FeedTab, MaterialsTab, MoneyTab, SettingsTab, StagesTab, TeamTab } from "./tabs";
 import { ExpenseForm, HoursForm, MaterialForm, UpdateForm } from "./forms";
 import { ClockPanel } from "@/components/app/Clock";
+import { TaskSheet, TasksTab } from "./tasks";
 import type { OpenClock } from "@/lib/projects";
 
 export type ProjectData = {
@@ -54,6 +55,17 @@ export type ProjectData = {
     ended_at: string | null;
     auto_closed: boolean;
   }[];
+  tasks: {
+    id: string;
+    title: string;
+    due_date: string | null;
+    assignee_id: string | null;
+    assignee: string | null;
+    done_at: string | null;
+    done_by: string | null;
+    created_by: string | null;
+    created_at: string;
+  }[];
   /** The viewer's open clock entry, on this or any other project. */
   myClock: OpenClock | null;
   money: {
@@ -65,8 +77,8 @@ export type ProjectData = {
   viewer: { id: string; isAdmin: boolean; isSupervisor: boolean; isMember: boolean };
 };
 
-export type Tab = "feed" | "stages" | "materials" | "team" | "money" | "settings";
-type Quick = "update" | "hours" | "material" | "expense";
+export type Tab = "feed" | "stages" | "tasks" | "materials" | "team" | "money" | "settings";
+type Quick = "update" | "task" | "hours" | "material" | "expense";
 
 const STATUS_TONE: Record<string, Tone> = { planning: "neutral", active: "accent", on_hold: "attention", completed: "ok" };
 
@@ -83,6 +95,7 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
   const tabs = [
     { key: "feed", label: t("projects.feed"), href: "?tab=feed" },
     { key: "stages", label: t("projects.stages"), href: "?tab=stages" },
+    { key: "tasks", label: t("tasks.tab"), href: "?tab=tasks" },
     { key: "materials", label: t("projects.materials"), href: "?tab=materials" },
     { key: "team", label: t("projects.team"), href: "?tab=team" },
     ...(viewer.isAdmin
@@ -95,6 +108,7 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
 
   const quickOptions: { key: Quick; icon: React.ComponentType<{ className?: string }>; label: string; hint: string; show: boolean }[] = [
     { key: "update", icon: Camera, label: t("projects.update"), hint: t("projects.updateHint"), show: true },
+    { key: "task", icon: ListTodo, label: t("tasks.task"), hint: t("tasks.taskHint"), show: true },
     { key: "hours", icon: Clock, label: t("projects.hours"), hint: t("projects.hoursHint"), show: true },
     { key: "material", icon: Package, label: t("projects.material"), hint: t("projects.materialHint"), show: true },
     { key: "expense", icon: Receipt, label: t("projects.expense"), hint: t("projects.expenseHint"), show: canExpense },
@@ -166,6 +180,7 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
 
       {tab === "feed" && <FeedTab data={data} onCompose={() => setQuick("update")} />}
       {tab === "stages" && <StagesTab data={data} />}
+      {tab === "tasks" && <TasksTab data={data} />}
       {tab === "materials" && <MaterialsTab data={data} onAdd={() => setQuick("material")} />}
       {tab === "team" && <TeamTab data={data} onLog={() => setQuick("hours")} />}
       {tab === "money" && data.money && <MoneyTab data={data} onAdd={() => setQuick("expense")} />}
@@ -208,6 +223,7 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
       </Sheet>
 
       <UpdateForm open={quick === "update"} onClose={close} data={data} />
+      {quick === "task" && <TaskSheet data={data} task={null} defaultDate={null} onClose={close} />}
       <HoursForm open={quick === "hours"} onClose={close} data={data} />
       <MaterialForm open={quick === "material"} onClose={close} data={data} />
       {canExpense && <ExpenseForm open={quick === "expense"} onClose={close} data={data} />}
