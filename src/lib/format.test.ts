@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, formatHours, formatMoney, initials, perthDateTime, todayPerth } from "./format";
+import { addDays, formatHours, formatInstantTime, formatMoney, formatTime, initials, perthDateTime, todayPerth } from "./format";
 
 describe("format", () => {
   it("formats money without cents when whole", () => {
@@ -22,5 +22,14 @@ describe("format", () => {
     expect(initials("Kiri Waititi")).toBe("KW");
     expect(initials("Ana")).toBe("A");
     expect(initials("")).toBe("?");
+  });
+});
+
+describe("time labels", () => {
+  // Node and browsers disagree on the spaces inside "p. m.", which breaks hydration.
+  it("uses plain spaces so server and browser render the same text", () => {
+    expect(formatInstantTime("2026-10-20T13:25:00Z", "es")).toBe("9:25 p. m.");
+    expect(formatTime("21:25", "es")).toBe("9:25 p. m.");
+    expect(formatInstantTime("2026-10-20T13:25:00Z", "en")).toBe("9:25 pm");
   });
 });

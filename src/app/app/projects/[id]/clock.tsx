@@ -85,9 +85,10 @@ export function OnSiteNow({ data }: { data: ProjectData }) {
                     variant="secondary"
                     loading={pending}
                     icon={<LogOut className="size-4" />}
+                    aria-label={`${t("clock.clockOut")}: ${e.name}`}
                     onClick={() => run(() => clockOut(e.id, data.project.id), t("clock.clockedOut"))}
                   >
-                    {t("clock.clockOut")}
+                    <span className="hidden sm:inline">{t("clock.clockOut")}</span>
                   </Button>
                 </>
               )}

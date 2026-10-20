@@ -57,19 +57,22 @@ export function formatDateLong(date: string, locale: Loc = "en") {
   return formatDate(date, locale, { weekday: "long", month: "long", year: "numeric" });
 }
 
+/** ICU versions differ on no-break spaces ("p. m." vs "p. m."); plain spaces keep server and browser in step. */
+const plainSpaces = (s: string) => s.replace(/[  ]/g, " ");
+
 /** "9:00 am" / "09:00" from "09:00:00" */
 export function formatTime(time: string, locale: Loc = "en") {
-  return new Intl.DateTimeFormat(intlLocale(locale), {
-    timeZone: TZ,
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(perthDateTime("2026-01-01", time));
+  return plainSpaces(
+    new Intl.DateTimeFormat(intlLocale(locale), {
+      timeZone: TZ,
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(perthDateTime("2026-01-01", time)),
+  );
 }
 
 export function formatInstantTime(iso: string, locale: Loc = "en") {
-  return new Intl.DateTimeFormat(intlLocale(locale), { timeZone: TZ, hour: "numeric", minute: "2-digit" }).format(
-    new Date(iso),
-  );
+  return plainSpaces(new Intl.DateTimeFormat(intlLocale(locale), { timeZone: TZ, hour: "numeric", minute: "2-digit" }).format(new Date(iso)));
 }
 
 export function formatInstantDate(iso: string, locale: Loc = "en", opts: Intl.DateTimeFormatOptions = {}) {
