@@ -41,6 +41,76 @@ export type Database = {
         }
         Relationships: []
       }
+      board_cards: {
+        Row: {
+          body: string
+          color: string
+          created_at: string
+          created_by: string | null
+          id: string
+          items: Json
+          kind: string
+          photo_path: string | null
+          position: number
+          project_id: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          body?: string
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          items?: Json
+          kind: string
+          photo_path?: string | null
+          position?: number
+          project_id: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          body?: string
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          items?: Json
+          kind?: string
+          photo_path?: string | null
+          position?: number
+          project_id?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_cards_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "board_cards_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "board_cards_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_events: {
         Row: {
           actor_id: string | null
@@ -1178,6 +1248,7 @@ export type Database = {
       my_role: { Args: never; Returns: Database["public"]["Enums"]["app_role"] }
       random_ref: { Args: never; Returns: string }
       random_token: { Args: { bytes?: number }; Returns: string }
+      set_board_item_done: { Args: { p_card: string; p_done: boolean; p_item: string }; Returns: undefined }
       set_task_done: { Args: { p_done: boolean; p_task: string }; Returns: undefined }
       remind_open_clocks: {
         Args: { p_after_hours: number }

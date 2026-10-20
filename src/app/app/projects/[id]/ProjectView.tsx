@@ -13,6 +13,7 @@ import { ExpenseForm, HoursForm, MaterialForm, UpdateForm } from "./forms";
 import { ClockPanel } from "@/components/app/Clock";
 import { TaskSheet, TasksTab } from "./tasks";
 import type { OpenClock } from "@/lib/projects";
+import type { CardColor, CardItem, CardKind } from "@/lib/board";
 
 export type ProjectData = {
   project: {
@@ -54,6 +55,20 @@ export type ProjectData = {
     started_at: string | null;
     ended_at: string | null;
     auto_closed: boolean;
+  }[];
+  cards: {
+    id: string;
+    kind: CardKind;
+    title: string;
+    body: string;
+    color: CardColor;
+    items: CardItem[];
+    photo_path: string | null;
+    /** Signed URL for the photo card */
+    photo: string | null;
+    created_by: string | null;
+    updated_at: string;
+    editor: string | null;
   }[];
   tasks: {
     id: string;

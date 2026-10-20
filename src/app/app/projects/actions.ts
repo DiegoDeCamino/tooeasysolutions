@@ -6,9 +6,10 @@ import { z } from "zod";
 import { fail, ok, requireAdmin, requireStaff, type ActionResult } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createUploadTargets, pathsInScope, type UploadTarget } from "@/lib/media";
+import { BUCKET, createUploadTargets, pathsInScope, type UploadTarget } from "@/lib/media";
 import { notify } from "@/lib/notify";
 import { entryRange } from "@/lib/clock";
+import { CARD_COLORS, CARD_KINDS, cleanItems, type CardItem } from "@/lib/board";
 
 const uuid = z.uuid();
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -257,6 +258,127 @@ export async function editClockTimes(entryId: string, projectId: string, input: 
     .select("id");
   if (error) return fail(error.code === "23514" ? "Check the times" : error.message);
   if (!data?.length) return fail("Only supervisors and admins can change times");
+  refresh(projectId);
+  return ok();
+}
+
+// --- whiteboard ------------------------------------------------------------------------
+
+const cardSchema = z.object({
+  kind: z.enum(CARD_KINDS),
+  title: z.string().trim().max(120),
+  body: z.string().trim().max(4000),
+  color: z.enum(CARD_COLORS),
+  items: z
+    .array(
+      z.object({
+        id: z.string().min(1).max(40),
+        text: z.string().max(300).optional(),
+        done: z.boolean().optional(),
+        label: z.string().max(120).optional(),
+        value: z.string().max(120).optional(),
+      }),
+    )
+    .max(100),
+  photoPath: z.string().nullable(),
+});
+
+type CardRow = { kind: string; title: string; body: string; color: string; items: CardItem[]; photo_path: string | null };
+
+/** Validate a card and shape it into a row. Returns an error message when it's empty. */
+function cardRow(projectId: string, input: z.input<typeof cardSchema>): { error: string } | { error: null; row: CardRow } {
+  const parsed = cardSchema.safeParse(input);
+  if (!parsed.success) return { error: "Check the card" };
+  const c = parsed.data;
+  const items = cleanItems(
+    c.kind,
+    c.items.map((i) => ({ id: i.id, text: i.text ?? "", done: i.done ?? false, label: i.label ?? "", value: i.value ?? "" })),
+  );
+  const photo = c.kind === "photo" && c.photoPath ? (pathsInScope([c.photoPath], "projects", projectId)[0] ?? null) : null;
+  if (c.kind === "note" && !c.title && !c.body) return { error: "Write something on the note" };
+  if ((c.kind === "checklist" || c.kind === "measures") && !items.length) return { error: "Add at least one line" };
+  if (c.kind === "photo" && !photo) return { error: "Add a photo" };
+  return { error: null, row: { kind: c.kind, title: c.title, body: c.body, color: c.color, items, photo_path: photo } };
+}
+
+async function removeFiles(paths: (string | null | undefined)[]) {
+  const list = paths.filter((p): p is string => Boolean(p));
+  if (list.length) await createAdminClient().storage.from(BUCKET).remove(list);
+}
+
+export async function addCard(projectId: string, input: z.input<typeof cardSchema>): Promise<ActionResult> {
+  const viewer = await requireStaff();
+  if (!uuid.safeParse(projectId).success) return fail("Bad project");
+  const shaped = cardRow(projectId, input);
+  if (shaped.error !== null) return fail(shaped.error);
+  const supabase = await createClient();
+  // New cards go on top of the board.
+  const { data: first } = await supabase.from("board_cards").select("position").eq("project_id", projectId).order("position").limit(1);
+  const { error } = await supabase.from("board_cards").insert({
+    ...shaped.row,
+    project_id: projectId,
+    position: (first?.[0]?.position ?? 1) - 1,
+    created_by: viewer.userId,
+    updated_by: viewer.userId,
+  });
+  if (error) return fail(error.message.includes("row-level") ? "Only the team on this project can add cards" : error.message);
+  refresh(projectId);
+  return ok();
+}
+
+export async function updateCard(cardId: string, projectId: string, input: z.input<typeof cardSchema>): Promise<ActionResult> {
+  const viewer = await requireStaff();
+  if (!uuid.safeParse(cardId).success) return fail("Bad card");
+  const shaped = cardRow(projectId, input);
+  if (shaped.error !== null) return fail(shaped.error);
+  const supabase = await createClient();
+  const { data: before } = await supabase.from("board_cards").select("photo_path").eq("id", cardId).maybeSingle();
+  const { data, error } = await supabase
+    .from("board_cards")
+    .update({ ...shaped.row, updated_by: viewer.userId })
+    .eq("id", cardId)
+    .eq("project_id", projectId)
+    .select("id");
+  if (error) return fail(error.message);
+  if (!data?.length) return fail("Only the team on this project can edit cards");
+  if (before?.photo_path && before.photo_path !== shaped.row.photo_path) await removeFiles([before.photo_path]);
+  refresh(projectId);
+  return ok();
+}
+
+export async function deleteCard(cardId: string, projectId: string): Promise<ActionResult> {
+  await requireStaff();
+  if (!uuid.safeParse(cardId).success) return fail("Bad card");
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("board_cards").delete().eq("id", cardId).select("photo_path");
+  if (error) return fail(error.message);
+  if (!data?.length) return fail("Only the person who added it, supervisors and admins can delete a card");
+  await removeFiles(data.map((c) => c.photo_path));
+  refresh(projectId);
+  return ok();
+}
+
+export async function reorderCards(projectId: string, cardIds: string[]): Promise<ActionResult> {
+  await requireStaff();
+  const parsed = z.array(uuid).max(500).safeParse(cardIds);
+  if (!uuid.safeParse(projectId).success || !parsed.success) return fail("Bad card order");
+  const supabase = await createClient();
+  const results = await Promise.all(
+    parsed.data.map((id, position) => supabase.from("board_cards").update({ position }).eq("id", id).eq("project_id", projectId).select("id")),
+  );
+  const failed = results.find((r) => r.error);
+  if (failed?.error) return fail(failed.error.message);
+  if (results.some((r) => !r.data?.length)) return fail("Only the team on this project can move cards");
+  refresh(projectId);
+  return ok();
+}
+
+export async function setBoardItemDone(cardId: string, projectId: string, itemId: string, done: boolean): Promise<ActionResult> {
+  await requireStaff();
+  if (!uuid.safeParse(cardId).success || !itemId || itemId.length > 40) return fail("Bad item");
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_board_item_done", { p_card: cardId, p_item: itemId, p_done: done });
+  if (error) return fail(error.message);
   refresh(projectId);
   return ok();
 }

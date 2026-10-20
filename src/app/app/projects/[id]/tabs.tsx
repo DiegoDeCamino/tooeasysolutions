@@ -29,6 +29,7 @@ import {
 } from "../actions";
 import type { ProjectData } from "./ProjectView";
 import { OnSiteNow, TimeLog } from "./clock";
+import { Board } from "./board";
 
 const NEXT_STAGE = { todo: "doing", doing: "done", done: "todo" } as const;
 
@@ -54,53 +55,56 @@ export function FeedTab({ data, onCompose }: { data: ProjectData; onCompose: () 
   const stageName = (id: string | null) => data.stages.find((s) => s.id === id)?.name;
 
   return (
-    <div className="mx-auto grid w-full max-w-2xl gap-4">
-      <button
-        type="button"
-        onClick={onCompose}
-        className="flex items-center gap-3 rounded-(--r-card) border border-line bg-surface p-3 text-left shadow-soft transition hover:border-ink-2/30"
-      >
-        <span className="flex size-11 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
-          <Camera className="size-5" />
-        </span>
-        <span className="flex-1 font-medium text-ink-2">{t("projects.whatsNew")}</span>
-      </button>
-      {data.updates.length === 0 && <EmptyState icon={<Camera className="size-6" />} title={t("projects.noUpdates")} />}
-      {data.updates.map((u) => {
-        const mine = u.author_id === data.viewer.id;
-        return (
-          <article key={u.id} className="grid gap-3 rounded-(--r-card) border border-line bg-surface p-4 shadow-soft">
-            <header className="flex items-center gap-3">
-              <Avatar name={u.author} />
-              <div className="grid min-w-0 flex-1">
-                <span className="truncate font-semibold">{u.author}</span>
-                <span suppressHydrationWarning className="text-xs font-medium text-ink-2">
-                  {timeAgo(u.created_at, locale)}
-                  {stageName(u.stage_id) && ` · ${stageName(u.stage_id)}`}
-                </span>
-              </div>
-              {(data.viewer.isAdmin || mine) ? (
-                <button
-                  type="button"
-                  onClick={() => act(() => setUpdateVisibility(u.id, data.project.id, !u.client_visible))}
-                  className={cn(
-                    "inline-flex h-9 items-center gap-1.5 rounded-(--r-control) px-3 text-xs font-semibold",
-                    u.client_visible ? "bg-accent-soft text-accent-strong" : "bg-surface-2 text-ink-2",
-                  )}
-                  aria-pressed={u.client_visible}
-                >
-                  {u.client_visible ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
-                  {u.client_visible ? t("projects.clientSees") : t("projects.internal")}
-                </button>
-              ) : (
-                u.client_visible && <Eye className="size-4 text-ink-2" aria-label={t("projects.clientSees")} />
-              )}
-            </header>
-            {u.body && <p className="whitespace-pre-line text-[15px] leading-relaxed">{u.body}</p>}
-            {u.photos.length > 0 && <PhotoGrid urls={u.photos} />}
-          </article>
-        );
-      })}
+    <div className="grid gap-8">
+      <Board data={data} />
+      <div className="mx-auto grid w-full max-w-2xl gap-4">
+        <button
+          type="button"
+          onClick={onCompose}
+          className="flex items-center gap-3 rounded-(--r-card) border border-line bg-surface p-3 text-left shadow-soft transition hover:border-ink-2/30"
+        >
+          <span className="flex size-11 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
+            <Camera className="size-5" />
+          </span>
+          <span className="flex-1 font-medium text-ink-2">{t("projects.whatsNew")}</span>
+        </button>
+        {data.updates.length === 0 && <EmptyState icon={<Camera className="size-6" />} title={t("projects.noUpdates")} />}
+        {data.updates.map((u) => {
+          const mine = u.author_id === data.viewer.id;
+          return (
+            <article key={u.id} className="grid gap-3 rounded-(--r-card) border border-line bg-surface p-4 shadow-soft">
+              <header className="flex items-center gap-3">
+                <Avatar name={u.author} />
+                <div className="grid min-w-0 flex-1">
+                  <span className="truncate font-semibold">{u.author}</span>
+                  <span suppressHydrationWarning className="text-xs font-medium text-ink-2">
+                    {timeAgo(u.created_at, locale)}
+                    {stageName(u.stage_id) && ` · ${stageName(u.stage_id)}`}
+                  </span>
+                </div>
+                {(data.viewer.isAdmin || mine) ? (
+                  <button
+                    type="button"
+                    onClick={() => act(() => setUpdateVisibility(u.id, data.project.id, !u.client_visible))}
+                    className={cn(
+                      "inline-flex h-9 items-center gap-1.5 rounded-(--r-control) px-3 text-xs font-semibold",
+                      u.client_visible ? "bg-accent-soft text-accent-strong" : "bg-surface-2 text-ink-2",
+                    )}
+                    aria-pressed={u.client_visible}
+                  >
+                    {u.client_visible ? <Eye className="size-3.5" /> : <EyeOff className="size-3.5" />}
+                    {u.client_visible ? t("projects.clientSees") : t("projects.internal")}
+                  </button>
+                ) : (
+                  u.client_visible && <Eye className="size-4 text-ink-2" aria-label={t("projects.clientSees")} />
+                )}
+              </header>
+              {u.body && <p className="whitespace-pre-line text-[15px] leading-relaxed">{u.body}</p>}
+              {u.photos.length > 0 && <PhotoGrid urls={u.photos} />}
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }

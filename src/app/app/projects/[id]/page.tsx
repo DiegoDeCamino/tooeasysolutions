@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { signedUrls } from "@/lib/media";
 import { loadOpenClock } from "@/lib/projects";
+import type { CardColor, CardItem, CardKind } from "@/lib/board";
 import { ProjectView, type ProjectData } from "./ProjectView";
 
 export const metadata = { title: "Project" };
@@ -20,7 +21,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { data: project } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
   if (!project) notFound();
 
-  const [{ data: stages }, { data: updates }, { data: members }, { data: time }, { data: materials }, myClock, { data: tasks }] = await Promise.all([
+  const [{ data: stages }, { data: updates }, { data: members }, { data: time }, { data: materials }, myClock, { data: tasks }, { data: cards }] = await Promise.all([
     supabase.from("project_stages").select("id, name, position, status").eq("project_id", id).order("position"),
     supabase
       .from("project_updates")
@@ -45,6 +46,12 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
         "id, title, due_date, assignee_id, done_at, created_by, created_at, assignee:profiles!project_tasks_assignee_id_fkey(full_name), doneBy:profiles!project_tasks_done_by_fkey(full_name)",
       )
       .eq("project_id", id),
+    supabase
+      .from("board_cards")
+      .select("id, kind, title, body, color, items, photo_path, created_by, updated_at, editor:profiles!board_cards_updated_by_fkey(full_name)")
+      .eq("project_id", id)
+      .order("position")
+      .order("created_at", { ascending: false }),
   ]);
 
   const myRole = members?.find((m) => m.profile_id === profile.id)?.role ?? null;
@@ -77,7 +84,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     staff = (people ?? []).map((p) => ({ id: p.id, name: p.full_name, skills: p.skills }));
   }
 
-  const photoUrls = await signedUrls((updates ?? []).flatMap((u) => u.photo_paths));
+  const photoUrls = await signedUrls([...(updates ?? []).flatMap((u) => u.photo_paths), ...(cards ?? []).map((c) => c.photo_path)]);
   const hoursBy = new Map<string, number>();
   for (const e of time ?? []) hoursBy.set(e.profile_id, (hoursBy.get(e.profile_id) ?? 0) + Number(e.hours));
 
@@ -135,6 +142,19 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       auto_closed: e.auto_closed,
     })),
     myClock,
+    cards: (cards ?? []).map((c) => ({
+      id: c.id,
+      kind: c.kind as CardKind,
+      title: c.title,
+      body: c.body,
+      color: c.color as CardColor,
+      items: (Array.isArray(c.items) ? c.items : []) as CardItem[],
+      photo_path: c.photo_path,
+      photo: c.photo_path ? (photoUrls[c.photo_path] ?? null) : null,
+      created_by: c.created_by,
+      updated_at: c.updated_at,
+      editor: c.editor?.full_name ?? null,
+    })),
     tasks: (tasks ?? []).map((x) => ({
       id: x.id,
       title: x.title,
