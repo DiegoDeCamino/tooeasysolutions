@@ -1,8 +1,9 @@
 "use client";
 
-import { useOptimistic, useState, useTransition } from "react";
+import { useOptimistic, useRef, useState, useTransition } from "react";
+import { Reorder, useDragControls, useReducedMotion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { Camera, Check, Copy, Eye, EyeOff, Package, Phone, Plus, Receipt, Share2, Trash2, UserPlus, X } from "lucide-react";
+import { Camera, Check, Copy, GripVertical, Eye, EyeOff, Package, Phone, Plus, Receipt, Share2, Trash2, UserPlus, X } from "lucide-react";
 import { useT } from "@/lib/i18n/client";
 import { formatDate, formatHours, formatMoney, timeAgo } from "@/lib/format";
 import { cn } from "@/lib/cn";
@@ -19,6 +20,7 @@ import {
   deleteExpense,
   removeMember,
   removeStage,
+  reorderStages,
   setBudget,
   setMaterialStatus,
   setStageStatus,
@@ -114,6 +116,22 @@ export function StagesTab({ data }: { data: ProjectData }) {
   const [name, setName] = useState("");
   const canMove = data.viewer.isAdmin || data.viewer.isSupervisor;
 
+  // Local order while dragging; resets whenever the server order changes (add, remove, refresh).
+  const serverOrder = data.stages.map((s) => s.id);
+  const [order, setOrder] = useState(serverOrder);
+  const [synced, setSynced] = useState(serverOrder.join());
+  const orderRef = useRef(order);
+  const reorder = (ids: string[]) => {
+    orderRef.current = ids;
+    setOrder(ids);
+  };
+  if (synced !== serverOrder.join()) {
+    setSynced(serverOrder.join());
+    reorder(serverOrder);
+  }
+  const byId = new Map(stages.map((s) => [s.id, s]));
+  const list = order.flatMap((id) => byId.get(id) ?? []);
+
   const cycle = (id: string) =>
     start(async () => {
       const s = stages.find((x) => x.id === id)!;
@@ -125,49 +143,46 @@ export function StagesTab({ data }: { data: ProjectData }) {
       router.refresh();
     });
 
+  const commit = (ids = orderRef.current) => {
+    if (ids.join() === serverOrder.join()) return;
+    start(async () => {
+      const res = await reorderStages(data.project.id, ids);
+      if (!res.ok) {
+        toast(res.error, "error");
+        reorder(serverOrder);
+      }
+      router.refresh();
+    });
+  };
+
+  const nudge = (id: string, by: -1 | 1) => {
+    const from = order.indexOf(id);
+    const to = from + by;
+    if (to < 0 || to >= order.length) return;
+    const next = [...order];
+    [next[from], next[to]] = [next[to], next[from]];
+    reorder(next);
+    commit(next);
+  };
+
   return (
     <div className="mx-auto grid w-full max-w-2xl gap-4">
       {canMove && <p className="text-sm font-medium text-ink-2">{t("projects.tapToAdvance")}</p>}
-      <ol className="relative grid gap-2">
-        {stages.map((s, i) => (
-          <li key={s.id} className="flex items-center gap-2">
-            <button
-              type="button"
-              disabled={!canMove}
-              onClick={() => cycle(s.id)}
-              className={cn(
-                "flex min-h-16 flex-1 items-center gap-4 rounded-(--r-card) border p-3 text-left transition active:scale-[0.99] disabled:active:scale-100",
-                s.status === "doing" ? "border-accent bg-accent-soft/60" : "border-line bg-surface",
-              )}
-            >
-              <span
-                className={cn(
-                  "flex size-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold",
-                  s.status === "done" && "border-accent-strong bg-accent-strong text-accent-ink",
-                  s.status === "doing" && "border-accent-strong text-accent-strong",
-                  s.status === "todo" && "border-line text-ink-2",
-                )}
-              >
-                {s.status === "done" ? <Check className="size-5" strokeWidth={3} /> : i + 1}
-              </span>
-              <span className="grid flex-1 gap-0.5">
-                <span className={cn("font-semibold", s.status === "done" && "text-ink-2 line-through decoration-2")}>{s.name}</span>
-                <span className="text-xs font-medium text-ink-2">{t(`stageStatus.${s.status}`)}</span>
-              </span>
-            </button>
-            {data.viewer.isAdmin && (
-              <button
-                type="button"
-                aria-label={t("common.delete")}
-                onClick={() => act(() => removeStage(s.id, data.project.id))}
-                className="inline-flex size-11 items-center justify-center rounded-(--r-control) text-ink-2 hover:bg-danger-soft hover:text-danger"
-              >
-                <X className="size-5" />
-              </button>
-            )}
-          </li>
+      <Reorder.Group as="ol" axis="y" values={order} onReorder={reorder} className="relative grid gap-2">
+        {list.map((s, i) => (
+          <StageRow
+            key={s.id}
+            stage={s}
+            index={i}
+            canMove={canMove}
+            canDelete={data.viewer.isAdmin}
+            onCycle={() => cycle(s.id)}
+            onDrop={() => commit()}
+            onNudge={(by) => nudge(s.id, by)}
+            onDelete={() => act(() => removeStage(s.id, data.project.id))}
+          />
         ))}
-      </ol>
+      </Reorder.Group>
       {data.viewer.isAdmin && (
         <form
           className="flex gap-2"
@@ -181,6 +196,93 @@ export function StagesTab({ data }: { data: ProjectData }) {
         </form>
       )}
     </div>
+  );
+}
+
+function StageRow({
+  stage: s,
+  index,
+  canMove,
+  canDelete,
+  onCycle,
+  onDrop,
+  onNudge,
+  onDelete,
+}: {
+  stage: ProjectData["stages"][number];
+  index: number;
+  canMove: boolean;
+  canDelete: boolean;
+  onCycle: () => void;
+  onDrop: () => void;
+  onNudge: (by: -1 | 1) => void;
+  onDelete: () => void;
+}) {
+  const { t } = useT();
+  const controls = useDragControls();
+  const reduce = useReducedMotion();
+
+  return (
+    <Reorder.Item
+      as="li"
+      value={s.id}
+      dragListener={false}
+      dragControls={controls}
+      onDragEnd={onDrop}
+      whileDrag={{ zIndex: 10, filter: "drop-shadow(0 8px 16px rgb(0 0 0 / 0.14))", ...(reduce ? {} : { scale: 1.02 }) }}
+      className="relative flex items-center gap-2"
+    >
+      {canMove && (
+        <button
+          type="button"
+          aria-label={t("projects.reorderStage", { name: s.name })}
+          onPointerDown={(e) => controls.start(e)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+              e.preventDefault();
+              onNudge(e.key === "ArrowUp" ? -1 : 1);
+            }
+          }}
+          className="inline-flex size-11 shrink-0 cursor-grab touch-none items-center justify-center rounded-(--r-control) text-ink-2 hover:bg-surface-2 active:cursor-grabbing"
+        >
+          <GripVertical className="size-5" />
+        </button>
+      )}
+      <button
+        type="button"
+        disabled={!canMove}
+        onClick={onCycle}
+        className={cn(
+          "flex min-h-16 flex-1 items-center gap-4 rounded-(--r-card) border p-3 text-left transition active:scale-[0.99] disabled:active:scale-100",
+          s.status === "doing" ? "border-accent bg-accent-soft/60" : "border-line bg-surface",
+        )}
+      >
+        <span
+          className={cn(
+            "flex size-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold",
+            s.status === "done" && "border-accent-strong bg-accent-strong text-accent-ink",
+            s.status === "doing" && "border-accent-strong text-accent-strong",
+            s.status === "todo" && "border-line text-ink-2",
+          )}
+        >
+          {s.status === "done" ? <Check className="size-5" strokeWidth={3} /> : index + 1}
+        </span>
+        <span className="grid flex-1 gap-0.5">
+          <span className={cn("font-semibold", s.status === "done" && "text-ink-2 line-through decoration-2")}>{s.name}</span>
+          <span className="text-xs font-medium text-ink-2">{t(`stageStatus.${s.status}`)}</span>
+        </span>
+      </button>
+      {canDelete && (
+        <button
+          type="button"
+          aria-label={t("common.delete")}
+          onClick={onDelete}
+          className="inline-flex size-11 items-center justify-center rounded-(--r-control) text-ink-2 hover:bg-danger-soft hover:text-danger"
+        >
+          <X className="size-5" />
+        </button>
+      )}
+    </Reorder.Item>
   );
 }
 

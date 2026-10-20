@@ -173,6 +173,24 @@ export async function setStageStatus(stageId: string, projectId: string, status:
   return ok();
 }
 
+/** Save a new stage order. RLS limits updates to admins and the project's supervisors. */
+export async function reorderStages(projectId: string, stageIds: string[]): Promise<ActionResult> {
+  await requireStaff();
+  const parsed = z.array(uuid).max(100).safeParse(stageIds);
+  if (!uuid.safeParse(projectId).success || !parsed.success) return fail("Bad stage order");
+  const supabase = await createClient();
+  const results = await Promise.all(
+    parsed.data.map((id, position) =>
+      supabase.from("project_stages").update({ position }).eq("id", id).eq("project_id", projectId).select("id"),
+    ),
+  );
+  const failed = results.find((r) => r.error);
+  if (failed?.error) return fail(failed.error.message);
+  if (results.some((r) => !r.data?.length)) return fail("Only supervisors and admins can reorder stages");
+  refresh(projectId);
+  return ok();
+}
+
 export async function addStage(projectId: string, name: string): Promise<ActionResult> {
   await requireAdmin();
   const clean = name.trim().slice(0, 80);
