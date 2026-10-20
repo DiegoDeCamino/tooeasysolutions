@@ -106,7 +106,7 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
     min_price: String(s0.minPrice),
     price_rounding: String(s0.priceRounding),
   });
-  const [types, setTypes] = useState(initial.cleanTypes.map((c) => ({ ...c, multiplier: String(c.multiplier) })));
+  const [types, setTypes] = useState(initial.cleanTypes.map((c) => ({ ...c, multiplier: String(c.multiplier), minCrew: String(c.minCrew) })));
   const [addons, setAddons] = useState(initial.addons.map((a) => ({ ...a, value: String(a.value) })));
   const [presets, setPresets] = useState(
     initial.presets.map((p) => ({ ...p, maxSqm: p.maxSqm === null ? "" : String(p.maxSqm), fixedPrice: String(p.fixedPrice) })),
@@ -139,7 +139,7 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
         minPrice: n(settings.min_price),
         priceRounding: Math.max(1, n(settings.price_rounding)),
       },
-      cleanType: { id: ct.id, name: ct.name, multiplier: n(ct.multiplier) },
+      cleanType: { id: ct.id, name: ct.name, multiplier: n(ct.multiplier), minCrew: Math.max(1, n(ct.minCrew)) },
       addons: [],
       presets: presets
         .filter((p) => p.active)
@@ -152,7 +152,7 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
     start(async () => {
       const res = await savePricing({
         settings,
-        cleanTypes: types.map((c) => ({ id: c.id.startsWith("new-") ? undefined : c.id, name: c.name, description: c.description, multiplier: c.multiplier, active: c.active })),
+        cleanTypes: types.map((c) => ({ id: c.id.startsWith("new-") ? undefined : c.id, name: c.name, description: c.description, multiplier: c.multiplier, minCrew: c.minCrew, active: c.active })),
         addons: addons.map((a) => ({ id: a.id.startsWith("new-") ? undefined : a.id, name: a.name, kind: a.kind, value: a.value, active: a.active })),
         presets: presets.map((p) => ({
           id: p.id.startsWith("new-") ? undefined : p.id,
@@ -199,14 +199,14 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
               size="sm"
               variant="secondary"
               icon={<Plus className="size-4" />}
-              onClick={touch(() => setTypes((x) => [...x, { id: newId(), key: "", name: "", description: "", multiplier: "1", active: true, sort: x.length }]))}
+              onClick={touch(() => setTypes((x) => [...x, { id: newId(), key: "", name: "", description: "", multiplier: "1", minCrew: "2", active: true, sort: x.length }]))}
             >
               {t("common.add")}
             </Button>
           }
         >
           <div className="-mx-5 -my-5 divide-y divide-line">
-            <RowHead cols={TYPE_COLS} labels={[t("settings.name"), t("settings.description"), t("settings.multiplier"), t("settings.active")]} />
+            <RowHead cols={TYPE_COLS} labels={[t("settings.name"), t("settings.description"), t("settings.multiplier"), t("settings.minCrew"), t("settings.active")]} />
             {types.map((c, i) => {
               const set = touch((patch: Partial<typeof c>) => setTypes((x) => x.map((y, j) => (j === i ? { ...y, ...patch } : y))));
               return (
@@ -222,6 +222,9 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
                   <div className="flex items-center justify-between gap-3 md:contents">
                     <div className="w-28 md:w-auto">
                       <NumberInput bare label={t("settings.multiplier")} suffix="×" step="0.05" value={c.multiplier} onChange={(v) => set({ multiplier: v })} />
+                    </div>
+                    <div className="w-24 md:w-auto">
+                      <NumberInput bare label={t("settings.minCrew")} suffix={t("settings.people")} step="1" value={c.minCrew} onChange={(v) => set({ minCrew: v })} />
                     </div>
                     <ActiveToggle active={c.active} onChange={(active) => set({ active })} label={t("settings.active")} />
                   </div>
@@ -418,7 +421,7 @@ function DeleteButton({ label, onClick }: { label: string; onClick: () => void }
   );
 }
 
-const TYPE_COLS = "md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)_110px_56px]";
+const TYPE_COLS = "md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)_110px_110px_56px]";
 const EXTRA_COLS = "md:grid-cols-[minmax(0,1fr)_150px_110px_56px_40px]";
 
 /** Column labels above a row list, from tablet up. */

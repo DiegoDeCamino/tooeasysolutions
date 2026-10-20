@@ -356,6 +356,8 @@ export const en = {
     rounding: "Round prices up to",
     cleanTypes: "Clean types",
     multiplier: "Time multiplier",
+    minCrew: "Min. crew",
+    people: "ppl",
     extras: "Extras",
     kindHours: "Adds time",
     kindFixed: "Fixed price",

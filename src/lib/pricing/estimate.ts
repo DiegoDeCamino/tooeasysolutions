@@ -84,8 +84,10 @@ export function estimate(input: EstimateInput): Estimate {
 
   let crew: number;
   if (input.crew !== undefined) crew = input.crew;
-  else if (input.maxHours !== undefined && input.maxHours > 0) crew = Math.ceil(labourHours / input.maxHours - 1e-9);
-  else crew = Math.ceil(labourHours / s.maxShiftHours - 1e-9);
+  else {
+    const maxHours = input.maxHours !== undefined && input.maxHours > 0 ? input.maxHours : s.maxShiftHours;
+    crew = Math.max(cleanType.minCrew, Math.ceil(labourHours / maxHours - 1e-9));
+  }
   crew = Math.min(MAX_CREW, Math.max(MIN_CREW, Math.round(crew)));
 
   const hours = roundUpTo(labourHours / crew, HOUR_STEP);

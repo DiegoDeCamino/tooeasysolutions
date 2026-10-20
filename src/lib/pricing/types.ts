@@ -11,7 +11,8 @@ export type PricingSettings = {
   priceRounding: number;
 };
 
-export type CleanType = { id: string; name: string; multiplier: number };
+/** minCrew: the fewest people sent, unless the client or admin asks for a specific crew. */
+export type CleanType = { id: string; name: string; multiplier: number; minCrew: number };
 
 export type Addon = { id: string; name: string; kind: "hours" | "fixed"; value: number };
 

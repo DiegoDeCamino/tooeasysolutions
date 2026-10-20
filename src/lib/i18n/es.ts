@@ -358,6 +358,8 @@ export const es: Dict = {
     rounding: "Redondear precios a",
     cleanTypes: "Tipos de limpieza",
     multiplier: "Multiplicador de tiempo",
+    minCrew: "Equipo mín.",
+    people: "pers.",
     extras: "Extras",
     kindHours: "Suma tiempo",
     kindFixed: "Precio fijo",

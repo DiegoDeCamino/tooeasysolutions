@@ -14,8 +14,10 @@ const settings: PricingSettings = {
   minPrice: 140,
   priceRounding: 5,
 };
-const regular: CleanType = { id: "regular", name: "Regular", multiplier: 1 };
-const bond: CleanType = { id: "bond", name: "End of lease", multiplier: 1.7 };
+const regular: CleanType = { id: "regular", name: "Regular", multiplier: 1, minCrew: 2 };
+const bond: CleanType = { id: "bond", name: "End of lease", multiplier: 1.7, minCrew: 2 };
+const deep: CleanType = { id: "deep", name: "Deep", multiplier: 1.4, minCrew: 3 };
+const small = { bedrooms: 1, bathrooms: 1, sqm: 60, levels: 1, pets: false };
 const oven: Addon = { id: "oven", name: "Inside oven", kind: "hours", value: 0.75 };
 const carpet: Addon = { id: "carpet", name: "Carpet steam", kind: "fixed", value: 120 };
 const home = { bedrooms: 3, bathrooms: 2, sqm: 150, levels: 1, pets: false };
@@ -141,6 +143,28 @@ describe("estimate", () => {
   it("clamps crew between 1 and 8", () => {
     expect(estimate({ settings, cleanType: regular, addons: [], presets: [], home, crew: 0 }).crew).toBe(1);
     expect(estimate({ settings, cleanType: regular, addons: [], presets: [], home, crew: 20 }).crew).toBe(8);
+  });
+
+  it("sends at least the clean type's minimum crew on small jobs", () => {
+    // 1.5 + 1 + 0.75 + ceil(60/50)*0.5 = 4.25h: one cleaner could do it, but regular starts at two
+    const e = estimate({ settings, cleanType: regular, addons: [], presets: [], home: small });
+    expect(e.crew).toBe(2);
+    expect(e.hours).toBe(2.25); // 4.25/2 = 2.125 -> 2.25
+    expect(estimate({ settings, cleanType: deep, addons: [], presets: [], home: small }).crew).toBe(3);
+  });
+
+  it("adds people above the minimum when the job is big", () => {
+    // (1.5 + 8 + 1.5 + 1.5) * 1.4 = 17.5h -> ceil(17.5/5) = 4, above deep's minimum of 3
+    const e = estimate({ settings, cleanType: deep, addons: [], presets: [], home: { ...home, bedrooms: 8 } });
+    expect(e.crew).toBe(4);
+  });
+
+  it("keeps the minimum when the client asks for a short visit", () => {
+    expect(estimate({ settings, cleanType: deep, addons: [], presets: [], home: small, maxHours: 5 }).crew).toBe(3);
+  });
+
+  it("honours an explicit crew request below the minimum", () => {
+    expect(estimate({ settings, cleanType: regular, addons: [], presets: [], home: small, crew: 1 }).crew).toBe(1);
   });
 
   it("explains itself with a breakdown", () => {

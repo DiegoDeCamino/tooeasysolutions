@@ -221,6 +221,7 @@ export type Database = {
           description: string
           id: string
           key: string
+          min_crew: number
           multiplier: number
           name: string
           sort: number
@@ -230,6 +231,7 @@ export type Database = {
           description?: string
           id?: string
           key: string
+          min_crew?: number
           multiplier?: number
           name: string
           sort?: number
@@ -239,6 +241,7 @@ export type Database = {
           description?: string
           id?: string
           key?: string
+          min_crew?: number
           multiplier?: number
           name?: string
           sort?: number

@@ -96,7 +96,7 @@ for (const b of bookings) {
   const ads = (b.addons ?? []).map(addon);
   const base = {
     settings,
-    cleanType: { id: ct.id, name: ct.name, multiplier: +ct.multiplier },
+    cleanType: { id: ct.id, name: ct.name, multiplier: +ct.multiplier, minCrew: ct.min_crew },
     addons: ads.map((a) => ({ id: a.id, name: a.name, kind: a.kind, value: +a.value })),
     presets: presets.map((p) => ({ id: p.id, name: p.name, cleanTypeId: p.clean_type_id, bedrooms: p.bedrooms, bathrooms: p.bathrooms, maxSqm: p.max_sqm, fixedPrice: +p.fixed_price })),
     home: { bedrooms: b.bedrooms, bathrooms: b.bathrooms, sqm: b.sqm, levels: b.levels ?? 1, pets: b.pets ?? false },

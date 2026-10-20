@@ -51,6 +51,7 @@ export async function loadPricing(client: SupabaseClient<Database>, opts: { acti
       name: r.name,
       description: r.description,
       multiplier: Number(r.multiplier),
+      minCrew: r.min_crew,
       active: r.active,
       sort: r.sort,
     })),

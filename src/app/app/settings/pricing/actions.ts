@@ -27,6 +27,7 @@ const schema = z.object({
       name: z.string().trim().min(1).max(60),
       description: z.string().trim().max(200),
       multiplier: num(0.1, 5),
+      minCrew: z.coerce.number().int().min(1).max(8),
       active: z.boolean(),
     }),
   ),
@@ -82,7 +83,7 @@ export async function savePricing(payload: PricingPayload): Promise<ActionResult
   check(await supabase.from("settings").update(p.settings).eq("id", 1));
 
   for (const [i, ct] of p.cleanTypes.entries()) {
-    const row = { name: ct.name, description: ct.description, multiplier: ct.multiplier, active: ct.active, sort: i };
+    const row = { name: ct.name, description: ct.description, multiplier: ct.multiplier, min_crew: ct.minCrew, active: ct.active, sort: i };
     check(
       isUuid(ct.id)
         ? await supabase.from("clean_types").update(row).eq("id", ct.id!)
