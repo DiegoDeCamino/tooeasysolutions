@@ -19,8 +19,7 @@ select * from (values
   ('Exterior windows', 'hours'::public.addon_kind, 1.50, 4),
   ('Balcony or patio', 'hours'::public.addon_kind, 0.50, 5),
   ('Walls spot clean', 'hours'::public.addon_kind, 1.00, 6),
-  ('Laundry and linen', 'hours'::public.addon_kind, 0.50, 7),
-  ('Carpet steam clean', 'fixed'::public.addon_kind, 120.00, 8)
+  ('Laundry and linen', 'hours'::public.addon_kind, 0.50, 7)
 ) as v(name, kind, value, sort)
 where not exists (select 1 from public.addons);
 
