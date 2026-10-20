@@ -206,7 +206,7 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
           }
         >
           <div className="-mx-5 -my-5 divide-y divide-line">
-            <RowHead cols={TYPE_COLS} labels={[t("settings.name"), t("settings.description"), t("settings.multiplier"), t("settings.minCrew"), t("settings.active")]} />
+            <RowHead cols={TYPE_COLS} labels={[t("settings.name"), t("settings.multiplier"), t("settings.minCrew"), t("settings.active")]} />
             {types.map((c, i) => {
               const set = touch((patch: Partial<typeof c>) => setTypes((x) => x.map((y, j) => (j === i ? { ...y, ...patch } : y))));
               return (
@@ -217,7 +217,8 @@ export function PricingEditor({ initial }: { initial: PricingData }) {
                     placeholder={t("settings.description")}
                     value={c.description}
                     onChange={(e) => set({ description: e.target.value })}
-                    className="text-ink-2"
+                    // Second line on desktop, so names and numbers keep their width.
+                    className="text-ink-2 md:col-span-full md:row-start-2"
                   />
                   <div className="flex items-center justify-between gap-3 md:contents">
                     <div className="w-28 md:w-auto">
@@ -421,7 +422,7 @@ function DeleteButton({ label, onClick }: { label: string; onClick: () => void }
   );
 }
 
-const TYPE_COLS = "md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)_110px_110px_56px]";
+const TYPE_COLS = "md:grid-cols-[minmax(0,1fr)_110px_110px_56px]";
 const EXTRA_COLS = "md:grid-cols-[minmax(0,1fr)_150px_110px_56px_40px]";
 
 /** Column labels above a row list, from tablet up. */

@@ -22,6 +22,7 @@ import { useT } from "@/lib/i18n/client";
 import { timeAgo } from "@/lib/format";
 import { uploadPhotos } from "@/lib/upload";
 import {
+  BOARD_PREVIEW_PHONE,
   CARD_COLORS,
   boardPreview,
   checklistProgress,
@@ -141,7 +142,10 @@ export function Board({ data }: { data: ProjectData }) {
     <section className="grid gap-3">
       <div className="flex items-end justify-between gap-3">
         <div className="grid gap-0.5">
-          <h2 className="text-[15px] font-semibold">{t("board.title")}</h2>
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <StickyNote className="size-5 text-accent-strong" />
+            {t("board.title")}
+          </h2>
           <p className="text-sm text-ink-2">{t("board.hint")}</p>
         </div>
         <Button size="sm" variant="secondary" icon={<Plus className="size-4" />} onClick={() => setPicking(true)}>
@@ -150,27 +154,62 @@ export function Board({ data }: { data: ProjectData }) {
       </div>
 
       {list.length === 0 ? (
-        <button
-          type="button"
-          onClick={() => setPicking(true)}
-          className="rounded-(--r-card) border border-dashed border-line px-4 py-6 text-center text-sm text-ink-2 transition hover:border-ink-2/40 hover:text-ink"
-        >
-          {t("board.empty")}
-        </button>
+        // Empty: show the four card kinds as sticky notes, one tap from a new card.
+        <div className="grid gap-3 rounded-(--r-card) border border-line bg-surface p-4 shadow-soft">
+          <p className="text-sm font-medium text-ink-2">{t("board.empty")}</p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {(["note", "checklist", "photo", "measures"] as const).map((kind, i) => {
+              const Icon = KIND_ICON[kind];
+              return (
+                <button
+                  key={kind}
+                  type="button"
+                  onClick={() => setEditing({ card: null, kind })}
+                  className={cn(
+                    "grid min-h-24 content-between gap-2 rounded-(--r-card) border p-3 text-left transition hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.98]",
+                    COLOR_CLASS[CARD_COLORS[i]],
+                  )}
+                >
+                  <Icon className="size-5 text-ink-2" />
+                  <span className="grid gap-0.5">
+                    <span className="flex items-center gap-1 font-semibold">
+                      <Plus className="size-4" /> {t(`board.${kind}`)}
+                    </span>
+                    <span className="text-xs text-ink-2">{t(`board.${kind}Hint`)}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       ) : (
         <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd} accessibility={accessibility}>
           <SortableContext items={shown.map((c) => c.id)} strategy={rectSortingStrategy}>
             <div className="grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {shown.map((c) => (
-                <BoardCard key={c.id} card={c} onEdit={() => setEditing({ card: c, kind: c.kind })} onTick={(itemId, done) => tick(c, itemId, done)} />
+              {shown.map((c, i) => (
+                <BoardCard
+                  key={c.id}
+                  card={c}
+                  className={cn(!expanded && i >= BOARD_PREVIEW_PHONE && "max-sm:hidden")}
+                  onEdit={() => setEditing({ card: c, kind: c.kind })}
+                  onTick={(itemId, done) => tick(c, itemId, done)}
+                />
               ))}
             </div>
           </SortableContext>
         </DndContext>
       )}
 
-      {(hidden > 0 || expanded) && list.length > 0 && (
-        <button type="button" onClick={() => setExpanded((x) => !x)} className="flex items-center gap-1.5 justify-self-start text-sm font-semibold text-ink-2 hover:text-ink">
+      {(expanded || list.length > BOARD_PREVIEW_PHONE) && (
+        <button
+          type="button"
+          onClick={() => setExpanded((x) => !x)}
+          className={cn(
+            "flex items-center gap-1.5 justify-self-start text-sm font-semibold text-ink-2 hover:text-ink",
+            // Phones preview fewer cards, so between the two limits only phones need the button.
+            !expanded && hidden === 0 && "sm:hidden",
+          )}
+        >
           <ChevronDown className={cn("size-4 transition", expanded && "rotate-180")} />
           {expanded ? t("board.showLess") : t("board.seeAll", { n: list.length })}
         </button>
@@ -208,7 +247,17 @@ export function Board({ data }: { data: ProjectData }) {
   );
 }
 
-function BoardCard({ card, onEdit, onTick }: { card: Card; onEdit: () => void; onTick: (itemId: string, done: boolean) => void }) {
+function BoardCard({
+  card,
+  className,
+  onEdit,
+  onTick,
+}: {
+  card: Card;
+  className?: string;
+  onEdit: () => void;
+  onTick: (itemId: string, done: boolean) => void;
+}) {
   const { t, locale } = useT();
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: card.id });
   const Icon = KIND_ICON[card.kind];
@@ -219,9 +268,10 @@ function BoardCard({ card, onEdit, onTick }: { card: Card; onEdit: () => void; o
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        "grid gap-2.5 rounded-(--r-card) border p-3 text-ink shadow-soft",
+        "flex flex-col gap-2.5 rounded-(--r-card) border p-3 text-ink shadow-soft",
         COLOR_CLASS[card.color],
         isDragging && "relative z-10 shadow-lift ring-2 ring-accent/40",
+        className,
       )}
     >
       <header className="flex items-center gap-1.5">
@@ -236,7 +286,8 @@ function BoardCard({ card, onEdit, onTick }: { card: Card; onEdit: () => void; o
           <GripVertical className="size-4" />
         </button>
         <Icon className="size-4 shrink-0 text-ink-2" />
-        <h3 className="min-w-0 flex-1 truncate font-semibold">{label}</h3>
+        {/* Untitled cards fall back to their kind, kept quiet so it doesn't read as a title. */}
+        <h3 className={cn("min-w-0 flex-1 truncate", card.title ? "font-semibold" : "text-sm font-medium text-ink-2")}>{label}</h3>
         <button
           type="button"
           aria-label={`${t("board.editCard")}: ${label}`}
@@ -278,7 +329,7 @@ function BoardCard({ card, onEdit, onTick }: { card: Card; onEdit: () => void; o
         </button>
       )}
 
-      {card.editor && <p suppressHydrationWarning className="text-xs text-ink-2">{t("board.edited", { name: card.editor, when: timeAgo(card.updated_at, locale) })}</p>}
+      {card.editor && <p suppressHydrationWarning className="mt-auto text-xs text-ink-2">{t("board.edited", { name: card.editor, when: timeAgo(card.updated_at, locale) })}</p>}
     </article>
   );
 }
@@ -296,11 +347,11 @@ function Checklist({ items, onTick }: { items: ChecklistItem[]; onTick: (itemId:
           role="checkbox"
           aria-checked={i.done}
           onClick={() => onTick(i.id, !i.done)}
-          className="flex min-h-10 items-center gap-2.5 rounded-lg px-1 text-left hover:bg-ink/5"
+          className="flex min-h-10 items-start gap-2.5 rounded-lg px-1 py-2 text-left hover:bg-ink/5"
         >
           <span
             className={cn(
-              "flex size-5 shrink-0 items-center justify-center rounded-md border-2 transition",
+              "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md border-2 transition",
               i.done ? "border-accent-strong bg-accent-strong text-accent-ink" : "border-ink-2/40",
             )}
           >

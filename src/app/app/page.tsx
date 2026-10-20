@@ -253,13 +253,14 @@ function ProjectRow({ p }: { p: Awaited<ReturnType<typeof loadProjectCards>>[num
   return (
     <Link href={`/app/projects/${p.id}`} className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2">
       <span className="grid min-w-0 flex-1 gap-1.5">
-        <span className="flex items-baseline justify-between gap-3">
-          <span className="truncate font-medium">{p.title}</span>
-          <span className="shrink-0 truncate text-sm text-ink-2">{p.currentStage}</span>
+        <span className="flex min-w-0 items-baseline justify-between gap-3">
+          <span className="min-w-0 truncate font-medium">{p.title}</span>
+          {/* Stage names can be long; cap them so the title keeps its space. */}
+          <span className="min-w-0 max-w-[55%] truncate text-right text-sm text-ink-2">{p.currentStage}</span>
         </span>
         <ProgressBar value={p.total ? p.done / p.total : 0} label={`${p.done}/${p.total}`} />
       </span>
-      <ChevronRight className="size-4 text-ink-2" />
+      <ChevronRight className="size-4 shrink-0 text-ink-2" />
     </Link>
   );
 }

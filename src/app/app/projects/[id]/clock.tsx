@@ -136,20 +136,24 @@ export function TimeLog({ data }: { data: ProjectData }) {
       <Card className="divide-y divide-line overflow-hidden">
         {done.slice(0, 30).map((e) => {
           const editable = manage && e.started_at !== null;
+          const date = formatDate(e.work_date, locale);
+          const times = e.started_at && e.ended_at ? `${formatInstantTime(e.started_at, locale)} – ${formatInstantTime(e.ended_at, locale)}` : null;
           const row = (
             <>
-              <span className="w-24 shrink-0 font-medium text-ink-2">{formatDate(e.work_date, locale)}</span>
+              {/* On phones the date moves under the name so names and notes keep their room. */}
+              <span className="w-24 shrink-0 font-medium text-ink-2 max-sm:hidden">{date}</span>
               <span className="grid min-w-0 flex-1 gap-0.5">
-                <span className="truncate font-medium">
-                  {e.name}
-                  {e.note && <span className="font-medium text-ink-2"> · {e.note}</span>}
-                </span>
-                {e.started_at && e.ended_at && (
-                  <span className="tabular flex flex-wrap items-center gap-x-2 text-xs text-ink-2">
-                    {formatInstantTime(e.started_at, locale)} – {formatInstantTime(e.ended_at, locale)}
-                    {e.auto_closed && <Badge tone="attention">{t("clock.review")}</Badge>}
+                <span className="truncate font-medium">{e.name}</span>
+                <span className={cn("tabular flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-2", !(times || e.note || e.auto_closed) && "sm:hidden")}>
+                  <span className="min-w-0 break-words">
+                    <span className="sm:hidden">
+                      {date}
+                      {(times || e.note) && " · "}
+                    </span>
+                    {[times, e.note].filter(Boolean).join(" · ")}
                   </span>
-                )}
+                  {e.auto_closed && <Badge tone="attention">{t("clock.review")}</Badge>}
+                </span>
               </span>
               <span className="tabular font-semibold">{formatHours(e.hours)}</span>
               {editable && <Pencil className="size-4 shrink-0 text-ink-2" aria-hidden />}

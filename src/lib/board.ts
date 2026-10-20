@@ -8,6 +8,8 @@ export const CARD_KINDS: CardKind[] = ["note", "checklist", "photo", "measures"]
 export const CARD_COLORS: CardColor[] = ["yellow", "green", "blue", "pink", "gray"];
 /** Cards shown before "See all", so the posts below stay in reach. */
 export const BOARD_PREVIEW = 6;
+/** Cards are a full screen wide on phones, so fewer fit before the feed. */
+export const BOARD_PREVIEW_PHONE = 3;
 
 /** The order after dragging `active` onto `over`. */
 export function moveId(ids: string[], active: string, over: string) {
