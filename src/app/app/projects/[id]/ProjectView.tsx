@@ -10,6 +10,8 @@ import { Segmented } from "@/components/ui/Segmented";
 import { Sheet } from "@/components/ui/Sheet";
 import { FeedTab, MaterialsTab, MoneyTab, SettingsTab, StagesTab, TeamTab } from "./tabs";
 import { ExpenseForm, HoursForm, MaterialForm, UpdateForm } from "./forms";
+import { ClockPanel } from "@/components/app/Clock";
+import type { OpenClock } from "@/lib/projects";
 
 export type ProjectData = {
   project: {
@@ -40,14 +42,27 @@ export type ProjectData = {
   }[];
   materials: { id: string; name: string; qty: number; unit: string; status: "needed" | "bought" | "used"; est_cost: number | null }[];
   members: { id: string; name: string; phone: string | null; role: "supervisor" | "worker"; hours: number }[];
-  time: { id: string; name: string; work_date: string; hours: number; note: string | null }[];
+  time: {
+    id: string;
+    profile_id: string;
+    name: string;
+    work_date: string;
+    /** null while still on the clock */
+    hours: number | null;
+    note: string | null;
+    started_at: string | null;
+    ended_at: string | null;
+    auto_closed: boolean;
+  }[];
+  /** The viewer's open clock entry, on this or any other project. */
+  myClock: OpenClock | null;
   money: {
     budget: number;
     workerRate: number;
     expenses: { id: string; amount: number; category: string; description: string; spent_on: string; by: string; receiptUrl: string | null }[];
   } | null;
   staff: { id: string; name: string; skills: string[] }[];
-  viewer: { id: string; isAdmin: boolean; isSupervisor: boolean };
+  viewer: { id: string; isAdmin: boolean; isSupervisor: boolean; isMember: boolean };
 };
 
 export type Tab = "feed" | "stages" | "materials" | "team" | "money" | "settings";
@@ -135,6 +150,8 @@ export function ProjectView({ data, tab, siteUrl }: { data: ProjectData; tab: Ta
           </div>
         </div>
       </section>
+
+      {(viewer.isMember || viewer.isAdmin) && <ClockPanel entry={data.myClock} projectId={p.id} />}
 
       <div className="flex items-center justify-between gap-3">
         <Segmented items={tabs} active={tab} className="min-w-0 flex-1" />

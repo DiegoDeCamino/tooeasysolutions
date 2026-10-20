@@ -70,3 +70,18 @@ export const PROJECT_CATEGORIES = [
 export function categoryLabel(value: string | null | undefined) {
   return PROJECT_CATEGORIES.find((c) => c.value === value)?.label ?? value ?? "";
 }
+
+export type OpenClock = { id: string; projectId: string; projectTitle: string; startedAt: string };
+
+/** The person's running clock entry, if they are on site anywhere. */
+export async function loadOpenClock(client: SupabaseClient<Database>, profileId: string): Promise<OpenClock | null> {
+  const { data } = await client
+    .from("time_entries")
+    .select("id, project_id, started_at, projects(title)")
+    .eq("profile_id", profileId)
+    .not("started_at", "is", null)
+    .is("ended_at", null)
+    .maybeSingle();
+  if (!data?.started_at) return null;
+  return { id: data.id, projectId: data.project_id, projectTitle: data.projects?.title ?? "", startedAt: data.started_at };
+}

@@ -6,7 +6,7 @@
 export const OPS_ENABLED = process.env.NEXT_PUBLIC_OPS_ENABLED === "true";
 
 /** Routes that belong to the operations platform and are hidden while it's off. */
-export const OPS_PATHS = ["/app", "/book", "/carpentry", "/b/", "/p/", "/join", "/login", "/account", "/reset-password", "/auth", "/api/stripe"];
+export const OPS_PATHS = ["/app", "/book", "/carpentry", "/b/", "/p/", "/join", "/login", "/account", "/reset-password", "/auth", "/api/stripe", "/api/cron"];
 
 export function isOpsPath(pathname: string) {
   return OPS_PATHS.some((p) => (p.endsWith("/") ? pathname.startsWith(p) : pathname === p || pathname.startsWith(`${p}/`)));

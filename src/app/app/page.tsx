@@ -11,7 +11,8 @@ import { cn } from "@/lib/cn";
 import { ShiftCard } from "@/components/app/ShiftCard";
 import { PushToggle } from "@/components/app/PushToggle";
 import { InstallPrompt } from "@/components/app/InstallPrompt";
-import { loadProjectCards } from "@/lib/projects";
+import { loadOpenClock, loadProjectCards } from "@/lib/projects";
+import { ClockPanel } from "@/components/app/Clock";
 
 export const metadata = { title: "Home" };
 
@@ -25,12 +26,14 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
   const viewer = await requireStaff();
   const { t, locale } = await getServerT();
   const { welcome } = await searchParams;
+  const clock = await loadOpenClock(await createClient(), viewer.profile.id);
   return (
     <div className="grid gap-6">
       <header className="grid gap-1">
         <h1 className="text-2xl font-semibold leading-9 tracking-[-0.02em] md:text-[28px]">{greeting(t, viewer.profile.full_name)}</h1>
         <p className="text-sm text-ink-2 first-letter:uppercase">{formatDate(todayPerth(), locale, { weekday: "long", month: "long" })}</p>
       </header>
+      <ClockPanel entry={clock} />
       {welcome && (
         <Card className="grid gap-5 p-5">
           <div className="flex items-start gap-3">

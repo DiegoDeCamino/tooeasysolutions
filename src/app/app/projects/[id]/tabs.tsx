@@ -28,6 +28,7 @@ import {
   updateProject,
 } from "../actions";
 import type { ProjectData } from "./ProjectView";
+import { OnSiteNow, TimeLog } from "./clock";
 
 const NEXT_STAGE = { todo: "doing", doing: "done", done: "todo" } as const;
 
@@ -352,7 +353,7 @@ export function MaterialsTab({ data, onAdd }: { data: ProjectData; onAdd: () => 
 // --- Team -------------------------------------------------------------------------
 
 export function TeamTab({ data, onLog }: { data: ProjectData; onLog: () => void }) {
-  const { t, locale } = useT();
+  const { t } = useT();
   const { act, pending } = useAct();
   const [adding, setAdding] = useState(false);
   const [role, setRole] = useState<"worker" | "supervisor">("worker");
@@ -402,23 +403,8 @@ export function TeamTab({ data, onLog }: { data: ProjectData; onLog: () => void 
           ))}
         </Card>
       )}
-      {data.time.length > 0 && (
-        <section className="grid gap-2">
-          <h3 className="text-sm font-semibold text-ink-2">{t("projects.hoursLogged")}</h3>
-          <Card className="divide-y divide-line overflow-hidden">
-            {data.time.slice(0, 20).map((e) => (
-              <div key={e.id} className="flex items-center gap-3 px-4 py-3 text-sm">
-                <span className="w-24 shrink-0 font-medium text-ink-2">{formatDate(e.work_date, locale)}</span>
-                <span className="min-w-0 flex-1 truncate font-medium">
-                  {e.name}
-                  {e.note && <span className="font-medium text-ink-2"> · {e.note}</span>}
-                </span>
-                <span className="tabular font-semibold">{formatHours(e.hours)}</span>
-              </div>
-            ))}
-          </Card>
-        </section>
-      )}
+      <OnSiteNow data={data} />
+      <TimeLog data={data} />
       <Sheet open={adding} onClose={() => setAdding(false)} title={t("projects.addMember")}>
         <div className="grid gap-4">
           <Chips
@@ -457,7 +443,7 @@ export function MoneyTab({ data, onAdd }: { data: ProjectData; onAdd: () => void
   const { act, pending } = useAct();
   const money = data.money!;
   const [budget, setBudgetValue] = useState(String(money.budget || ""));
-  const totalHours = data.time.reduce((a, e) => a + e.hours, 0);
+  const totalHours = data.time.reduce((a, e) => a + (e.hours ?? 0), 0);
   const labour = totalHours * money.workerRate;
   const expenses = money.expenses.reduce((a, e) => a + e.amount, 0);
   const spent = expenses + labour;

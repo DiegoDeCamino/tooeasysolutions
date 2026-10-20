@@ -1024,33 +1024,45 @@ export type Database = {
       }
       time_entries: {
         Row: {
+          auto_closed: boolean
           created_at: string
           created_by: string | null
-          hours: number
+          ended_at: string | null
+          hours: number | null
           id: string
           note: string | null
           profile_id: string
           project_id: string
+          reminded_at: string | null
+          started_at: string | null
           work_date: string
         }
         Insert: {
+          auto_closed?: boolean
           created_at?: string
           created_by?: string | null
-          hours: number
+          ended_at?: string | null
+          hours?: number | null
           id?: string
           note?: string | null
           profile_id: string
           project_id: string
+          reminded_at?: string | null
+          started_at?: string | null
           work_date?: string
         }
         Update: {
+          auto_closed?: boolean
           created_at?: string
           created_by?: string | null
-          hours?: number
+          ended_at?: string | null
+          hours?: number | null
           id?: string
           note?: string | null
           profile_id?: string
           project_id?: string
+          reminded_at?: string | null
+          started_at?: string | null
           work_date?: string
         }
         Relationships: [
@@ -1083,6 +1095,15 @@ export type Database = {
     }
     Functions: {
       claim_shift: { Args: { p_shift: string }; Returns: string }
+      clock_in: {
+        Args: { p_profile?: string; p_project: string }
+        Returns: Database["public"]["Tables"]["time_entries"]["Row"]
+      }
+      clock_out: { Args: { p_entry: string }; Returns: Database["public"]["Tables"]["time_entries"]["Row"] }
+      close_stale_clocks: {
+        Args: { p_after_hours: number }
+        Returns: Database["public"]["Tables"]["time_entries"]["Row"][]
+      }
       is_admin: { Args: never; Returns: boolean }
       is_on_shift: { Args: { p_shift: string }; Returns: boolean }
       is_project_member: { Args: { p_project: string }; Returns: boolean }
@@ -1092,6 +1113,10 @@ export type Database = {
       my_role: { Args: never; Returns: Database["public"]["Enums"]["app_role"] }
       random_ref: { Args: never; Returns: string }
       random_token: { Args: { bytes?: number }; Returns: string }
+      remind_open_clocks: {
+        Args: { p_after_hours: number }
+        Returns: Database["public"]["Tables"]["time_entries"]["Row"][]
+      }
     }
     Enums: {
       addon_kind: "hours" | "fixed"

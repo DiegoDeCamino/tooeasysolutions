@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createUploadTargets, pathsInScope, type UploadTarget } from "@/lib/media";
 import { notify } from "@/lib/notify";
+import { entryRange } from "@/lib/clock";
 
 const uuid = z.uuid();
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -207,6 +208,55 @@ export async function removeStage(stageId: string, projectId: string): Promise<A
   await requireAdmin();
   const supabase = await createClient();
   await supabase.from("project_stages").delete().eq("id", stageId);
+  refresh(projectId);
+  return ok();
+}
+
+// --- clock in / out ------------------------------------------------------------------
+
+/** Clock yourself in, or (as supervisor/admin) someone on the team. */
+export async function clockIn(projectId: string, profileId: string | null = null): Promise<ActionResult> {
+  await requireStaff();
+  if (!uuid.safeParse(projectId).success || (profileId !== null && !uuid.safeParse(profileId).success)) return fail("Bad request");
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("clock_in", { p_project: projectId, ...(profileId ? { p_profile: profileId } : {}) });
+  if (error) return fail(error.code === "23505" ? "Already clocked in. Clock out first." : error.message);
+  refresh(projectId);
+  return ok();
+}
+
+export async function clockOut(entryId: string, projectId: string): Promise<ActionResult> {
+  await requireStaff();
+  if (!uuid.safeParse(entryId).success) return fail("Bad request");
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("clock_out", { p_entry: entryId });
+  if (error) return fail(error.message);
+  refresh(projectId);
+  return ok();
+}
+
+const timesSchema = z.object({
+  date: dateStr,
+  start: z.string(),
+  end: z.string().nullable(),
+});
+
+/** Supervisors and admins correct a clocked entry. Clears the "review" flag. */
+export async function editClockTimes(entryId: string, projectId: string, input: z.input<typeof timesSchema>): Promise<ActionResult> {
+  await requireStaff();
+  const parsed = timesSchema.safeParse(input);
+  const range = parsed.success ? entryRange(parsed.data.date, parsed.data.start, parsed.data.end) : null;
+  if (!uuid.safeParse(entryId).success || !range) return fail("Check the times");
+  if (range.startedAt > new Date() || (range.endedAt && range.endedAt > new Date())) return fail("Times can't be in the future");
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("time_entries")
+    .update({ started_at: range.startedAt.toISOString(), ended_at: range.endedAt?.toISOString() ?? null, auto_closed: false })
+    .eq("id", entryId)
+    .not("started_at", "is", null)
+    .select("id");
+  if (error) return fail(error.code === "23514" ? "Check the times" : error.message);
+  if (!data?.length) return fail("Only supervisors and admins can change times");
   refresh(projectId);
   return ok();
 }

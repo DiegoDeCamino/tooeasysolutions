@@ -3,6 +3,7 @@ import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { signedUrls } from "@/lib/media";
+import { loadOpenClock } from "@/lib/projects";
 import { ProjectView, type ProjectData } from "./ProjectView";
 
 export const metadata = { title: "Project" };
@@ -19,7 +20,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { data: project } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
   if (!project) notFound();
 
-  const [{ data: stages }, { data: updates }, { data: members }, { data: time }, { data: materials }] = await Promise.all([
+  const [{ data: stages }, { data: updates }, { data: members }, { data: time }, { data: materials }, myClock] = await Promise.all([
     supabase.from("project_stages").select("id, name, position, status").eq("project_id", id).order("position"),
     supabase
       .from("project_updates")
@@ -28,10 +29,16 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
       .order("created_at", { ascending: false })
       .limit(100),
     supabase.from("project_members").select("profile_id, role, profiles(full_name, phone)").eq("project_id", id),
-    supabase.from("time_entries").select("id, profile_id, work_date, hours, note, profiles!time_entries_profile_id_fkey(full_name)").eq("project_id", id).order("work_date", { ascending: false }),
+    supabase
+      .from("time_entries")
+      .select("id, profile_id, work_date, hours, note, started_at, ended_at, auto_closed, profiles!time_entries_profile_id_fkey(full_name)")
+      .eq("project_id", id)
+      .order("work_date", { ascending: false })
+      .order("started_at", { ascending: false, nullsFirst: false }),
     isAdmin
       ? createAdminClient().from("materials").select("id, name, qty, unit, status, est_cost").eq("project_id", id).order("created_at")
       : supabase.from("materials").select("id, name, qty, unit, status").eq("project_id", id).order("created_at"),
+    loadOpenClock(supabase, profile.id),
   ]);
 
   const myRole = members?.find((m) => m.profile_id === profile.id)?.role ?? null;
@@ -112,14 +119,19 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     })),
     time: (time ?? []).map((e) => ({
       id: e.id,
+      profile_id: e.profile_id,
       name: (e.profiles as { full_name: string } | null)?.full_name ?? "",
       work_date: e.work_date,
-      hours: Number(e.hours),
+      hours: e.hours === null ? null : Number(e.hours),
       note: e.note,
+      started_at: e.started_at,
+      ended_at: e.ended_at,
+      auto_closed: e.auto_closed,
     })),
+    myClock,
     money,
     staff,
-    viewer: { id: profile.id, isAdmin, isSupervisor },
+    viewer: { id: profile.id, isAdmin, isSupervisor, isMember: myRole !== null },
   };
 
   const tab = (TABS as readonly string[]).includes(raw ?? "") ? (raw as (typeof TABS)[number]) : "feed";
