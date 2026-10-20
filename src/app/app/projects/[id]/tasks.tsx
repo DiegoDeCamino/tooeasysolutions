@@ -218,7 +218,11 @@ function QuickAdd({ data, date }: { data: ProjectData; date: string | null }) {
         e.preventDefault();
         if (!typing) return;
         const dueDate = date ?? when.dueDate;
-        run(() => addTask(data.project.id, { title, dueDate, assigneeId: who === "anyone" ? null : who }), t("tasks.added"), () => setTitle(""));
+        run(() => addTask(data.project.id, { title, dueDate, assigneeId: who === "anyone" ? null : who }), t("tasks.added"), () => {
+          setTitle("");
+          when.setChoice("none");
+          setWho("anyone");
+        });
       }}
     >
       <div className="flex gap-2">
