@@ -1,6 +1,11 @@
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, LogOut, Timer } from "lucide-react";
 import { requireStaff } from "@/lib/auth";
 import { getServerT } from "@/lib/i18n/server";
+import { createClient } from "@/lib/supabase/server";
+import { addDays, formatHours, todayPerth } from "@/lib/format";
+import { weekStart, weekSummary } from "@/lib/hours";
+import { loadMyHours } from "@/lib/projects";
 import { Avatar, Badge, Card, PageHeader } from "@/components/ui/Display";
 import { LocaleSwitch } from "@/components/app/LocaleSwitch";
 import { ThemeSwitch } from "@/components/app/ThemeSwitch";
@@ -14,7 +19,12 @@ export const metadata = { title: "Me" };
 
 export default async function MePage() {
   const { profile, email } = await requireStaff();
-  const [{ t }, theme] = await Promise.all([getServerT(), getServerTheme()]);
+  const monday = weekStart(todayPerth());
+  const [{ t }, theme, week] = await Promise.all([
+    getServerT(),
+    getServerTheme(),
+    createClient().then((c) => loadMyHours(c, profile.id, monday, addDays(monday, 6))),
+  ]);
 
   return (
     <div className="mx-auto grid max-w-xl gap-5">
@@ -33,6 +43,18 @@ export default async function MePage() {
           </div>
         </div>
       </Card>
+
+      <Link
+        href="/app/me/hours"
+        className="flex items-center gap-3 rounded-(--r-card) border border-line bg-surface px-5 py-4 shadow-soft transition-colors hover:bg-surface-2"
+      >
+        <Timer className="size-5 shrink-0 text-ink-2" aria-hidden />
+        <span className="flex-1 font-medium">{t("hours.title")}</span>
+        <span className="text-sm text-ink-2">
+          {t("hours.thisWeek")} · <span className="tabular font-semibold text-ink">{formatHours(weekSummary(week, monday).total)}</span>
+        </span>
+        <ChevronRight className="size-4 shrink-0 text-ink-2" />
+      </Link>
 
       <Card className="grid gap-5 p-5">
         <InstallPrompt />

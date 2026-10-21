@@ -362,6 +362,7 @@ export function TeamTab({ data, onLog }: { data: ProjectData; onLog: () => void 
   const [adding, setAdding] = useState(false);
   const [role, setRole] = useState<"worker" | "supervisor">("worker");
   const candidates = data.staff.filter((s) => !data.members.some((m) => m.id === s.id));
+  const manage = data.viewer.isAdmin || data.viewer.isSupervisor;
 
   return (
     <div className="mx-auto grid w-full max-w-2xl gap-4">
@@ -385,7 +386,9 @@ export function TeamTab({ data, onLog }: { data: ProjectData; onLog: () => void 
               <div className="grid min-w-0 flex-1 gap-0.5">
                 <span className="truncate font-semibold">{m.name}</span>
                 <span className="text-sm text-ink-2">
-                  {m.role === "supervisor" ? t("projects.supervisor") : t("projects.worker")} · {t("projects.totalHours", { hours: formatHours(m.hours) })}
+                  {m.role === "supervisor" ? t("projects.supervisor") : t("projects.worker")}
+                  {/* Workers only read their own entries, so anyone else's total would show as 0. */}
+                  {(manage || m.id === data.viewer.id) && ` · ${t("projects.totalHours", { hours: formatHours(m.hours) })}`}
                 </span>
               </div>
               {m.phone && (

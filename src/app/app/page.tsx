@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { ArrowRight, ChevronRight, Hammer, Inbox, PartyPopper, Sparkles, UsersRound, Wallet } from "lucide-react";
+import { ArrowRight, ChevronRight, Hammer, Inbox, PartyPopper, Sparkles, Timer, UsersRound, Wallet } from "lucide-react";
 import { requireStaff, type Viewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getServerT } from "@/lib/i18n/server";
 import type { TFn } from "@/lib/i18n";
 import { loadShifts } from "@/lib/shifts";
-import { addDays, firstName, formatDate, formatMoney, formatTime, todayPerth } from "@/lib/format";
+import { addDays, firstName, formatDate, formatHours, formatMoney, formatTime, todayPerth } from "@/lib/format";
+import { weekStart, weekSummary } from "@/lib/hours";
 import { Card, EmptyState, ProgressBar } from "@/components/ui/Display";
 import { cn } from "@/lib/cn";
 import { ShiftCard } from "@/components/app/ShiftCard";
 import { PushToggle } from "@/components/app/PushToggle";
 import { InstallPrompt } from "@/components/app/InstallPrompt";
-import { loadOpenClock, loadProjectCards, loadTodayTasks, type TodayTask } from "@/lib/projects";
+import { loadMyHours, loadOpenClock, loadProjectCards, loadTodayTasks, type TodayTask } from "@/lib/projects";
 import { ClockPanel } from "@/components/app/Clock";
 
 export const metadata = { title: "Home" };
@@ -27,7 +28,14 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
   const { t, locale } = await getServerT();
   const { welcome } = await searchParams;
   const supabase = await createClient();
-  const [clock, tasks] = await Promise.all([loadOpenClock(supabase, viewer.profile.id), loadTodayTasks(supabase, viewer.profile.id, todayPerth())]);
+  const today = todayPerth();
+  const monday = weekStart(today);
+  const [clock, tasks, week] = await Promise.all([
+    loadOpenClock(supabase, viewer.profile.id),
+    loadTodayTasks(supabase, viewer.profile.id, today),
+    loadMyHours(supabase, viewer.profile.id, monday, addDays(monday, 6)),
+  ]);
+  const weekHours = weekSummary(week, monday).total;
   return (
     <div className="grid gap-6">
       <header className="grid gap-1">
@@ -35,6 +43,8 @@ export default async function AppHome({ searchParams }: { searchParams: Promise<
         <p className="text-sm text-ink-2 first-letter:uppercase">{formatDate(todayPerth(), locale, { weekday: "long", month: "long" })}</p>
       </header>
       <ClockPanel entry={clock} />
+      {/* Admins rarely clock in; show them the link only once they have time logged. */}
+      {(viewer.profile.role !== "admin" || week.length > 0) && <WeekHours hours={weekHours} t={t} />}
       {tasks.length > 0 && <TodayTasks tasks={tasks} t={t} locale={locale} />}
       {welcome && (
         <Card className="grid gap-5 p-5">
@@ -260,6 +270,20 @@ function ProjectRow({ p }: { p: Awaited<ReturnType<typeof loadProjectCards>>[num
         </span>
         <ProgressBar value={p.total ? p.done / p.total : 0} label={`${p.done}/${p.total}`} />
       </span>
+      <ChevronRight className="size-4 shrink-0 text-ink-2" />
+    </Link>
+  );
+}
+
+function WeekHours({ hours, t }: { hours: number; t: TFn }) {
+  return (
+    <Link
+      href="/app/me/hours"
+      className="flex items-center gap-3 rounded-(--r-card) border border-line bg-surface px-4 py-3.5 shadow-soft transition-colors hover:bg-surface-2"
+    >
+      <Timer className="size-5 shrink-0 text-ink-2" aria-hidden />
+      <span className="flex-1 font-medium">{t("hours.thisWeek")}</span>
+      <span className="tabular font-semibold">{formatHours(hours)}</span>
       <ChevronRight className="size-4 shrink-0 text-ink-2" />
     </Link>
   );

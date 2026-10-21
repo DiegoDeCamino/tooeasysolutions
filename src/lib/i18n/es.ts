@@ -324,6 +324,16 @@ export const es: Dict = {
     markOpen: "Marcar {task} como pendiente",
     todayTitle: "Tareas de hoy",
   },
+  hours: {
+    title: "Mis horas",
+    thisWeek: "Esta semana",
+    lastWeek: "La semana pasada",
+    weekOf: "Semana del {date}",
+    prev: "Semana anterior",
+    next: "Semana siguiente",
+    none: "Sin horas esta semana",
+    noneBody: "Marca la entrada en un proyecto y tu tiempo aparece aquí.",
+  },
   clock: {
     clockIn: "Marcar entrada",
     clockOut: "Marcar salida",

@@ -322,6 +322,16 @@ export const en = {
     markOpen: "Mark {task} as not done",
     todayTitle: "Today's tasks",
   },
+  hours: {
+    title: "My hours",
+    thisWeek: "This week",
+    lastWeek: "Last week",
+    weekOf: "Week of {date}",
+    prev: "Previous week",
+    next: "Next week",
+    none: "No hours this week",
+    noneBody: "Clock in on a project and your time shows up here.",
+  },
   clock: {
     clockIn: "Clock in",
     clockOut: "Clock out",

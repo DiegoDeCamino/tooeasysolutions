@@ -86,7 +86,37 @@ export async function loadOpenClock(client: SupabaseClient<Database>, profileId:
   return { id: data.id, projectId: data.project_id, projectTitle: data.projects?.title ?? "", startedAt: data.started_at };
 }
 
-export type TodayTask = { id: string; title: string; due_date: string; projectId: string; projectTitle: string };
+export type MyEntry = {
+  id: string;
+  projectId: string;
+  projectTitle: string;
+  work_date: string;
+  hours: number | null;
+  note: string | null;
+  started_at: string | null;
+  ended_at: string | null;
+  auto_closed: boolean;
+};
+
+/** The person's own time on every project between two Perth dates, inclusive. */
+export async function loadMyHours(client: SupabaseClient<Database>, profileId: string, from: string, to: string): Promise<MyEntry[]> {
+  const { data } = await client
+    .from("time_entries")
+    .select("id, project_id, work_date, hours, note, started_at, ended_at, auto_closed, projects(title)")
+    .eq("profile_id", profileId)
+    .gte("work_date", from)
+    .lte("work_date", to)
+    .order("work_date")
+    .order("started_at", { nullsFirst: true });
+  return (data ?? []).map(({ project_id, projects, hours, ...e }) => ({
+    ...e,
+    projectId: project_id,
+    projectTitle: projects?.title ?? "",
+    hours: hours === null ? null : Number(hours),
+  }));
+}
+
+export type TodayTask ={ id: string; title: string; due_date: string; projectId: string; projectTitle: string };
 
 /** Open tasks due today or earlier on the viewer's projects, for them or for anyone. */
 export async function loadTodayTasks(client: SupabaseClient<Database>, profileId: string, today: string): Promise<TodayTask[]> {
